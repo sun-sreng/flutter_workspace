@@ -1,0 +1,19 @@
+name: gmana_flutter
+description: GMana project for flutter widgets and other utilities for convenient develop and consistency.
+version: 0.0.4
+repository: https://github.com/sun-sreng/pub_gmana_flutter.git
+
+environment:
+  sdk: ^3.7.2
+  flutter: ">=1.17.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

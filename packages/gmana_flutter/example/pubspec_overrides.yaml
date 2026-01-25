@@ -1,0 +1,3 @@
+dependency_overrides:
+  gmana_flutter:
+    path: ../

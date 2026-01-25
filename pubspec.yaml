@@ -1,0 +1,10 @@
+name: flutter_workspace
+publish_to: "none"
+
+environment:
+  sdk: ^3.10.7
+
+workspace:
+  - examples/flutter_widgets
+  - packages/gmana
+  - packages/gmana_flutter
