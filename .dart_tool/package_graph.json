@@ -1,6 +1,5 @@
 {
   "roots": [
-    "flutter_widgets",
     "flutter_workspace",
     "gmana",
     "gmana_flutter"
@@ -11,18 +10,6 @@
       "version": "0.0.0",
       "dependencies": [],
       "devDependencies": []
-    },
-    {
-      "name": "flutter_widgets",
-      "version": "0.0.1",
-      "dependencies": [
-        "flutter",
-        "flutter_svg"
-      ],
-      "devDependencies": [
-        "flutter_lints",
-        "flutter_test"
-      ]
     },
     {
       "name": "gmana",
@@ -86,17 +73,6 @@
       "dependencies": []
     },
     {
-      "name": "flutter_svg",
-      "version": "2.2.3",
-      "dependencies": [
-        "flutter",
-        "http",
-        "vector_graphics",
-        "vector_graphics_codec",
-        "vector_graphics_compiler"
-      ]
-    },
-    {
       "name": "stream_channel",
       "version": "2.1.4",
       "dependencies": [
@@ -156,7 +132,7 @@
     },
     {
       "name": "matcher",
-      "version": "0.12.17",
+      "version": "0.12.19",
       "dependencies": [
         "async",
         "meta",
@@ -167,7 +143,7 @@
     },
     {
       "name": "test_api",
-      "version": "0.7.7",
+      "version": "0.7.10",
       "dependencies": [
         "async",
         "boolean_selector",
@@ -187,51 +163,15 @@
     },
     {
       "name": "material_color_utilities",
-      "version": "0.11.1",
+      "version": "0.13.0",
       "dependencies": [
         "collection"
       ]
     },
     {
       "name": "characters",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "dependencies": []
-    },
-    {
-      "name": "vector_graphics_compiler",
-      "version": "1.1.20",
-      "dependencies": [
-        "args",
-        "meta",
-        "path",
-        "path_parsing",
-        "vector_graphics_codec",
-        "xml"
-      ]
-    },
-    {
-      "name": "vector_graphics_codec",
-      "version": "1.1.13",
-      "dependencies": []
-    },
-    {
-      "name": "vector_graphics",
-      "version": "1.1.19",
-      "dependencies": [
-        "flutter",
-        "http",
-        "vector_graphics_codec"
-      ]
-    },
-    {
-      "name": "http",
-      "version": "1.6.0",
-      "dependencies": [
-        "async",
-        "http_parser",
-        "meta",
-        "web"
-      ]
     },
     {
       "name": "async",
@@ -291,61 +231,9 @@
       ]
     },
     {
-      "name": "xml",
-      "version": "6.6.1",
-      "dependencies": [
-        "collection",
-        "meta",
-        "petitparser"
-      ]
-    },
-    {
-      "name": "path_parsing",
-      "version": "1.1.0",
-      "dependencies": [
-        "meta",
-        "vector_math"
-      ]
-    },
-    {
-      "name": "args",
-      "version": "2.7.0",
-      "dependencies": []
-    },
-    {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
-    },
-    {
-      "name": "http_parser",
-      "version": "4.1.2",
-      "dependencies": [
-        "collection",
-        "source_span",
-        "string_scanner",
-        "typed_data"
-      ]
-    },
-    {
       "name": "vm_service",
       "version": "15.0.2",
       "dependencies": []
-    },
-    {
-      "name": "petitparser",
-      "version": "7.0.1",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
-    },
-    {
-      "name": "typed_data",
-      "version": "1.4.0",
-      "dependencies": [
-        "collection"
-      ]
     }
   ],
   "configVersion": 1

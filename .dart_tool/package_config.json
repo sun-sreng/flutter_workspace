@@ -2,12 +2,6 @@
   "configVersion": 2,
   "packages": [
     {
-      "name": "args",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/args-2.7.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.3"
-    },
-    {
       "name": "async",
       "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/async-2.13.0",
       "packageUri": "lib/",
@@ -21,7 +15,7 @@
     },
     {
       "name": "characters",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/characters-1.4.0",
+      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/characters-1.4.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -47,7 +41,7 @@
       "name": "flutter",
       "rootUri": "file:///Users/rocky/development/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.9"
     },
     {
       "name": "flutter_lints",
@@ -56,28 +50,10 @@
       "languageVersion": "3.8"
     },
     {
-      "name": "flutter_svg",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/flutter_svg-2.2.3",
-      "packageUri": "lib/",
-      "languageVersion": "3.8"
-    },
-    {
       "name": "flutter_test",
       "rootUri": "file:///Users/rocky/development/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
-    },
-    {
-      "name": "http",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/http-1.6.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.4"
-    },
-    {
-      "name": "http_parser",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/http_parser-4.1.2",
-      "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.9"
     },
     {
       "name": "leak_tracker",
@@ -105,15 +81,15 @@
     },
     {
       "name": "matcher",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/matcher-0.12.17",
+      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/matcher-0.12.19",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.7"
     },
     {
       "name": "material_color_utilities",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/material_color_utilities-0.11.1",
+      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/material_color_utilities-0.13.0",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "3.5"
     },
     {
       "name": "meta",
@@ -128,22 +104,10 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "path_parsing",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/path_parsing-1.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.3"
-    },
-    {
-      "name": "petitparser",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/petitparser-7.0.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.8"
-    },
-    {
       "name": "sky_engine",
       "rootUri": "file:///Users/rocky/development/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.9"
     },
     {
       "name": "source_span",
@@ -177,33 +141,9 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/test_api-0.7.7",
+      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/test_api-0.7.10",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
-    },
-    {
-      "name": "typed_data",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/typed_data-1.4.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.5"
-    },
-    {
-      "name": "vector_graphics",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/vector_graphics-1.1.19",
-      "packageUri": "lib/",
-      "languageVersion": "3.6"
-    },
-    {
-      "name": "vector_graphics_codec",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/vector_graphics_codec-1.1.13",
-      "packageUri": "lib/",
-      "languageVersion": "3.4"
-    },
-    {
-      "name": "vector_graphics_compiler",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.20",
-      "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.7"
     },
     {
       "name": "vector_math",
@@ -218,26 +158,8 @@
       "languageVersion": "3.5"
     },
     {
-      "name": "web",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/web-1.1.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.4"
-    },
-    {
-      "name": "xml",
-      "rootUri": "file:///Users/rocky/.pub-cache/hosted/pub.dev/xml-6.6.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.8"
-    },
-    {
       "name": "flutter_workspace",
       "rootUri": "../",
-      "packageUri": "lib/",
-      "languageVersion": "3.10"
-    },
-    {
-      "name": "flutter_widgets",
-      "rootUri": "../examples/flutter_widgets",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -255,8 +177,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.10.7",
+  "generatorVersion": "3.11.4",
   "flutterRoot": "file:///Users/rocky/development/flutter",
-  "flutterVersion": "3.38.7",
+  "flutterVersion": "3.41.6",
   "pubCache": "file:///Users/rocky/.pub-cache"
 }
