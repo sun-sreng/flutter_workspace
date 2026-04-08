@@ -1,16 +1,35 @@
 import 'package:meta/meta.dart';
 
+/// Configuration rules for valid passwords.
+/// 
+/// Contains constraints such as length limit, complexity requirements, etc.
 @immutable
 final class PasswordValidationConfig {
+  /// The required minimum length of the password.
   final int minLength;
+  
+  /// The maximum allowed length of the password.
   final int maxLength;
+  
+  /// The required minimum complexity score.
   final int minComplexityScore;
+  
+  /// The minimum allowed ASCII character code.
   final int minAsciiCode;
+  
+  /// The maximum allowed ASCII character code.
   final int maxAsciiCode;
+  
+  /// Threshold for disallowing sequential runs of characters.
   final double sequentialRunFactor;
+  
+  /// Set of blacklisted common passwords.
   final Set<String> commonPasswords;
+  
+  /// List of blacklisted common prefixes.
   final List<String> commonPrefixes;
   
+  /// Creates a [PasswordValidationConfig] with optional customized constraints.
   const PasswordValidationConfig({
     this.minLength = 8,
     this.maxLength = 128,
@@ -22,6 +41,7 @@ final class PasswordValidationConfig {
     this.commonPrefixes = _defaultCommonPrefixes,
   });
   
+  /// Creates a more loosely configured [PasswordValidationConfig].
   factory PasswordValidationConfig.lenient() {
     return const PasswordValidationConfig(
       minLength: 4,
@@ -29,6 +49,7 @@ final class PasswordValidationConfig {
     );
   }
   
+  /// Creates a highly constrained [PasswordValidationConfig].
   factory PasswordValidationConfig.strict() {
     return const PasswordValidationConfig(
       minLength: 12,

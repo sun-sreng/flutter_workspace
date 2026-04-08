@@ -1,16 +1,38 @@
 import 'package:meta/meta.dart';
 
+/// Configuration rules for valid text strings.
+/// 
+/// Provides constraints such as length limit, regular expression patterns, 
+/// and blacklisted words.
 @immutable
 final class TextValidationConfig {
+  /// Optional minimum allowable length.
   final int? minLength;
+  
+  /// Optional maximum allowable length.
   final int? maxLength;
+  
+  /// Whether empty text (or whitespace-only if not trimmed) is permitted.
   final bool allowEmpty;
+  
+  /// Whether text consisting solely of whitespace characters is permitted.
   final bool allowOnlyWhitespace;
+  
+  /// Whether the text should be trimmed (removing leading/trailing whitespace).
   final bool trimWhitespace;
+  
+  /// A regular expression pattern that the text must match.
   final String? pattern;
+  
+  /// A set of words that are not permitted to appear in the text.
   final Set<String> blacklistedWords;
+  
+  /// Additional specification of characters that are allowed, often paired with `pattern`.
   final String? allowedCharacters;
   
+  /// Creates a new [TextValidationConfig] with customizable rules.
+  /// 
+  /// By default, trims whitespace and does not allow empty text.
   const TextValidationConfig({
     this.minLength,
     this.maxLength,

@@ -1,3 +1,7 @@
+/// A package to handle domain value objects like Email, Password, Text, and Number.
+/// 
+/// It provides core abstractions for value objects as well as 
+/// concrete implementations for common use cases.
 library;
 
 // Core

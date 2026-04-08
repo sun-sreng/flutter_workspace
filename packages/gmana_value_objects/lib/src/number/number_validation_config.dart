@@ -1,13 +1,26 @@
 import 'package:meta/meta.dart';
 
+/// Configuration rules for valid numbers.
+/// 
+/// Constraints include limits on value, integer checking, and decimal places.
 @immutable
 final class NumberValidationConfig {
+  /// The optional minimum value.
   final num? min;
+  
+  /// The optional maximum value.
   final num? max;
+  
+  /// Whether negative numbers are permitted.
   final bool allowNegative;
+  
+  /// Whether the number must be an integer (no fractional parts).
   final bool integerOnly;
+  
+  /// Optional limit on the number of digits following the decimal point.
   final int? maxDecimalPlaces;
   
+  /// Creates a [NumberValidationConfig] with customizable constraints.
   const NumberValidationConfig({
     this.min,
     this.max,

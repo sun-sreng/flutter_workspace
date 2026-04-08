@@ -10,10 +10,18 @@ abstract interface class ValidationErrorMessages {
   String getMessage(ValidationError error);
 }
 
+/// The default implementation of [ValidationErrorMessages].
+/// 
+/// This class provides default English error messages for all built-in
+/// validation errors in the package.
 final class DefaultValidationErrorMessages implements ValidationErrorMessages {
+  /// Creates a new instance of [DefaultValidationErrorMessages].
   const DefaultValidationErrorMessages();
 
   @override
+  /// Gets the localized or default string message for a given [ValidationError].
+  /// 
+  /// The [error] parameter represents the validation error to be translated.
   String getMessage(ValidationError error) {
     return switch (error) {
       // Email errors

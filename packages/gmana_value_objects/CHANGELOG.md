@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.2 - 2026-04-09
+
+### Fixed
+
+- Added extensive dartdoc coverage for public API elements (`Email`, `Password`, `TextValue`, `NumberValue`, validation configs, error hierarchies). This fixes the pub.dev analysis score for missing documentation.
+
 ## 0.0.1 - 2026-04-09
 
 ### Added
