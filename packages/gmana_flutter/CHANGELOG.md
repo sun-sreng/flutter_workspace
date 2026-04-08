@@ -1,3 +1,7 @@
+## 0.0.6
+
+- doc: add dart doc
+
 ## 0.0.5
 
 - Add TextForm validation
