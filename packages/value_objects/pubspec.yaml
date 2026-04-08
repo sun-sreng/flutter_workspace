@@ -1,6 +1,7 @@
 name: value_objects
 description: Production-ready value objects with configurable validation for Email, Password, Text, and Number
 version: 0.0.1
+repository: https://github.com/sun-sreng/flutter_workspace
 
 environment:
   sdk: ^3.7.2
