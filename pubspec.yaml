@@ -1,5 +1,4 @@
 name: flutter_workspace
-publish_to: "none"
 
 environment:
   sdk: ^3.10.7

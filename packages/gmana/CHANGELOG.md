@@ -1,3 +1,7 @@
+## 0.1.2
+
+- feat: add validators
+
 ## 0.1.1
 
 - doc: add dart doc

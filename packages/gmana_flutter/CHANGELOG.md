@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Add TextForm validation
+
 ## 0.0.4
 
 Refactor form field structure and add new field components with validation
