@@ -1,7 +1,15 @@
 name: gmana
-description: GMana project for flutter widgets and other utilities for convenient develop and consistency.
+description: A core Dart utility package providing extensions, validation utilities, and functional programming constructs for consistent development.
 version: 0.1.2
-repository: https://github.com/sun-sreng/pub_gmana.git
+repository: https://github.com/sun-sreng/flutter_workspace
+homepage: https://github.com/sun-sreng/flutter_workspace/tree/main/packages/gmana
+issue_tracker: https://github.com/sun-sreng/flutter_workspace/issues
+
+topics:
+  - extensions
+  - utility
+  - validator
+  - functional-programming
 
 environment:
   sdk: ^3.7.2

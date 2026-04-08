@@ -386,8 +386,8 @@
       "languageVersion": "3.7"
     },
     {
-      "name": "value_objects",
-      "rootUri": "../packages/value_objects",
+      "name": "gmana_value_objects",
+      "rootUri": "../packages/gmana_value_objects",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     }

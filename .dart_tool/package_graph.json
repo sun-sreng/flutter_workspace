@@ -3,7 +3,7 @@
     "flutter_workspace",
     "gmana",
     "gmana_flutter",
-    "value_objects"
+    "gmana_value_objects"
   ],
   "packages": [
     {
@@ -32,7 +32,7 @@
       ]
     },
     {
-      "name": "value_objects",
+      "name": "gmana_value_objects",
       "version": "0.0.1",
       "dependencies": [
         "fpdart",

@@ -1,7 +1,7 @@
 name: gmana_flutter
-description: GMana project for flutter widgets and other utilities for convenient develop and consistency.
+description: A comprehensive Flutter UI library providing curated widgets, form helpers, theme services, and extensions to accelerate and standardize development.
 version: 0.0.5
-repository: https://github.com/sun-sreng/pub_gmana_flutter.git
+repository: https://github.com/sun-sreng/flutter_workspace
 
 environment:
   sdk: ^3.7.2

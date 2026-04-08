@@ -1,4 +1,4 @@
-import 'package:value_objects/value_objects.dart';
+import 'package:gmana_value_objects/gmana_value_objects.dart';
 
 void main() {
   print('--- Value Objects Example ---\n');
