@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.3 - 2026-04-19
+
+### Changed
+
+- doc: update README.md documentation
+
 ## 0.0.2 - 2026-04-09
 
 ### Fixed

@@ -1,3 +1,7 @@
+## 0.1.4
+
+- doc: update README.md
+
 ## 0.1.3
 
 - doc: add dart doc
