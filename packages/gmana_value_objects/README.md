@@ -1,7 +1,7 @@
 # gmana_value_objects
 
 <p align="center">
-  Production-ready value objects with configurable validation for Email, Password, Text, and Number types, built powerfully on fpdart.
+  Production-ready value objects with configurable validation for Email, Password, Text, and Number types, built on gmana.
 </p>
 
 ---
@@ -15,7 +15,6 @@ Add `gmana_value_objects` to your `pubspec.yaml` dependencies:
 ```yaml
 dependencies:
   gmana_value_objects: ^0.0.2 # Please check pub.dev for the latest version
-  fpdart: ^1.2.0  # Used internally, great to have it at hand!
 ```
 
 Or install it via CLI:
@@ -188,11 +187,10 @@ extension ValidationErrorL10n on ValidationError {
 
 ---
 
-## ⛓ Mapping to your Core Architectures (`fpdart`)
-Because `gmana_value_objects` uses `fpdart` exclusively under the hood (`Either<ValidationError, T>`), you never have to deal with incompatible Functional interfaces if your overall Application also leverages `fpdart`. 
+## ⛓ Mapping to your Core Architectures (`gmana`)
+`gmana_value_objects` uses `gmana`'s `Either<ValidationError, T>` under the hood and re-exports `Either`, `Left`, and `Right`, so the value-object API stays aligned with the rest of the `gmana` package family.
 
 ```dart
-import 'package:fpdart/fpdart.dart';
 import 'package:gmana_value_objects/gmana_value_objects.dart' as vo;
 
 sealed class Failure {}
@@ -202,11 +200,11 @@ final class ValidationFailure extends Failure {
 }
 
 final class AppEmail {
-  final Either<Failure, String> value;
+  final vo.Either<Failure, String> value;
   
   factory AppEmail(String input) {
     return AppEmail._(
-      // Safely swap gmana_value_object errors for native Domain Failure variants
+      // Safely swap value-object errors for native Domain Failure variants
       vo.Email(input).value.mapLeft((error) => ValidationFailure(error)),
     );
   }

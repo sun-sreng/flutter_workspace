@@ -17,7 +17,8 @@
       "version": "0.1.3",
       "dependencies": [],
       "devDependencies": [
-        "lints"
+        "lints",
+        "test"
       ]
     },
     {
@@ -35,7 +36,7 @@
       "name": "gmana_value_objects",
       "version": "0.0.2",
       "dependencies": [
-        "fpdart",
+        "gmana",
         "meta"
       ],
       "devDependencies": [
@@ -82,11 +83,6 @@
     {
       "name": "meta",
       "version": "1.17.0",
-      "dependencies": []
-    },
-    {
-      "name": "fpdart",
-      "version": "1.2.0",
       "dependencies": []
     },
     {

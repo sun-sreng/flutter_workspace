@@ -1,4 +1,4 @@
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'password_errors.dart';
 import 'password_validation_config.dart';
 
@@ -13,11 +13,21 @@ final class PasswordValidator {
     }
 
     if (input.length < config.minLength) {
-      return Left(PasswordTooShort(currentLength: input.length, minLength: config.minLength));
+      return Left(
+        PasswordTooShort(
+          currentLength: input.length,
+          minLength: config.minLength,
+        ),
+      );
     }
 
     if (input.length > config.maxLength) {
-      return Left(PasswordTooLong(currentLength: input.length, maxLength: config.maxLength));
+      return Left(
+        PasswordTooLong(
+          currentLength: input.length,
+          maxLength: config.maxLength,
+        ),
+      );
     }
 
     if (!_isAsciiOnly(input)) {
@@ -34,27 +44,39 @@ final class PasswordValidator {
       return const Left(PasswordTooWeak());
     }
 
-    final maxAllowedRun = (input.length * config.sequentialRunFactor).floor().clamp(3, 7);
+    final maxAllowedRun = (input.length * config.sequentialRunFactor)
+        .floor()
+        .clamp(3, 7);
     if (_hasLongSequentialRun(lowered, minRun: maxAllowedRun)) {
       return const Left(PasswordTooPredictable());
     }
 
     final score = _classScore(input);
     if (score < config.minComplexityScore) {
-      return Left(PasswordComplexityRequired(currentScore: score, requiredScore: config.minComplexityScore));
+      return Left(
+        PasswordComplexityRequired(
+          currentScore: score,
+          requiredScore: config.minComplexityScore,
+        ),
+      );
     }
 
     return Right(input);
   }
 
   bool _isAsciiOnly(String s) {
-    return s.codeUnits.every((c) => c >= config.minAsciiCode && c <= config.maxAsciiCode);
+    return s.codeUnits.every(
+      (c) => c >= config.minAsciiCode && c <= config.maxAsciiCode,
+    );
   }
 
   bool _hasCommonPasswordPrefix(String lowered) {
     if (config.commonPasswords.contains(lowered)) return true;
 
-    return config.commonPrefixes.any((prefix) => lowered.startsWith(prefix) && lowered.length <= prefix.length + 4);
+    return config.commonPrefixes.any(
+      (prefix) =>
+          lowered.startsWith(prefix) && lowered.length <= prefix.length + 4,
+    );
   }
 
   int _classScore(String s) {
@@ -63,7 +85,10 @@ final class PasswordValidator {
     final hasDigit = s.contains(RegExp(r'\d'));
     final hasSymbol = s.contains(RegExp(r'[^A-Za-z0-9]'));
 
-    return (hasLower ? 1 : 0) + (hasUpper ? 1 : 0) + (hasDigit ? 1 : 0) + (hasSymbol ? 1 : 0);
+    return (hasLower ? 1 : 0) +
+        (hasUpper ? 1 : 0) +
+        (hasDigit ? 1 : 0) +
+        (hasSymbol ? 1 : 0);
   }
 
   bool _allSameChar(String s) {

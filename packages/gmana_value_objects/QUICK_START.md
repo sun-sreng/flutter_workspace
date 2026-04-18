@@ -6,7 +6,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  fpdart: ^1.2.0
+  gmana: ^0.1.3
   meta: ^1.9.1
 ```
 
@@ -28,7 +28,7 @@ abstract class ValidationError {
 **lib/src/core/value_object.dart**
 
 ```dart
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either;
 import 'validation_error.dart';
 
 abstract class ValueObject<T> {
@@ -94,7 +94,7 @@ final class EmailValidationConfig {
 **lib/src/email/email_validator.dart**
 
 ```dart
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'email_errors.dart';
 import 'email_validation_config.dart';
 
@@ -135,7 +135,7 @@ final class EmailValidator {
 **lib/src/email/email.dart**
 
 ```dart
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either;
 import '../core/value_object.dart';
 import 'email_errors.dart';
 import 'email_validation_config.dart';
@@ -225,7 +225,7 @@ final class PasswordValidationConfig {
 **lib/src/password/password_validator.dart**
 
 ```dart
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'password_errors.dart';
 import 'password_validation_config.dart';
 
@@ -276,7 +276,7 @@ final class PasswordValidator {
 **lib/src/password/password.dart**
 
 ```dart
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either;
 import '../core/value_object.dart';
 import 'password_errors.dart';
 import 'password_validation_config.dart';

@@ -31,13 +31,39 @@ class Failure {
   final String message;
 
   /// Creates a [Failure] with an optional [message]. Defaults to a generic error message.
-  Failure([this.message = 'An unexpected error occurred,']);
+  const Failure([this.message = 'An unexpected error occurred.']);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is Failure &&
+            other.message == message;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  @override
+  String toString() => 'Failure(message: $message)';
 }
 
 /// A class that represents a lack of parameters.
 ///
 /// Useful when a [UseCase] requires no input but must still follow a uniform interface.
-class NoParams {}
+class NoParams {
+  /// Creates a [NoParams] marker value.
+  const NoParams();
+
+  @override
+  bool operator ==(Object other) => other is NoParams;
+
+  @override
+  int get hashCode => 0;
+
+  @override
+  String toString() => 'NoParams()';
+}
 
 /// Represents a void-like value in functional programming.
 ///
@@ -51,6 +77,12 @@ final class Unit {
   /// String representation of [Unit] — returns `'()'`.
   @override
   String toString() => '()';
+
+  @override
+  bool operator ==(Object other) => other is Unit;
+
+  @override
+  int get hashCode => 1;
 }
 
 /// A contract for defining use cases (application business logic) in a clean architecture approach.

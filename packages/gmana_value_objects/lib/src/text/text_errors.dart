@@ -16,35 +16,31 @@ final class TextEmpty extends TextError {
 final class TextTooShort extends TextError {
   /// The length of the provided text.
   final int currentLength;
+
   /// The minimum allowed length.
   final int minLength;
-  
+
   /// Creates a new [TextTooShort] error.
-  const TextTooShort({
-    required this.currentLength,
-    required this.minLength,
-  });
+  const TextTooShort({required this.currentLength, required this.minLength});
 }
 
 /// Error indicating that the text exceeds the maximum allowed length.
 final class TextTooLong extends TextError {
   /// The length of the provided text.
   final int currentLength;
+
   /// The maximum allowed length.
   final int maxLength;
-  
+
   /// Creates a new [TextTooLong] error.
-  const TextTooLong({
-    required this.currentLength,
-    required this.maxLength,
-  });
+  const TextTooLong({required this.currentLength, required this.maxLength});
 }
 
 /// Error indicating that the text does not match the required regular expression pattern.
 final class TextInvalidPattern extends TextError {
   /// The required pattern that was not matched.
   final String pattern;
-  
+
   /// Creates a new [TextInvalidPattern] error.
   const TextInvalidPattern(this.pattern);
 }
@@ -53,7 +49,7 @@ final class TextInvalidPattern extends TextError {
 final class TextContainsBlacklisted extends TextError {
   /// The blacklisted words found in the text.
   final List<String> foundWords;
-  
+
   /// Creates a new [TextContainsBlacklisted] error.
   const TextContainsBlacklisted(this.foundWords);
 }
@@ -68,7 +64,7 @@ final class TextOnlyWhitespace extends TextError {
 final class TextInvalidCharacters extends TextError {
   /// The characters that are considered invalid.
   final String invalidChars;
-  
+
   /// Creates a new [TextInvalidCharacters] error.
   const TextInvalidCharacters(this.invalidChars);
 }

@@ -16,9 +16,10 @@ final class PasswordEmpty extends PasswordError {
 final class PasswordTooShort extends PasswordError {
   /// The length of the provided password.
   final int currentLength;
+
   /// The minimum allowed length.
   final int minLength;
-  
+
   /// Creates a new [PasswordTooShort] error.
   const PasswordTooShort({
     required this.currentLength,
@@ -30,14 +31,12 @@ final class PasswordTooShort extends PasswordError {
 final class PasswordTooLong extends PasswordError {
   /// The length of the provided password.
   final int currentLength;
+
   /// The maximum allowed length.
   final int maxLength;
-  
+
   /// Creates a new [PasswordTooLong] error.
-  const PasswordTooLong({
-    required this.currentLength,
-    required this.maxLength,
-  });
+  const PasswordTooLong({required this.currentLength, required this.maxLength});
 }
 
 /// Error indicating that the password contains non-ASCII characters.
@@ -68,9 +67,10 @@ final class PasswordTooPredictable extends PasswordError {
 final class PasswordComplexityRequired extends PasswordError {
   /// The complexity score evaluated for the password.
   final int currentScore;
+
   /// The minimum required complexity score.
   final int requiredScore;
-  
+
   /// Creates a new [PasswordComplexityRequired] error.
   const PasswordComplexityRequired({
     required this.currentScore,

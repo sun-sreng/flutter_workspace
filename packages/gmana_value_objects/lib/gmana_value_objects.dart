@@ -1,8 +1,10 @@
 /// A package to handle domain value objects like Email, Password, Text, and Number.
-/// 
-/// It provides core abstractions for value objects as well as 
+///
+/// It provides core abstractions for value objects as well as
 /// concrete implementations for common use cases.
 library;
+
+export 'package:gmana/gmana.dart' show Either, Left, Right;
 
 // Core
 export 'src/core/validation_error.dart';

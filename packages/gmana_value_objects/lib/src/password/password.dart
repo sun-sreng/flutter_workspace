@@ -1,11 +1,11 @@
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either;
 import '../core/value_object.dart';
 import 'password_errors.dart';
 import 'password_validation_config.dart';
 import 'password_validator.dart';
 
 /// A value object representing a validated password.
-/// 
+///
 /// Holds either a [PasswordError] if validation fails, or the successful [String] value.
 final class Password extends ValueObject<String> {
   @override
@@ -13,9 +13,12 @@ final class Password extends ValueObject<String> {
   final Either<PasswordError, String> value;
 
   /// Creates a new [Password] instance by validating the given [input].
-  /// 
+  ///
   /// The [config] allows customizable validation rules.
-  factory Password(String input, {PasswordValidationConfig config = const PasswordValidationConfig()}) {
+  factory Password(
+    String input, {
+    PasswordValidationConfig config = const PasswordValidationConfig(),
+  }) {
     final validator = PasswordValidator(config);
     return Password._(validator.validate(input));
   }

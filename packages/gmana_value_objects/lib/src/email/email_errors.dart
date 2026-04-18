@@ -22,23 +22,22 @@ final class EmailInvalidFormat extends EmailError {
 final class EmailTooLong extends EmailError {
   /// The length of the provided email string.
   final int currentLength;
+
   /// The maximum allowed length.
   final int maxLength;
-  
+
   /// Creates a new [EmailTooLong] error.
-  const EmailTooLong({
-    required this.currentLength,
-    required this.maxLength,
-  });
+  const EmailTooLong({required this.currentLength, required this.maxLength});
 }
 
 /// Error indicating that the local part of the email exceeds the maximum allowed length.
 final class EmailLocalPartTooLong extends EmailError {
   /// The current length of the local part.
   final int currentLength;
+
   /// The maximum allowed length for the local part.
   final int maxLength;
-  
+
   /// Creates a new [EmailLocalPartTooLong] error.
   const EmailLocalPartTooLong({
     required this.currentLength,
@@ -50,9 +49,10 @@ final class EmailLocalPartTooLong extends EmailError {
 final class EmailDomainTooLong extends EmailError {
   /// The current length of the domain part.
   final int currentLength;
+
   /// The maximum allowed length for the domain.
   final int maxLength;
-  
+
   /// Creates a new [EmailDomainTooLong] error.
   const EmailDomainTooLong({
     required this.currentLength,
@@ -64,7 +64,7 @@ final class EmailDomainTooLong extends EmailError {
 final class EmailDisposableDomain extends EmailError {
   /// The disposable domain that was rejected.
   final String domain;
-  
+
   /// Creates a new [EmailDisposableDomain] error.
   const EmailDisposableDomain(this.domain);
 }
@@ -73,7 +73,7 @@ final class EmailDisposableDomain extends EmailError {
 final class EmailBlockedDomain extends EmailError {
   /// The blocked domain that was rejected.
   final String domain;
-  
+
   /// Creates a new [EmailBlockedDomain] error.
   const EmailBlockedDomain(this.domain);
 }

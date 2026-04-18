@@ -39,10 +39,21 @@ abstract class Either<L, R> {
   /// Creates an [Either] instance.
   const Either();
 
+  /// Maps the [Left] value using [f], if present.
+  ///
+  /// If this is a [Right], the same successful value is returned unchanged.
+  Either<L2, R> mapLeft<L2>(L2 Function(L left) f);
+
   /// Applies the function [f] to the value contained in [Right], if it exists,
   /// and returns a new [Either] containing the result. If this is a [Left],
   /// it is returned unchanged.
   Either<L, R2> flatMap<R2>(Either<L, R2> Function(R right) f);
+
+  /// Applies [ifLeft] or [ifRight] and returns a new [Either] with mapped values.
+  Either<L2, R2> bimap<L2, R2>(
+    L2 Function(L left) ifLeft,
+    R2 Function(R right) ifRight,
+  );
 
   /// Applies one of two functions depending on whether this is a [Left] or [Right].
   ///
@@ -56,6 +67,15 @@ abstract class Either<L, R> {
   /// Returns the [Right] value if this is a [Right], otherwise throws.
   R getRight();
 
+  /// Returns the [Left] value if this is a [Left], otherwise `null`.
+  L? leftOrNull();
+
+  /// Returns the [Right] value if this is a [Right], otherwise `null`.
+  R? rightOrNull();
+
+  /// Returns the [Right] value if this is a [Right], otherwise computes a fallback.
+  R getOrElse(R Function(L left) orElse) => fold(orElse, (right) => right);
+
   /// Returns `true` if this is a [Left].
   bool isLeft();
 
@@ -67,4 +87,7 @@ abstract class Either<L, R> {
   ///
   /// If this is a [Left], the same instance is returned unchanged.
   Either<L, R2> map<R2>(R2 Function(R right) f);
+
+  /// Swaps the sides of this [Either], turning [Left] into [Right] and vice versa.
+  Either<R, L> swap();
 }

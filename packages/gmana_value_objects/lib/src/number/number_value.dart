@@ -1,11 +1,11 @@
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either;
 import '../core/value_object.dart';
 import 'number_errors.dart';
 import 'number_validation_config.dart';
 import 'number_validator.dart';
 
 /// A value object representing a validated number constraint.
-/// 
+///
 /// Holds either a [NumberError] if validation fails, or the successful [num] value.
 final class NumberValue extends ValueObject<num> {
   @override
@@ -13,15 +13,21 @@ final class NumberValue extends ValueObject<num> {
   final Either<NumberError, num> value;
 
   /// Creates a new [NumberValue] instance by parsing and validating the given string [input].
-  /// 
+  ///
   /// The [config] provides limits and restrictions for validation.
-  factory NumberValue(String input, {NumberValidationConfig config = const NumberValidationConfig()}) {
+  factory NumberValue(
+    String input, {
+    NumberValidationConfig config = const NumberValidationConfig(),
+  }) {
     final validator = NumberValidator(config);
     return NumberValue._(validator.validate(input));
   }
 
   /// Creates a [NumberValue] directly from a [num], wrapping it in a string for validation.
-  factory NumberValue.fromNum(num input, {NumberValidationConfig config = const NumberValidationConfig()}) {
+  factory NumberValue.fromNum(
+    num input, {
+    NumberValidationConfig config = const NumberValidationConfig(),
+  }) {
     return NumberValue(input.toString(), config: config);
   }
 
@@ -35,7 +41,7 @@ final class NumberValue extends ValueObject<num> {
 
   /// Returns the underlying valid numeric value as an [int], or `null` if invalid.
   int? get asInt => valueOrNull?.toInt();
-  
+
   /// Returns the underlying valid numeric value as a [double], or `null` if invalid.
   double? get asDouble => valueOrNull?.toDouble();
 

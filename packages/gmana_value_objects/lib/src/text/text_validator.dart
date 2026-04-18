@@ -1,4 +1,4 @@
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'text_errors.dart';
 import 'text_validation_config.dart';
 
@@ -14,16 +14,22 @@ final class TextValidator {
       return const Left(TextEmpty());
     }
 
-    if (!config.allowOnlyWhitespace && value.trim().isEmpty && value.isNotEmpty) {
+    if (!config.allowOnlyWhitespace &&
+        value.trim().isEmpty &&
+        value.isNotEmpty) {
       return const Left(TextOnlyWhitespace());
     }
 
     if (config.minLength != null && value.length < config.minLength!) {
-      return Left(TextTooShort(currentLength: value.length, minLength: config.minLength!));
+      return Left(
+        TextTooShort(currentLength: value.length, minLength: config.minLength!),
+      );
     }
 
     if (config.maxLength != null && value.length > config.maxLength!) {
-      return Left(TextTooLong(currentLength: value.length, maxLength: config.maxLength!));
+      return Left(
+        TextTooLong(currentLength: value.length, maxLength: config.maxLength!),
+      );
     }
 
     if (config.pattern != null) {
@@ -34,17 +40,26 @@ final class TextValidator {
     }
 
     if (config.allowedCharacters != null) {
-      final allowedRegex = RegExp('[^${RegExp.escape(config.allowedCharacters!)}]');
+      final allowedRegex = RegExp(
+        '[^${RegExp.escape(config.allowedCharacters!)}]',
+      );
       final match = allowedRegex.firstMatch(value);
       if (match != null) {
-        final invalidChars = value.split('').where((c) => !config.allowedCharacters!.contains(c)).toSet().join('');
+        final invalidChars = value
+            .split('')
+            .where((c) => !config.allowedCharacters!.contains(c))
+            .toSet()
+            .join('');
         return Left(TextInvalidCharacters(invalidChars));
       }
     }
 
     if (config.blacklistedWords.isNotEmpty) {
       final lowered = value.toLowerCase();
-      final foundWords = config.blacklistedWords.where((word) => lowered.contains(word.toLowerCase())).toList();
+      final foundWords =
+          config.blacklistedWords
+              .where((word) => lowered.contains(word.toLowerCase()))
+              .toList();
 
       if (foundWords.isNotEmpty) {
         return Left(TextContainsBlacklisted(foundWords));

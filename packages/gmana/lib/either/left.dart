@@ -1,4 +1,5 @@
 import 'either.dart';
+import 'right.dart';
 
 /// Represents the failure or error side of an [Either].
 ///
@@ -25,9 +26,22 @@ class Left<L, R> extends Either<L, R> {
   const Left(this.value);
 
   @override
+  Either<L2, R> mapLeft<L2>(L2 Function(L left) f) {
+    return Left<L2, R>(f(value));
+  }
+
+  @override
   Either<L, R2> flatMap<R2>(Either<L, R2> Function(R right) f) {
     // Left stays unchanged during flatMap
     return Left<L, R2>(value);
+  }
+
+  @override
+  Either<L2, R2> bimap<L2, R2>(
+    L2 Function(L left) ifLeft,
+    R2 Function(R right) ifRight,
+  ) {
+    return Left<L2, R2>(ifLeft(value));
   }
 
   @override
@@ -42,7 +56,7 @@ class Left<L, R> extends Either<L, R> {
 
   @override
   R getRight() {
-    throw Exception("getRight() called on Left");
+    throw StateError('Cannot get a Right value from $this.');
   }
 
   @override
@@ -52,8 +66,31 @@ class Left<L, R> extends Either<L, R> {
   bool isRight() => false;
 
   @override
+  L? leftOrNull() => value;
+
+  @override
+  R? rightOrNull() => null;
+
+  @override
   Either<L, R2> map<R2>(R2 Function(R right) f) {
     // Left stays unchanged during map
     return Left<L, R2>(value);
   }
+
+  @override
+  Either<R, L> swap() => Right<R, L>(value);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is Left &&
+            other.value == value;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, value);
+
+  @override
+  String toString() => 'Left($value)';
 }

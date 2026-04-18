@@ -1,11 +1,11 @@
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either;
 import '../core/value_object.dart';
 import 'text_errors.dart';
 import 'text_validation_config.dart';
 import 'text_validator.dart';
 
 /// A value object representing a validated text string.
-/// 
+///
 /// Holds either a [TextError] if validation fails, or the raw [String] if it succeeds.
 final class TextValue extends ValueObject<String> {
   @override
@@ -13,9 +13,12 @@ final class TextValue extends ValueObject<String> {
   final Either<TextError, String> value;
 
   /// Creates a new [TextValue] instance by validating the given [input].
-  /// 
+  ///
   /// An optional [config] can be provided to customize the validation constraints.
-  factory TextValue(String input, {TextValidationConfig config = const TextValidationConfig()}) {
+  factory TextValue(
+    String input, {
+    TextValidationConfig config = const TextValidationConfig(),
+  }) {
     final validator = TextValidator(config);
     return TextValue._(validator.validate(input));
   }

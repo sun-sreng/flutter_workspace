@@ -22,35 +22,31 @@ final class NumberInvalidFormat extends NumberError {
 final class NumberTooSmall extends NumberError {
   /// The evaluated numeric value.
   final num currentValue;
+
   /// The minimum allowed value.
   final num minValue;
-  
+
   /// Creates a new [NumberTooSmall] error.
-  const NumberTooSmall({
-    required this.currentValue,
-    required this.minValue,
-  });
+  const NumberTooSmall({required this.currentValue, required this.minValue});
 }
 
 /// Error indicating that the number is larger than the maximum allowed value.
 final class NumberTooLarge extends NumberError {
   /// The evaluated numeric value.
   final num currentValue;
+
   /// The maximum allowed value.
   final num maxValue;
-  
+
   /// Creates a new [NumberTooLarge] error.
-  const NumberTooLarge({
-    required this.currentValue,
-    required this.maxValue,
-  });
+  const NumberTooLarge({required this.currentValue, required this.maxValue});
 }
 
 /// Error indicating that the number must be an integer, but has fractional parts.
 final class NumberNotInteger extends NumberError {
   /// The evaluated numeric value that failed the integer check.
   final num currentValue;
-  
+
   /// Creates a new [NumberNotInteger] error.
   const NumberNotInteger(this.currentValue);
 }
@@ -59,7 +55,7 @@ final class NumberNotInteger extends NumberError {
 final class NumberNegativeNotAllowed extends NumberError {
   /// The evaluated numeric value that was negatively signed.
   final num currentValue;
-  
+
   /// Creates a new [NumberNegativeNotAllowed] error.
   const NumberNegativeNotAllowed(this.currentValue);
 }
@@ -68,11 +64,13 @@ final class NumberNegativeNotAllowed extends NumberError {
 final class NumberNotInRange extends NumberError {
   /// The evaluated numeric value.
   final num currentValue;
+
   /// The minimum boundary.
   final num minValue;
+
   /// The maximum boundary.
   final num maxValue;
-  
+
   /// Creates a new [NumberNotInRange] error.
   const NumberNotInRange({
     required this.currentValue,
@@ -85,9 +83,10 @@ final class NumberNotInRange extends NumberError {
 final class NumberDecimalPlacesExceeded extends NumberError {
   /// The count of decimal places provided.
   final int currentPlaces;
+
   /// The maximum allowed decimal places.
   final int maxPlaces;
-  
+
   /// Creates a new [NumberDecimalPlacesExceeded] error.
   const NumberDecimalPlacesExceeded({
     required this.currentPlaces,

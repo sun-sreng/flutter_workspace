@@ -1,4 +1,4 @@
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'email_errors.dart';
 import 'email_validation_config.dart';
 
@@ -20,7 +20,12 @@ final class EmailValidator {
     }
 
     if (trimmed.length > config.maxLength) {
-      return Left(EmailTooLong(currentLength: trimmed.length, maxLength: config.maxLength));
+      return Left(
+        EmailTooLong(
+          currentLength: trimmed.length,
+          maxLength: config.maxLength,
+        ),
+      );
     }
 
     if (!_emailRegex.hasMatch(trimmed)) {
@@ -36,11 +41,21 @@ final class EmailValidator {
     final domain = parts[1];
 
     if (localPart.length > config.maxLocalPartLength) {
-      return Left(EmailLocalPartTooLong(currentLength: localPart.length, maxLength: config.maxLocalPartLength));
+      return Left(
+        EmailLocalPartTooLong(
+          currentLength: localPart.length,
+          maxLength: config.maxLocalPartLength,
+        ),
+      );
     }
 
     if (domain.length > config.maxDomainLength) {
-      return Left(EmailDomainTooLong(currentLength: domain.length, maxLength: config.maxDomainLength));
+      return Left(
+        EmailDomainTooLong(
+          currentLength: domain.length,
+          maxLength: config.maxDomainLength,
+        ),
+      );
     }
 
     final lowerDomain = domain.toLowerCase();
@@ -49,7 +64,8 @@ final class EmailValidator {
       return Left(EmailBlockedDomain(lowerDomain));
     }
 
-    if (!config.allowDisposable && config.disposableDomains.contains(lowerDomain)) {
+    if (!config.allowDisposable &&
+        config.disposableDomains.contains(lowerDomain)) {
       return Left(EmailDisposableDomain(lowerDomain));
     }
 

@@ -1,4 +1,4 @@
-import 'package:fpdart/fpdart.dart';
+import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'number_errors.dart';
 import 'number_validation_config.dart';
 
@@ -38,7 +38,12 @@ final class NumberValidator {
     if (config.maxDecimalPlaces != null) {
       final decimalPlaces = _countDecimalPlaces(parsed);
       if (decimalPlaces > config.maxDecimalPlaces!) {
-        return Left(NumberDecimalPlacesExceeded(currentPlaces: decimalPlaces, maxPlaces: config.maxDecimalPlaces!));
+        return Left(
+          NumberDecimalPlacesExceeded(
+            currentPlaces: decimalPlaces,
+            maxPlaces: config.maxDecimalPlaces!,
+          ),
+        );
       }
     }
 
