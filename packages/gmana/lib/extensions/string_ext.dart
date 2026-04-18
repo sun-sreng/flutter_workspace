@@ -1,105 +1,98 @@
 /// Extension on [String] to add conversion, formatting, and utility methods.
 extension StringExt on String {
-  /// Parses the string to a `double`. Returns `0.0` if parsing fails.
-  ///
-  /// Example:
-  /// ```dart
-  /// '42.5'.toDouble // 42.5
-  /// 'abc'.toDouble // 0.0
-  /// ```
-  double get toDouble => double.tryParse(this) ?? 0.0;
+  // ---------------------------------------------------------------------------
+  // Parsing
+  // ---------------------------------------------------------------------------
 
-  /// Parses the string to an `int`. Returns `0` if parsing fails.
-  ///
-  /// Example:
-  /// ```dart
-  /// '42'.toInt // 42
-  /// 'abc'.toInt // 0
-  /// ```
-  int get toInt => int.tryParse(this) ?? 0;
+  /// Parses to `double`, returns `null` on failure.
+  /// Prefer this over [toDoubleOrZero] when you need to distinguish "0" from invalid.
+  double? get toDoubleOrNull => double.tryParse(this);
 
-  /// Estimates the reading time of the text in **minutes**.
-  ///
-  /// Assumes an average reading speed of 225 words per minute.
-  ///
-  /// Example:
-  /// ```dart
-  /// 'This is a sample paragraph...'.calculateReadingTime(); // 1
-  /// ```
-  int calculateReadingTime() {
-    final int wordCount = split(RegExp(r'\s+')).length;
-    final double readingTime = wordCount / 225;
-    return readingTime.ceil();
-  }
+  /// Parses to `double`, returns `0.0` on failure.
+  double get toDoubleOrZero => double.tryParse(this) ?? 0.0;
 
-  /// Parses a time string (e.g. `"MM:SS"` or `"HH:MM:SS"`) into a [Duration].
+  /// Parses to `int`, returns `null` on failure.
+  int? get toIntOrNull => int.tryParse(this);
+
+  /// Parses to `int`, returns `0` on failure.
+  int get toIntOrZero => int.tryParse(this) ?? 0;
+
+  // ---------------------------------------------------------------------------
+  // Duration
+  // ---------------------------------------------------------------------------
+
+  /// Parses `"SS"`, `"MM:SS"`, or `"HH:MM:SS"` into a [Duration].
   ///
-  /// Throws an [Exception] if the format is invalid.
-  ///
-  /// Example:
-  /// ```dart
-  /// '01:30'.toDuration(); // Duration(minutes: 1, seconds: 30)
-  /// '01:15:20'.toDuration(); // Duration(hours: 1, minutes: 15, seconds: 20)
-  /// ```
+  /// Throws [FormatException] on invalid format or out-of-range values.
   Duration toDuration() {
-    final chunks = split(':');
-    if (chunks.length == 1) {
-      throw Exception('Invalid duration string: $this');
-    } else if (chunks.length == 2) {
-      return Duration(
-        minutes: int.parse(chunks[0].trim()),
-        seconds: int.parse(chunks[1].trim()),
-      );
-    } else if (chunks.length == 3) {
-      return Duration(
-        hours: int.parse(chunks[0].trim()),
-        minutes: int.parse(chunks[1].trim()),
-        seconds: int.parse(chunks[2].trim()),
-      );
-    } else {
-      throw Exception('Invalid duration string: $this');
+    final parts = split(':');
+
+    int parse(String s, String label, {int max = 59}) {
+      final v = int.tryParse(s.trim());
+      if (v == null) throw FormatException('Invalid $label in duration: "$this"');
+      if (v < 0 || v > max) {
+        throw FormatException('$label out of range (0–$max) in duration: "$this"');
+      }
+      return v;
     }
+
+    return switch (parts.length) {
+      1 => Duration(seconds: parse(parts[0], 'seconds')),
+      2 => Duration(minutes: parse(parts[0], 'minutes'), seconds: parse(parts[1], 'seconds')),
+      3 => Duration(
+        hours: parse(parts[0], 'hours', max: 23),
+        minutes: parse(parts[1], 'minutes'),
+        seconds: parse(parts[2], 'seconds'),
+      ),
+      _ => throw FormatException('Invalid duration format: "$this"'),
+    };
   }
 
-  /// Capitalizes the first character of the string, leaving the rest as-is.
-  ///
-  /// Example:
-  /// ```dart
-  /// 'hello'.toSentenceCase(); // 'Hello'
-  /// ```
-  String toSentenceCase() {
-    switch (length) {
-      case 0:
-        return this;
-      case 1:
-        return toUpperCase();
-      default:
-        return substring(0, 1).toUpperCase() + substring(1);
-    }
+  // ---------------------------------------------------------------------------
+  // Reading time
+  // ---------------------------------------------------------------------------
+
+  /// Estimates reading time in minutes (225 wpm average).
+  /// Returns `0` for blank/empty strings.
+  int get readingTimeMinutes {
+    final trimmed = trim();
+    if (trimmed.isEmpty) return 0;
+    final wordCount = trimmed.split(RegExp(r'\s+')).length;
+    return (wordCount / 225).ceil();
   }
 
-  /// Capitalizes the first letter of each word in the string.
+  // ---------------------------------------------------------------------------
+  // Case formatting
+  // ---------------------------------------------------------------------------
+
+  /// Capitalizes only the first character; preserves the rest.
   ///
-  /// Example:
-  /// ```dart
-  /// 'hello world'.toTitleCase(); // 'Hello World'
-  /// ```
-  String toTitleCase() => replaceAll(
-    RegExp(' +'),
-    ' ',
-  ).split(' ').map((str) => str.toSentenceCase()).join(' ');
+  /// `'hello world'` → `'Hello world'`
+  String get toSentenceCase {
+    if (isEmpty) return this;
+    return this[0].toUpperCase() + substring(1);
+  }
+
+  /// Capitalizes the first letter of each whitespace-delimited word.
+  ///
+  /// Collapses internal whitespace; strips leading/trailing whitespace.
+  ///
+  /// `'  hello   world  '` → `'Hello World'`
+  String get toTitleCase {
+    return trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).map((w) => w.toSentenceCase).join(' ');
+  }
 }
 
-/// Extension on nullable [String] to safely fallback to an empty string.
+// ---------------------------------------------------------------------------
+
+/// Extension on nullable [String].
 extension StringNullableExt on String? {
-  /// Returns the string or an empty string if `null`.
-  ///
-  /// Example:
-  /// ```dart
-  /// String? name = null;
-  /// print(name.orEmpty()); // ''
-  /// ```
-  String orEmpty() {
-    return this ?? "";
-  }
+  /// Returns the string or `''` if `null`.
+  String get orEmpty => this ?? '';
+
+  /// Returns `true` if `null` or empty.
+  bool get isNullOrEmpty => this == null || this!.isEmpty;
+
+  /// Returns `true` if `null`, empty, or only whitespace.
+  bool get isNullOrBlank => this == null || this!.trim().isEmpty;
 }

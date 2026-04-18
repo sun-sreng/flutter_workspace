@@ -1,70 +1,52 @@
-/// Extension on nullable `int` to provide utility methods for null safety.
 extension IntNullableExt on int? {
-  /// Returns the integer value or `0` if the value is `null`.
-  ///
-  /// Useful when a nullable int might be `null`, and you want a default value.
-  ///
-  /// Example:
-  /// ```dart
-  /// int? value = null;
-  /// print(value.orZero()); // 0
-  /// ```
-  int orZero() {
-    return this ?? 0;
-  }
+  /// Returns the value or `0` if `null`.
+  int get orZero => this ?? 0;
+
+  /// Returns the value or [fallback] if `null`.
+  int orDefault(int fallback) => this ?? fallback;
 }
 
-/// Extension on [num] to provide common numeric utilities,
-/// including temperature conversions and normalization.
-extension Normalize on num {
-  /// Converts Celsius to Fahrenheit.
+extension NumExt on num {
+  // ---------------------------------------------------------------------------
+  // Temperature
+  // ---------------------------------------------------------------------------
+
+  /// Converts Celsius → Fahrenheit. `(°C × 9/5) + 32`
+  double get celsiusToFahrenheit => this * 9 / 5 + 32;
+
+  /// Converts Fahrenheit → Celsius. `(°F − 32) × 5/9`
+  double get fahrenheitToCelsius => (this - 32) * 5 / 9;
+
+  // ---------------------------------------------------------------------------
+  // Normalization
+  // ---------------------------------------------------------------------------
+
+  /// Maps this value from `[fromMin, fromMax]` into `[toMin, toMax]`.
   ///
-  /// Formula: `(°C × 9/5) + 32 = °F`
+  /// Throws [ArgumentError] if source range is zero (would produce NaN).
   ///
-  /// Example:
   /// ```dart
-  /// print(25.celsiusToFahrenheit()); // 77.0
+  /// 260.normalized(0, 300);              // 0.8667 (maps to 0.0–1.0)
+  /// 260.normalized(0, 300, 0, 100);      // 86.67  (maps to 0–100)
   /// ```
-  double celsiusToFahrenheit() {
-    return this * 9 / 5 + 32;
+  double normalized(num fromMin, num fromMax, [num toMin = 0.0, num toMax = 1.0]) {
+    final range = fromMax - fromMin;
+    if (range == 0) {
+      throw ArgumentError('Source range cannot be zero (fromMin == fromMax == $fromMin)');
+    }
+    return ((toMax - toMin) * ((this - fromMin) / range) + toMin).toDouble();
   }
 
-  /// Converts Fahrenheit to Celsius.
+  /// Same as [normalized] but clamps the result to `[toMin, toMax]`.
   ///
-  /// Formula: `(°F − 32) × 5/9 = °C`
+  /// Use when [this] may fall outside the source range and you want
+  /// to avoid overshooting the target range.
   ///
-  /// Example:
   /// ```dart
-  /// print(77.fahrenheitToCelsius()); // 25.0
+  /// 350.normalizedClamped(0, 300);  // 1.0  (clamped, not 1.1667)
+  /// (-50).normalizedClamped(0, 300); // 0.0 (clamped, not -0.1667)
   /// ```
-  double fahrenheitToCelsius() {
-    return (this - 32) * 5 / 9;
-  }
-
-  /// Normalizes this number from its own range to a target range.
-  ///
-  /// For example, normalizing 260 from range 0–300 to 0.0–1.0 will return:
-  /// `0.8666666666666667`
-  ///
-  /// Formula:
-  /// ```
-  /// normalized = (toMax - toMin) *
-  ///              ((value - fromMin) / (fromMax - fromMin)) +
-  ///              toMin
-  /// ```
-  ///
-  /// Example:
-  /// ```dart
-  /// print(260.normalized(0.0, 300)); // 0.866...
-  /// ```
-  num normalized(
-    num selfRangeMin,
-    num selfRangeMax, [
-    num normalizedRangeMin = 0.0,
-    num normalizedRangeMax = 1.0,
-  ]) {
-    return (normalizedRangeMax - normalizedRangeMin) *
-            ((this - selfRangeMin) / (selfRangeMax - selfRangeMin)) +
-        normalizedRangeMin;
+  double normalizedClamped(num fromMin, num fromMax, [num toMin = 0.0, num toMax = 1.0]) {
+    return normalized(fromMin, fromMax, toMin, toMax).clamp(toMin.toDouble(), toMax.toDouble());
   }
 }

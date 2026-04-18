@@ -4,5 +4,6 @@ import 'package:meta/meta.dart';
 /// Extend this in your domain-specific error types.
 @immutable
 abstract class ValidationError {
+  /// Creates a base [ValidationError].
   const ValidationError();
 }
