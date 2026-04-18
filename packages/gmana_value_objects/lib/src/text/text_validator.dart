@@ -2,11 +2,20 @@ import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'text_errors.dart';
 import 'text_validation_config.dart';
 
+/// A class responsible for validating generic text inputs according to a [TextValidationConfig].
 final class TextValidator {
+  /// The configuration rules to apply during validation.
   final TextValidationConfig config;
 
+  /// Creates a new [TextValidator].
+  ///
+  /// If [config] is not provided, the default [TextValidationConfig] will be used.
   const TextValidator([this.config = const TextValidationConfig()]);
 
+  /// Validates the given [input] string as text according to the [config].
+  ///
+  /// Returns a `Right` containing the input string if it is valid.
+  /// Otherwise, returns a `Left` containing the specific [TextError] detailing why.
   Either<TextError, String> validate(String input) {
     String value = config.trimWhitespace ? input.trim() : input;
 

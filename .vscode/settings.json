@@ -1,15 +1,20 @@
 {
   "dart.lineLength": 120,
   "cSpell.words": [
+    "bimap",
     "blocklisted",
+    "companyname",
     "dartdoc",
     "fpdart",
     "missingusername",
+    "mypassword",
+    "Nanoids",
     "Passwo",
     "pubspec",
     "Riverpod",
     "Sreng",
     "sswo",
-    "ssword"
+    "ssword",
+    "weakpass"
   ]
 }

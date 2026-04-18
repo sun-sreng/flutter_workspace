@@ -2,7 +2,9 @@ import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'email_errors.dart';
 import 'email_validation_config.dart';
 
+/// A validator class for email addresses that conforms to an [EmailValidationConfig].
 final class EmailValidator {
+  /// The configuration rules to apply during validation.
   final EmailValidationConfig config;
 
   // RFC 5322 compliant regex (simplified but robust)
@@ -10,8 +12,16 @@ final class EmailValidator {
     r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
   );
 
+  /// Creates a new [EmailValidator].
+  ///
+  /// If [config] is not provided, the default [EmailValidationConfig] will be used.
   const EmailValidator([this.config = const EmailValidationConfig()]);
 
+  /// Validates the given [input] string as an email address.
+  ///
+  /// Returns a `Right` containing the sanitized (trimmed and lowercased) email
+  /// if it is valid. Otherwise, returns a `Left` containing the specific [EmailError]
+  /// detailing why the validation failed.
   Either<EmailError, String> validate(String input) {
     final trimmed = input.trim();
 

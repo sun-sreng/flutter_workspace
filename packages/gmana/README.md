@@ -6,7 +6,7 @@
 
 ---
 
-> **Note:** This package is **pure Dart** and can be used in any Dart or Flutter project. 
+> **Note:** This package is **pure Dart** and can be used in any Dart or Flutter project.
 > For Flutter-specific widgets and UI utilities, please see [gmana_flutter](https://pub.dev/packages/gmana_flutter).
 
 ## 🚀 Installation
@@ -42,7 +42,8 @@ flutter pub add gmana
 ## 🏗 Functional Programming
 
 ### `Either` Pattern
-The `Either` type represents a value of one of two possible types (a disjoint union). It is commonly used as a functional alternative to throwing exceptions, handling errors gracefully. 
+
+The `Either` type represents a value of one of two possible types (a disjoint union). It is commonly used as a functional alternative to throwing exceptions, handling errors gracefully.
 
 ```dart
 import 'package:gmana/gmana.dart';
@@ -64,6 +65,7 @@ void main() {
 ```
 
 ### Clean Architecture `UseCase`
+
 `UseCase` provides an interface boundary for your application business logic. Included are `Unit`, `Failure`, `NoParams`, and standard typedefs like `FutureEither<T>`.
 
 ```dart
@@ -87,6 +89,7 @@ class LoginUseCase implements UseCase<String, LoginParams> {
 ## ✨ Rich Extensions
 
 ### String Extensions
+
 Extensive additions to the core `String` class.
 
 ```dart
@@ -105,7 +108,8 @@ print('This is a long article...'.readingTimeMinutes); // Outputs estimated minu
 print(null.orEmpty); // '' on a nullable String?
 ```
 
-### Numbers & Duration 
+### Numbers & Duration
+
 Syntax sugar for delays, timeouts, and reading times directly on `num` (`int` and `double`).
 
 ```dart
@@ -120,12 +124,14 @@ double normalized = 260.normalized(0, 300); // 0.866
 ```
 
 Readable times through the `Duration` extension:
+
 ```dart
 final duration = Duration(hours: 1, minutes: 2, seconds: 34);
 print(duration.toHumanizedString()); // "1:02:34"
 ```
 
 ### Iterable & List Utilities
+
 Transform and analyze your collections easily.
 
 ```dart
@@ -142,6 +148,7 @@ final numbers = [1, 2, null, 3].compactMap((e) => e != null ? e * 2 : null); // 
 ```
 
 ### Stream Utils
+
 ```dart
 final stream = Stream.value([1, 2, 3, 4, 5]);
 stream.filter((n) => n.isEven).listen(print); // prints: [2, 4]
@@ -152,6 +159,7 @@ stream.filter((n) => n.isEven).listen(print); // prints: [2, 4]
 ## 🛡 Validation Utilities
 
 ### Instant String Validation
+
 Immediate getters on `String` to assert valid formats quickly.
 
 ```dart
@@ -160,9 +168,11 @@ print('password123'.isValidPassword); // false (needs special char, upper & lowe
 print('+01234567890'.isValidPhone); // true
 print('Jane Doe'.isValidName); // true
 ```
+
 > Wait, there's more! Comprehensive match packages for UUIDs, IPv4/IPv6, Base64, hex colors, and ISBNs are baked in via the `is` and `regex` submodules.
 
 ### Form Validator Chains
+
 A configurable backend-friendly validation engine (ideal with Flutter Form fields).
 
 ```dart
@@ -180,9 +190,10 @@ print(error); // "Must contain at least one uppercase letter"
 
 ---
 
-## ⚙️ Core Utilities 
+## ⚙️ Core Utilities
 
 ### ID Generator
+
 A handy wrapper class for generating various unique keys and encodings.
 
 ```dart

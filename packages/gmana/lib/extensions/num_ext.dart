@@ -1,3 +1,4 @@
+/// Utility extension on nullable integer values.
 extension IntNullableExt on int? {
   /// Returns the value or `0` if `null`.
   int get orZero => this ?? 0;
@@ -6,6 +7,7 @@ extension IntNullableExt on int? {
   int orDefault(int fallback) => this ?? fallback;
 }
 
+/// Utility extension on [num] providing temperature conversion and normalization functions.
 extension NumExt on num {
   // ---------------------------------------------------------------------------
   // Temperature

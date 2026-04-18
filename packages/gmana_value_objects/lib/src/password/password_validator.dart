@@ -2,11 +2,20 @@ import 'package:gmana/gmana.dart' show Either, Left, Right;
 import 'password_errors.dart';
 import 'password_validation_config.dart';
 
+/// A class responsible for validating string inputs as passwords according to a [PasswordValidationConfig].
 final class PasswordValidator {
+  /// The configuration rules to apply during validation.
   final PasswordValidationConfig config;
 
+  /// Creates a new [PasswordValidator].
+  ///
+  /// If [config] is not provided, the default [PasswordValidationConfig] will be used.
   const PasswordValidator([this.config = const PasswordValidationConfig()]);
 
+  /// Validates the given [input] string as a password.
+  ///
+  /// Returns a `Right` containing the input string if valid.
+  /// Otherwise, returns a `Left` containing the specific [PasswordError] detailing why.
   Either<PasswordError, String> validate(String input) {
     if (input.isEmpty) {
       return const Left(PasswordEmpty());

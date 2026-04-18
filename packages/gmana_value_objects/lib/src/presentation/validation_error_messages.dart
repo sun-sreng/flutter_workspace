@@ -7,6 +7,9 @@ import '../number/number_errors.dart';
 /// Default English messages for all validation errors.
 /// Consumers can create their own implementations for i18n.
 abstract interface class ValidationErrorMessages {
+  /// Converts a [ValidationError] into a human-readable string message.
+  /// 
+  /// The [error] parameter is the validation error that needs to be displayed.
   String getMessage(ValidationError error);
 }
 
@@ -18,10 +21,10 @@ final class DefaultValidationErrorMessages implements ValidationErrorMessages {
   /// Creates a new instance of [DefaultValidationErrorMessages].
   const DefaultValidationErrorMessages();
 
-  @override
   /// Gets the localized or default string message for a given [ValidationError].
   ///
   /// The [error] parameter represents the validation error to be translated.
+  @override
   String getMessage(ValidationError error) {
     return switch (error) {
       // Email errors
