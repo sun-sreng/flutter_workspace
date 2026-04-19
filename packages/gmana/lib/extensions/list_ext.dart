@@ -1,35 +1,109 @@
-/// Extension on [Iterable] of nullable values, allowing removal of nulls and optional transformation.
-///
-/// If a [transform] function is provided, it is applied to each element before filtering out nulls.
-///
-/// Example:
-/// ```dart
-/// final result = [1, 2, null, 3].compactMap();
-/// print(result); // (1, 2, 3)
-///
-/// final transformed = [1, 2, null, 3].compactMap((e) => e == null ? null : e * 2);
-/// print(transformed); // (2, 4, 6)
-/// ```
-extension CompactMap<T> on Iterable<T?> {
-  /// Maps and filters out `null` values from the iterable.
+// ─── Null-safety utilities ────────────────────────────────────────────────
+
+/// Extension on [Iterable] providing utilities for filtering and transforming nullable elements safely.
+extension IterableNullableX<T extends Object> on Iterable<T?> {
+  /// Removes null values, returning `Iterable<T>`.
   ///
-  /// If [transform] is provided, each element is first transformed and then filtered.
-  /// If not, the original values are used as-is.
-  Iterable<T> compactMap<E>([E? Function(T?)? transform]) {
-    return map(transform ?? (e) => e).where((e) => e != null).cast();
-  }
+  /// ```dart
+  /// [1, null, 2].whereNotNull; // (1, 2)
+  /// ```
+  Iterable<T> get whereNotNull => whereType<T>();
+
+  /// Filters nulls after applying [transform].
+  ///
+  /// Unlike the original, [R] is the actual return type of the transform,
+  /// so mapping to a different type is safe.
+  ///
+  /// ```dart
+  /// [1, 2, null, 3].compactMap((e) => e?.isEven == true ? 'even' : null);
+  /// // ('even')
+  /// ```
+  Iterable<R> compactMap<R extends Object>(R? Function(T?) transform) => map(transform).whereType<R>();
+
+  /// Shorthand for [compactMap] when you only want to strip nulls with
+  /// no transformation — just `whereNotNull` as a method call for
+  /// symmetry with [compactMap].
+  Iterable<T> compact() => whereNotNull;
 }
 
-/// Extension on a list of lists to provide a single-level flattened list.
-///
-/// Flattens a nested list structure like `List<List<E>>` into a single [List<E>].
-///
-/// Example:
-/// ```dart
-/// final flatList = [[1, 2, 3], [4, 5, 6]].flatten();
-/// print(flatList); // [1, 2, 3, 4, 5, 6]
-/// ```
-extension ListFlattenExtension<E> on List<List<E>> {
-  /// Flattens a `List<List<E>>` into a single `List<E>`.
-  List<E> flatten() => [for (final list in this) ...list];
+// ─── Flatten / FlatMap ───────────────────────────────────────────────────
+
+/// Extension on [Iterable] of [Iterable]s providing methods to flatten nested collections.
+extension IterableOfIterablesX<E> on Iterable<Iterable<E>> {
+  /// Single-level flatten. Works on any `Iterable<Iterable<E>>`.
+  ///
+  /// ```dart
+  /// [[1, 2], [3, 4]].flatten(); // (1, 2, 3, 4)
+  /// ```
+  Iterable<E> flatten() => expand((e) => e);
+
+  /// Flatten to a [List].
+  List<E> flattenToList() => [for (final inner in this) ...inner];
+}
+
+/// General utility extension on [Iterable] providing flat-mapping, grouping, and chunking capabilities.
+extension IterableX<T> on Iterable<T> {
+  /// Maps each element to an iterable, then flattens one level.
+  ///
+  /// Equivalent to `expand`, but named `flatMap` to match Kotlin/Swift/Rx
+  /// conventions and pair naturally with [compactMap].
+  ///
+  /// ```dart
+  /// [1, 2, 3].flatMap((e) => [e, e * 10]); // (1, 10, 2, 20, 3, 30)
+  /// ```
+  Iterable<R> flatMap<R>(Iterable<R> Function(T) transform) => expand(transform);
+
+  /// [flatMap] that discards nulls from the produced iterables.
+  ///
+  /// ```dart
+  /// ['hello', 'hi', 'world']
+  ///     .flatMapNotNull((s) => [s.startsWith('h') ? s.toUpperCase() : null]);
+  /// // ('HELLO', 'HI')
+  /// ```
+  Iterable<R> flatMapNotNull<R extends Object>(Iterable<R?> Function(T) transform) => expand(transform).whereType<R>();
+
+  /// Groups elements by a key derived from [keyOf].
+  ///
+  /// ```dart
+  /// [1, 2, 3, 4].groupBy((e) => e.isEven ? 'even' : 'odd');
+  /// // {odd: [1, 3], even: [2, 4]}
+  /// ```
+  Map<K, List<T>> groupBy<K>(K Function(T) keyOf) {
+    final map = <K, List<T>>{};
+    for (final e in this) {
+      (map[keyOf(e)] ??= []).add(e);
+    }
+    return map;
+  }
+
+  /// Returns distinct elements by a derived key, preserving first-seen order.
+  ///
+  /// ```dart
+  /// [1, 2, 1, 3, 2].distinctBy((e) => e); // (1, 2, 3)
+  /// ```
+  Iterable<T> distinctBy<K>(K Function(T) keyOf) sync* {
+    final seen = <K>{};
+    for (final e in this) {
+      if (seen.add(keyOf(e))) yield e;
+    }
+  }
+
+  /// Splits the iterable into chunks of [size].
+  /// The last chunk may be smaller.
+  ///
+  /// ```dart
+  /// [1, 2, 3, 4, 5].chunked(2); // ([1,2], [3,4], [5])
+  /// ```
+  Iterable<List<T>> chunked(int size) sync* {
+    assert(size > 0, 'Chunk size must be > 0');
+    var chunk = <T>[];
+    for (final e in this) {
+      chunk.add(e);
+      if (chunk.length == size) {
+        yield chunk;
+        chunk = [];
+      }
+    }
+    if (chunk.isNotEmpty) yield chunk;
+  }
 }
