@@ -1,14 +1,18 @@
+import 'package:gmana/is/is_alpha.dart' as v_alpha;
+import 'package:gmana/is/is_alpha_numeric.dart' as v_alphanumeric;
+import 'package:gmana/is/is_credit_card.dart' as v_credit_card;
+import 'package:gmana/is/is_email.dart' as v_email;
+import 'package:gmana/is/is_hex_color.dart' as v_hex_color;
+import 'package:gmana/is/is_numeric.dart' as v_numeric;
+import 'package:gmana/is/is_uuid.dart' as v_uuid;
+
 /// A vast collection of validation utilities mapped as getters on [String].
 extension StringValidation on String {
   // ─── Email ────────────────────────────────────────────────────────────────
 
   /// RFC-5321-aligned. Handles subdomains, hyphens, multi-part TLDs.
   /// Still a heuristic — true validation requires sending a mail.
-  bool get isValidEmail {
-    if (isEmpty) return false;
-    final re = RegExp(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$');
-    return re.hasMatch(trim());
-  }
+  bool get isValidEmail => v_email.isEmail(trim());
 
   // ─── Name ─────────────────────────────────────────────────────────────────
 
@@ -71,13 +75,13 @@ extension StringValidation on String {
   bool get isNotBlank => trim().isNotEmpty;
 
   /// Checks if the string contains only numeric digits.
-  bool get isNumeric => RegExp(r'^\d+$').hasMatch(this);
+  bool get isNumeric => v_numeric.isNumeric(this);
   
   /// Checks if the string contains only alphabetic characters.
-  bool get isAlpha => RegExp(r'^[a-zA-Z]+$').hasMatch(this);
+  bool get isAlpha => v_alpha.isAlpha(this);
   
   /// Checks if the string contains only alphanumeric characters.
-  bool get isAlphanumeric => RegExp(r'^[a-zA-Z0-9]+$').hasMatch(this);
+  bool get isAlphanumeric => v_alphanumeric.isAlphaNumeric(this);
 
   /// Valid URL (http/https). Intentionally simple — use `Uri.tryParse`
   /// for structural checks; this validates the common displayed format.
@@ -88,12 +92,8 @@ extension StringValidation on String {
     ).hasMatch(trim());
   }
 
-  /// UUID v4 format.
-  bool get isValidUuid {
-    return RegExp(
-      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
-    ).hasMatch(this);
-  }
+  /// Checks if the string is a valid UUID (v4).
+  bool get isValidUuid => v_uuid.isUuid(this, '4');
 
   /// ISO 8601 date only: `2024-01-31`
   bool get isValidIsoDate {
@@ -112,28 +112,10 @@ extension StringValidation on String {
   }
 
   /// Checks if the string is a valid hexadecimal color mapping (e.g. #FFF or #FFFFFF).
-  bool get isValidHexColor {
-    return RegExp(r'^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$').hasMatch(this);
-  }
+  bool get isValidHexColor => v_hex_color.isHexColor(this);
 
   /// Checks if the string is a valid credit card number using the Luhn algorithm.
-  bool get isValidCreditCard {
-    final digits = replaceAll(RegExp(r'\D'), '');
-    if (digits.length < 13 || digits.length > 19) return false;
-    // Luhn algorithm
-    int sum = 0;
-    bool alternate = false;
-    for (int i = digits.length - 1; i >= 0; i--) {
-      int n = int.parse(digits[i]);
-      if (alternate) {
-        n *= 2;
-        if (n > 9) n -= 9;
-      }
-      sum += n;
-      alternate = !alternate;
-    }
-    return sum % 10 == 0;
-  }
+  bool get isValidCreditCard => v_credit_card.isCreditCard(this);
 
   /// Length bounded — prevents silent acceptance of huge inputs.
   bool isWithinLength({required int min, required int max}) => length >= min && length <= max;
