@@ -113,7 +113,7 @@ extension StreamX<T> on Stream<T> {
 
   /// Recovers from errors by emitting [fallback].
   Stream<T> onErrorReturn(T fallback) =>
-      transform(StreamTransformer.fromHandlers(handleError: (_, __, sink) => sink.add(fallback)));
+      transform(StreamTransformer.fromHandlers(handleError: (_, _, sink) => sink.add(fallback)));
 
   /// Recovers from errors by emitting the result of [recover].
   Stream<T> onErrorReturnWith(T Function(Object error) recover) =>
