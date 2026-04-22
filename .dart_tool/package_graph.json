@@ -1,13 +1,13 @@
 {
   "roots": [
-    "flutter_workspace",
+    "flutters",
     "gmana",
     "gmana_flutter",
     "gmana_value_objects"
   ],
   "packages": [
     {
-      "name": "flutter_workspace",
+      "name": "flutters",
       "version": "0.0.0",
       "dependencies": [],
       "devDependencies": []

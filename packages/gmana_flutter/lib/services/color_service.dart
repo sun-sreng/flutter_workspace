@@ -1,101 +1,167 @@
+// color_service.dart
 import 'package:flutter/material.dart';
 
-/// Domain layer service for color manipulation operations.
-class ColorService {
-  /// Singleton instance for accessing color manipulation logic.
-  static const ColorService _instance = ColorService._internal();
-
-  /// Default amount for lightness adjustment.
+abstract final class ColorService {
   static const double defaultAmount = 0.1;
-  factory ColorService() => _instance;
 
-  const ColorService._internal();
+  // ── Lightness ──────────────────────────────────────────────────────────
 
-  /// Adjusts the lightness of a color.
-  ///
-  /// [color]: The input color to adjust.
-  /// [amount]: The amount to adjust lightness (between 0.0 and 1.0).
-  /// [darken]: If true, decreases lightness; if false, increases lightness.
-  /// Returns the adjusted color.
-  Color adjustLightness({
-    required Color color,
-    double amount = defaultAmount,
-    bool darken = false,
-  }) {
-    assert(amount >= 0 && amount <= 1, 'Amount must be between 0 and 1');
-
+  static Color adjustLightness(Color color, {required double amount, required bool darken}) {
+    assert(amount >= 0 && amount <= 1);
     final hsl = HSLColor.fromColor(color);
-    final newLightness = darken
-        ? (hsl.lightness - amount).clamp(0.0, 1.0)
-        : (hsl.lightness + amount).clamp(0.0, 1.0);
-    return hsl.withLightness(newLightness).toColor();
+    final l = darken ? (hsl.lightness - amount).clamp(0.0, 1.0) : (hsl.lightness + amount).clamp(0.0, 1.0);
+    return hsl.withLightness(l).toColor();
   }
 
-  /// Creates a MaterialColor from a base Color by generating a swatch of shades.
-  ///
-  /// [color]: The base color.
-  /// Returns a MaterialColor with shades from 50 to 900.
-  MaterialColor createMaterialColor(Color color) {
-    final strengths = <double>[0.05];
-    final swatch = <int, Color>{};
-    final r = (color.r * 255.0).round() & 0xff;
-    final g = (color.g * 255.0).round() & 0xff;
-    final b = (color.b * 255.0).round() & 0xff;
+  // ── Saturation ─────────────────────────────────────────────────────────
 
-    for (var i = 1; i < 10; i++) {
-      strengths.add(0.1 * i);
-    }
+  static Color adjustSaturation(Color color, {required double amount, required bool desaturate}) {
+    assert(amount >= 0 && amount <= 1);
+    final hsl = HSLColor.fromColor(color);
+    final s = desaturate ? (hsl.saturation - amount).clamp(0.0, 1.0) : (hsl.saturation + amount).clamp(0.0, 1.0);
+    return hsl.withSaturation(s).toColor();
+  }
 
-    for (var strength in strengths) {
-      final ds = 0.5 - strength;
-      swatch[(strength * 1000).round()] = Color.fromRGBO(
-        r + ((ds < 0 ? r : (255 - r)) * ds).round(),
-        g + ((ds < 0 ? g : (255 - g)) * ds).round(),
-        b + ((ds < 0 ? b : (255 - b)) * ds).round(),
-        1.0,
-      );
-    }
+  /// Returns [count] analogous colors evenly spaced around [color].
+  /// [spreadDegrees] controls the total arc (default 30° each side).
+  static List<Color> analogous(Color color, {int count = 2, double spreadDegrees = 30}) {
+    assert(count >= 1);
+    final hsl = HSLColor.fromColor(color);
+    final step = spreadDegrees / count;
+    return [
+      for (var i = 1; i <= count; i++) ...[
+        hsl.withHue((hsl.hue - step * i) % 360).toColor(),
+        hsl.withHue((hsl.hue + step * i) % 360).toColor(),
+      ],
+    ];
+  }
+
+  // ── Mixing ─────────────────────────────────────────────────────────────
+
+  /// Picks whichever of [candidates] has the highest contrast against [background].
+  /// Defaults to black/white if no candidates supplied.
+  static Color bestContrast(Color background, [List<Color> candidates = const [Colors.white, Colors.black]]) {
+    assert(candidates.isNotEmpty);
+    return candidates.reduce((best, c) => contrastRatio(c, background) > contrastRatio(best, background) ? c : best);
+  }
+
+  /// Returns the complementary color (hue + 180°).
+  static Color complementary(Color color) {
+    final hsl = HSLColor.fromColor(color);
+    return hsl.withHue((hsl.hue + 180) % 360).toColor();
+  }
+
+  /// Returns the WCAG contrast ratio between two colors (1–21).
+  static double contrastRatio(Color a, Color b) {
+    final la = a.computeLuminance() + 0.05;
+    final lb = b.computeLuminance() + 0.05;
+    return la > lb ? la / lb : lb / la;
+  }
+
+  // ── Harmony ────────────────────────────────────────────────────────────
+
+  /// Generates a [MaterialColor] swatch using HSL lightness steps so shades
+  /// match Material Design intent rather than raw RGB blending.
+  static MaterialColor createMaterialColor(Color color) {
+    final hsl = HSLColor.fromColor(color);
+
+    // Material shade → target lightness mapping (approximates the spec).
+    const shadeMap = {
+      50: 0.95,
+      100: 0.90,
+      200: 0.80,
+      300: 0.70,
+      400: 0.60,
+      500: 0.50,
+      600: 0.40,
+      700: 0.30,
+      800: 0.20,
+      900: 0.10,
+    };
+
+    final swatch = {for (final entry in shadeMap.entries) entry.key: hsl.withLightness(entry.value).toColor()};
 
     return MaterialColor(color.toARGB32(), swatch);
   }
 
-  /// Gets a contrasting text color (white or black) for readability.
-  ///
-  /// Returns white for dark colors, black for light colors.
-  Color getContrastText(Color color) =>
-      isDark(color) ? Colors.white : Colors.black;
+  /// Removes all saturation — equivalent to a greyscale conversion.
+  static Color greyscale(Color color) => adjustSaturation(color, amount: 1.0, desaturate: true);
 
-  /// Determines if a color is dark based on its luminance.
-  ///
-  /// Returns true if the luminance is less than 0.5.
-  bool isDark(Color color) => color.computeLuminance() < 0.5;
+  /// WCAG 2.1 relative luminance. Threshold 0.179 gives 4.5:1 contrast ratio.
+  static bool isDark(Color color) => color.computeLuminance() < 0.179;
 
-  /// Determines if a color is light based on its luminance.
-  ///
-  /// Returns true if the luminance is at least 0.5.
-  bool isLight(Color color) => !isDark(color);
+  static bool isLight(Color color) => !isDark(color);
 
-  /// Converts a color to a hex string.
-  ///
-  /// [color]: The input color.
-  /// [withHashSign]: If true, includes '#' prefix (default: true).
-  /// Returns the hex string (e.g., '#FF5500' or 'FF5500').
-  String toHex(Color color, {bool withHashSign = true}) {
-    final hexString = color
-        .toARGB32()
-        .toRadixString(16)
-        .padLeft(8, '0')
-        .toUpperCase();
-    return withHashSign ? '#$hexString' : hexString;
+  // ── Contrast / Accessibility ───────────────────────────────────────────
+
+  /// AA = 4.5:1 for normal text, AAA = 7:1.
+  static bool meetsWcagAA(Color foreground, Color background) => contrastRatio(foreground, background) >= 4.5;
+  static bool meetsWcagAAA(Color foreground, Color background) => contrastRatio(foreground, background) >= 7.0;
+
+  /// Linear interpolation between [a] and [b] in sRGB space.
+  /// [t] = 0.0 → [a], [t] = 1.0 → [b].
+  static Color mix(Color a, Color b, [double t = 0.5]) {
+    assert(t >= 0 && t <= 1);
+    return Color.lerp(a, b, t)!;
   }
 
-  /// Creates a color with the specified opacity.
-  ///
-  /// [color]: The input color.
-  /// [opacity]: The opacity value (between 0.0 and 1.0).
-  /// Returns the color with the adjusted opacity.
-  Color withAlphaOpacity(Color color, double opacity) {
-    assert(opacity >= 0 && opacity <= 1, 'Opacity must be between 0 and 1');
-    return color.withAlpha((opacity * 255).round());
+  /// Mixes [color] with black.
+  static Color shade(Color color, [double amount = 0.5]) => mix(color, const Color(0xFF000000), amount);
+
+  /// Returns a split-complementary palette (hue + 150° and hue + 210°).
+  static (Color, Color) splitComplementary(Color color) {
+    final hsl = HSLColor.fromColor(color);
+    return (hsl.withHue((hsl.hue + 150) % 360).toColor(), hsl.withHue((hsl.hue + 210) % 360).toColor());
+  }
+
+  /// Mixes [color] with white.
+  static Color tint(Color color, [double amount = 0.5]) => mix(color, const Color(0xFFFFFFFF), amount);
+
+  // ── Serialization ──────────────────────────────────────────────────────
+
+  /// Outputs 8-char ARGB hex including alpha: `#CCFF5500`.
+  static String toHexARGB(Color color, {bool withHashSign = true}) {
+    final hex = color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase();
+    return withHashSign ? '#$hex' : hex;
+  }
+
+  /// Outputs 6-char RGB hex, ignoring alpha: `#FF5500`.
+  static String toHexRGB(Color color, {bool withHashSign = true}) {
+    final r = (color.r * 255).round().toRadixString(16).padLeft(2, '0');
+    final g = (color.g * 255).round().toRadixString(16).padLeft(2, '0');
+    final b = (color.b * 255).round().toRadixString(16).padLeft(2, '0');
+    final hex = '$r$g$b'.toUpperCase();
+    return withHashSign ? '#$hex' : hex;
+  }
+
+  /// Returns a triadic palette (hue ± 120°).
+  static (Color, Color) triadic(Color color) {
+    final hsl = HSLColor.fromColor(color);
+    return (hsl.withHue((hsl.hue + 120) % 360).toColor(), hsl.withHue((hsl.hue + 240) % 360).toColor());
+  }
+
+  // ── Material swatch ────────────────────────────────────────────────────
+
+  /// Parses `#RGB`, `#RRGGBB`, `#AARRGGBB` (hash optional).
+  static Color? tryParseHex(String hex) {
+    final clean = hex.startsWith('#') ? hex.substring(1) : hex;
+    return switch (clean.length) {
+      3 => () {
+        final r = clean[0] * 2;
+        final g = clean[1] * 2;
+        final b = clean[2] * 2;
+        final value = int.tryParse('FF$r$g$b', radix: 16);
+        return value != null ? Color(value) : null;
+      }(),
+      6 => () {
+        final value = int.tryParse('FF$clean', radix: 16);
+        return value != null ? Color(value) : null;
+      }(),
+      8 => () {
+        final value = int.tryParse(clean, radix: 16);
+        return value != null ? Color(value) : null;
+      }(),
+      _ => null,
+    };
   }
 }

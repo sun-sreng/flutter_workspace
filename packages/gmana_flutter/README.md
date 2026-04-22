@@ -53,8 +53,8 @@ Scaffold(
   body: Column(
     children: [
       // Standardize your vertical spacing (uses design system tokens)
-      const SizedBoxHeight(spacing: 24.0), 
-      
+      const SizedBoxHeight(spacing: 24.0),
+
       // Feature-rich star rating bars
       StarRatingBar(
         ratingValue: 4.5,
@@ -98,6 +98,7 @@ Column(
 ## ⏳ Loading Spinners
 
 Ditch raw Material loaders for stylized, branded loading indicators.
+
 ```dart
 // Easily throw in pre-built spinners across your app
 const SpinnerCircular();
@@ -111,6 +112,7 @@ const SpinnerWaveDot();
 ## 🛠 Services & Extensions
 
 ### Colors & Contrast Engine
+
 Ensure your text is always readable over dynamic background colors!
 
 ```dart
@@ -120,7 +122,7 @@ print(primaryColor.isDark); // true
 print(primaryColor.toHex()); // "#0055FF"
 
 // Automatically returns white/black depending on what's safe
-final safeTextColor = primaryColor.contrastText; 
+final safeTextColor = primaryColor.contrastText;
 
 // Easily lighten/darken UI elements
 final hoverColor = primaryColor.lighten(0.1);
@@ -128,6 +130,7 @@ final activeColor = primaryColor.darken(0.2);
 ```
 
 ### Theme Mode Management
+
 Provides strongly typed `ThemeMode` parsers and human-readable tags for your Settings pages.
 
 ```dart
@@ -167,7 +170,7 @@ class MyApp extends StatelessWidget {
 
 class DemoHome extends StatelessWidget {
   const DemoHome({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,10 +181,10 @@ class DemoHome extends StatelessWidget {
           children: [
             const SpinnerWaveDot(),
             const SizedBoxHeight(),
-            Text('Processing Theme Settings...', 
+            Text('Processing Theme Settings...',
               style: TextStyle(
                 // Auto-contrast!
-                color: Theme.of(context).primaryColor.contrastText 
+                color: Theme.of(context).primaryColor.contrastText
               )
             ),
           ],
@@ -190,4 +193,29 @@ class DemoHome extends StatelessWidget {
     );
   }
 }
+```
+
+```dart
+Duration(hours: 1, minutes: 3, seconds: 7).toClockString()      // "1:03:07"
+Duration(minutes: 4, seconds: 2).toClockString()                // "4:02"
+Duration(hours: 2, minutes: 3).toHumanizedString()              // "2 hours 3 minutes"
+Duration(seconds: 45).toHumanizedString()                       // "45 seconds"
+Duration(minutes: 5).toRelativeString()                         // "in 5 minutes"
+Duration(minutes: -3).toRelativeString()                        // "3 minutes ago"
+Duration(seconds: 3).toRelativeString()                         // "just now"
+Duration(hours: 2, minutes: 3).toCompactString()                // "2h 3m"
+Duration(minutes: 1, milliseconds: 500).toVerboseString()       // "1m 0s 500ms"
+```
+
+```dart
+// Serialize
+final json = Icons.home.toJsonString();
+
+// Parse — null-safe, caller decides fallback
+final icon = IconDataExt.tryParse(json);             // IconData?
+final icon = IconDataExt.parse(json);                // Icons.question_mark on failure
+final icon = IconDataExt.parse(json, fallback: Icons.error); // custom fallback
+
+// In a widget
+Icon(IconDataExt.tryParse(storedString) ?? Icons.broken_image)
 ```
