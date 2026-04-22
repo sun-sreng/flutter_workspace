@@ -24,21 +24,13 @@ class GWaveCustomPaint extends CustomPainter {
     required Size size,
   }) : super(repaint: controller) {
     _waveMaxRadius = _lineRadius(size.width, 10);
-    _spinnerAnimation = Tween<double>(
-      begin: 0,
-      end: pi * 2,
-    ).animate(CurvedAnimation(curve: curve, parent: controller));
+    _spinnerAnimation = Tween<double>(begin: 0, end: pi * 2).animate(CurvedAnimation(curve: curve, parent: controller));
     _waveVerticalShiftAnimation = Tween<double>(
       begin: _waveMaxRadius,
       end: -_waveMaxRadius,
     ).animate(CurvedAnimation(curve: curve, parent: controller));
     _waveAmplitudeAnimation =
-        !hasChild
-            ? Tween<double>(
-              begin: 0,
-              end: -4,
-            ).animate(CurvedAnimation(curve: curve, parent: controller))
-            : null;
+        !hasChild ? Tween<double>(begin: 0, end: -4).animate(CurvedAnimation(curve: curve, parent: controller)) : null;
   }
 
   @override
@@ -84,11 +76,7 @@ class GWaveCustomPaint extends CustomPainter {
     final lineRadius = _lineRadius(size.width, lineRadiusMultiplier) * 2;
     final centerOffset = Offset(size.width / 2, size.width / 2);
     canvas.drawArc(
-      Rect.fromCenter(
-        center: centerOffset,
-        width: lineRadius,
-        height: lineRadius,
-      ),
+      Rect.fromCenter(center: centerOffset, width: lineRadius, height: lineRadius),
       startAngle,
       sweepAngle,
       false,
@@ -106,9 +94,7 @@ class GWaveCustomPaint extends CustomPainter {
       height: Size.fromRadius(_waveMaxRadius).width,
     );
     canvas.save();
-    canvas.clipRRect(
-      RRect.fromRectAndRadius(bounds, Radius.circular(_waveMaxRadius)),
-    );
+    canvas.clipRRect(RRect.fromRectAndRadius(bounds, Radius.circular(_waveMaxRadius)));
     canvas.translate(size.width / 2, size.height / 2);
 
     final path = Path()..moveTo(-_waveMaxRadius, _waveMaxRadius);

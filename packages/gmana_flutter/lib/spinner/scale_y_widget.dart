@@ -15,10 +15,6 @@ class ScaleYWidget extends AnimatedWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Transform(
-      transform: Matrix4.diagonal3Values(1.0, scale.value, 1.0),
-      alignment: alignment,
-      child: child,
-    );
+    return Transform(transform: Matrix4.diagonal3Values(1.0, scale.value, 1.0), alignment: alignment, child: child);
   }
 }

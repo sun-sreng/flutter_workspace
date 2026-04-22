@@ -25,7 +25,8 @@
       "name": "gmana_flutter",
       "version": "0.0.7",
       "dependencies": [
-        "flutter"
+        "flutter",
+        "gmana"
       ],
       "devDependencies": [
         "flutter_lints",

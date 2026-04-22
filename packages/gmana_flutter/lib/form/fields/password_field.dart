@@ -61,10 +61,7 @@ class _GPasswordFieldContentState extends State<_GPasswordFieldContent> {
         labelText: widget.config.labelText,
         hintText: widget.config.hintText,
         prefixIcon: Icon(widget.config.prefixIcon),
-        suffixIcon: VisibilityToggle(
-          onVisibilityChanged:
-              (obscure) => setState(() => _obscureText = obscure),
-        ),
+        suffixIcon: VisibilityToggle(onVisibilityChanged: (obscure) => setState(() => _obscureText = obscure)),
       ),
     );
   }

@@ -1,5 +1,6 @@
 library;
 
+export 'design_system/spacing.dart';
 export 'either/either.dart';
 export 'either/left.dart';
 export 'either/right.dart';
@@ -45,6 +46,7 @@ export 'is/is_upper_case.dart';
 export 'is/is_uuid.dart';
 export 'is/is_variable_width.dart';
 export 'is/matches.dart';
+export 'math/vertical_point.dart';
 export 'regex/alpha_numeric_reg.dart';
 export 'regex/alpha_reg.dart';
 export 'regex/ascii_reg.dart';
@@ -77,5 +79,10 @@ export 'regex/upper_case_reg.dart';
 export 'regex/url_reg.dart';
 export 'regex/uuid_reg.dart';
 export 'regex/white_space_reg.dart';
+export 'utils/debounce.dart';
 export 'utils/id_generator.dart';
+export 'utils/throttle.dart';
+export 'validator/email_validator.dart';
+export 'validator/field_validator.dart';
+export 'validator/number_validator.dart';
 export 'validator/validators.dart';

@@ -30,17 +30,14 @@ class GSpinner extends StatefulWidget {
   State<GSpinner> createState() => _GSpinnerState();
 }
 
-class _GSpinnerState extends State<GSpinner>
-    with SingleTickerProviderStateMixin {
+class _GSpinnerState extends State<GSpinner> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final size = Size.square(
-          min(min(constraints.maxWidth, constraints.maxHeight), widget.size),
-        );
+        final size = Size.square(min(min(constraints.maxWidth, constraints.maxHeight), widget.size));
         final childMaxSize = Size.square(widget.size * 0.7);
         return SizedBox.fromSize(
           size: size,
@@ -60,12 +57,7 @@ class _GSpinnerState extends State<GSpinner>
                 ),
               ),
               if (widget.child != null)
-                Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints.tight(childMaxSize),
-                    child: widget.child,
-                  ),
-                ),
+                Center(child: ConstrainedBox(constraints: BoxConstraints.tight(childMaxSize), child: widget.child)),
             ],
           ),
         );
@@ -85,9 +77,6 @@ class _GSpinnerState extends State<GSpinner>
   void initState() {
     super.initState();
 
-    _controller =
-        (widget.controller ??
-              AnimationController(duration: widget.duration, vsync: this))
-          ..repeat();
+    _controller = (widget.controller ?? AnimationController(duration: widget.duration, vsync: this))..repeat();
   }
 }

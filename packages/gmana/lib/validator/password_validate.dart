@@ -22,29 +22,18 @@ String? validatePassword(
   Set<PasswordRequirement> requirements = const {PasswordRequirement.minLength},
   String specialCharacters = r'[#?!@$%^&*-]',
 }) {
-  final rules = <ValidationRule>[
-    Validators.required(message: 'Password is required'),
-  ];
+  final rules = <ValidationRule>[Validators.required(message: 'Password is required')];
 
   if (requirements.contains(PasswordRequirement.minLength)) {
-    rules.add(
-      Validators.minLength(
-        minLength,
-        message: 'Password must be at least $minLength characters',
-      ),
-    );
+    rules.add(Validators.minLength(minLength, message: 'Password must be at least $minLength characters'));
   }
 
   if (requirements.contains(PasswordRequirement.upperCase)) {
-    rules.add(
-      Validators.oneUpperCase(message: PasswordRequirement.upperCase.message),
-    );
+    rules.add(Validators.oneUpperCase(message: PasswordRequirement.upperCase.message));
   }
 
   if (requirements.contains(PasswordRequirement.lowerCase)) {
-    rules.add(
-      Validators.oneLowerCase(message: PasswordRequirement.lowerCase.message),
-    );
+    rules.add(Validators.oneLowerCase(message: PasswordRequirement.lowerCase.message));
   }
 
   if (requirements.contains(PasswordRequirement.digit)) {
@@ -56,8 +45,7 @@ String? validatePassword(
     rules.add(
       Validators.pattern(
         '(?=.*[$escapedSpecialChars])',
-        message:
-            'Password must contain at least one special character ($specialCharacters)',
+        message: 'Password must contain at least one special character ($specialCharacters)',
       ),
     );
   }

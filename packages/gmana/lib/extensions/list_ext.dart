@@ -9,6 +9,11 @@ extension IterableNullableX<T extends Object> on Iterable<T?> {
   /// ```
   Iterable<T> get whereNotNull => whereType<T>();
 
+  /// Shorthand for [compactMap] when you only want to strip nulls with
+  /// no transformation — just `whereNotNull` as a method call for
+  /// symmetry with [compactMap].
+  Iterable<T> compact() => whereNotNull;
+
   /// Filters nulls after applying [transform].
   ///
   /// Unlike the original, [R] is the actual return type of the transform,
@@ -19,11 +24,6 @@ extension IterableNullableX<T extends Object> on Iterable<T?> {
   /// // ('even')
   /// ```
   Iterable<R> compactMap<R extends Object>(R? Function(T?) transform) => map(transform).whereType<R>();
-
-  /// Shorthand for [compactMap] when you only want to strip nulls with
-  /// no transformation — just `whereNotNull` as a method call for
-  /// symmetry with [compactMap].
-  Iterable<T> compact() => whereNotNull;
 }
 
 // ─── Flatten / FlatMap ───────────────────────────────────────────────────
@@ -43,6 +43,37 @@ extension IterableOfIterablesX<E> on Iterable<Iterable<E>> {
 
 /// General utility extension on [Iterable] providing flat-mapping, grouping, and chunking capabilities.
 extension IterableX<T> on Iterable<T> {
+  /// Splits the iterable into chunks of [size].
+  /// The last chunk may be smaller.
+  ///
+  /// ```dart
+  /// [1, 2, 3, 4, 5].chunked(2); // ([1,2], [3,4], [5])
+  /// ```
+  Iterable<List<T>> chunked(int size) sync* {
+    assert(size > 0, 'Chunk size must be > 0');
+    var chunk = <T>[];
+    for (final e in this) {
+      chunk.add(e);
+      if (chunk.length == size) {
+        yield chunk;
+        chunk = [];
+      }
+    }
+    if (chunk.isNotEmpty) yield chunk;
+  }
+
+  /// Returns distinct elements by a derived key, preserving first-seen order.
+  ///
+  /// ```dart
+  /// [1, 2, 1, 3, 2].distinctBy((e) => e); // (1, 2, 3)
+  /// ```
+  Iterable<T> distinctBy<K>(K Function(T) keyOf) sync* {
+    final seen = <K>{};
+    for (final e in this) {
+      if (seen.add(keyOf(e))) yield e;
+    }
+  }
+
   /// Maps each element to an iterable, then flattens one level.
   ///
   /// Equivalent to `expand`, but named `flatMap` to match Kotlin/Swift/Rx
@@ -74,36 +105,5 @@ extension IterableX<T> on Iterable<T> {
       (map[keyOf(e)] ??= []).add(e);
     }
     return map;
-  }
-
-  /// Returns distinct elements by a derived key, preserving first-seen order.
-  ///
-  /// ```dart
-  /// [1, 2, 1, 3, 2].distinctBy((e) => e); // (1, 2, 3)
-  /// ```
-  Iterable<T> distinctBy<K>(K Function(T) keyOf) sync* {
-    final seen = <K>{};
-    for (final e in this) {
-      if (seen.add(keyOf(e))) yield e;
-    }
-  }
-
-  /// Splits the iterable into chunks of [size].
-  /// The last chunk may be smaller.
-  ///
-  /// ```dart
-  /// [1, 2, 3, 4, 5].chunked(2); // ([1,2], [3,4], [5])
-  /// ```
-  Iterable<List<T>> chunked(int size) sync* {
-    assert(size > 0, 'Chunk size must be > 0');
-    var chunk = <T>[];
-    for (final e in this) {
-      chunk.add(e);
-      if (chunk.length == size) {
-        yield chunk;
-        chunk = [];
-      }
-    }
-    if (chunk.isNotEmpty) yield chunk;
   }
 }

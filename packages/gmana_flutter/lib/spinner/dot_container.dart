@@ -40,10 +40,7 @@ class DotContainer extends StatelessWidget {
                   .animate(
                     CurvedAnimation(
                       parent: controller,
-                      curve:
-                          isForward
-                              ? config.offsetInterval
-                              : config.reverseOffsetInterval,
+                      curve: isForward ? config.offsetInterval : config.reverseOffsetInterval,
                     ),
                   )
                   .value,
@@ -54,17 +51,11 @@ class DotContainer extends StatelessWidget {
                     .animate(
                       CurvedAnimation(
                         parent: controller,
-                        curve:
-                            isForward
-                                ? config.heightInterval
-                                : config.reverseHeightInterval,
+                        curve: isForward ? config.heightInterval : config.reverseHeightInterval,
                       ),
                     )
                     .value,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(dotSize / 2),
-            ),
+            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(dotSize / 2)),
           ),
         );
       },

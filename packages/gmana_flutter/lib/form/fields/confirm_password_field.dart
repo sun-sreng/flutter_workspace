@@ -47,12 +47,10 @@ class _GConfirmPasswordFieldContent extends StatefulWidget {
   const _GConfirmPasswordFieldContent({required this.config});
 
   @override
-  State<_GConfirmPasswordFieldContent> createState() =>
-      _GConfirmPasswordFieldContentState();
+  State<_GConfirmPasswordFieldContent> createState() => _GConfirmPasswordFieldContentState();
 }
 
-class _GConfirmPasswordFieldContentState
-    extends State<_GConfirmPasswordFieldContent> {
+class _GConfirmPasswordFieldContentState extends State<_GConfirmPasswordFieldContent> {
   bool _obscureText = true;
 
   @override
@@ -69,10 +67,7 @@ class _GConfirmPasswordFieldContentState
         labelText: widget.config.labelText,
         hintText: widget.config.hintText,
         prefixIcon: Icon(widget.config.prefixIcon),
-        suffixIcon: VisibilityToggle(
-          onVisibilityChanged:
-              (obscure) => setState(() => _obscureText = obscure),
-        ),
+        suffixIcon: VisibilityToggle(onVisibilityChanged: (obscure) => setState(() => _obscureText = obscure)),
       ),
     );
   }

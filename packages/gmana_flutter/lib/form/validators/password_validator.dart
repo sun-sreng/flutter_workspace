@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gmana_flutter/form/models/field_validator.dart';
+import 'package:gmana/validator/field_validator.dart';
 
 /// Validator for confirming passwords match.
 class ConfirmPasswordValidator implements FieldValidator {

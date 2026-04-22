@@ -1,32 +1,32 @@
-/// Default Spacing in App UI.
+/// Default spacing constants for UI layout systems.
 abstract class GSpacing {
-  /// The default unit of spacing
+  /// The default unit of spacing.
   static const double spaceUnit = 16;
 
-  /// xxxs spacing value (1pt)
+  /// Extra-extra-extra small spacing.
   static const double xxxs = 0.0625 * spaceUnit;
 
-  /// xxs spacing value (2pt)
+  /// Extra-extra small spacing.
   static const double xxs = 0.125 * spaceUnit;
 
-  /// xs spacing value (4pt)
+  /// Extra small spacing.
   static const double xs = 0.25 * spaceUnit;
 
-  /// sm spacing value (8pt)
+  /// Small spacing.
   static const double sm = 0.5 * spaceUnit;
 
-  /// md spacing value (12pt)
+  /// Medium spacing.
   static const double md = 0.75 * spaceUnit;
 
-  /// lg spacing value (16pt)
+  /// Large spacing.
   static const double lg = spaceUnit;
 
-  /// xlg spacing value (24pt)
+  /// Extra large spacing.
   static const double xlg = 1.5 * spaceUnit;
 
-  /// xxlg spacing value (40pt)
+  /// Extra-extra large spacing.
   static const double xxlg = 2.5 * spaceUnit;
 
-  /// xxxlg pacing value (64pt)
+  /// Extra-extra-extra large spacing.
   static const double xxxlg = 4 * spaceUnit;
 }

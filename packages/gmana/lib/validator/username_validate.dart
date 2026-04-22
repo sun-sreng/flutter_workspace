@@ -33,25 +33,15 @@ class UsernameValidator {
   }) {
     return [
       Validators.required(message: 'Username is required'),
-      Validators.minLength(
-        minLength,
-        message: 'Username must be at least $minLength characters',
-      ),
-      Validators.maxLength(
-        maxLength,
-        message: 'Username must not exceed $maxLength characters',
-      ),
+      Validators.minLength(minLength, message: 'Username must be at least $minLength characters'),
+      Validators.maxLength(maxLength, message: 'Username must not exceed $maxLength characters'),
       if (forbiddenCharacters.isNotEmpty)
         Validators.custom(
-          (value) =>
-              _containsForbiddenChars(value, forbiddenCharacters) ? '' : null,
+          (value) => _containsForbiddenChars(value, forbiddenCharacters) ? '' : null,
           message: 'Username cannot contain: ${forbiddenCharacters.join(', ')}',
         ),
       if (allowedPattern != null)
-        Validators.pattern(
-          allowedPattern.pattern,
-          message: 'Username contains invalid characters',
-        ),
+        Validators.pattern(allowedPattern.pattern, message: 'Username contains invalid characters'),
     ];
   }
 
@@ -86,10 +76,7 @@ class UsernameValidator {
   /// Checks if the given [value] contains any character from [forbiddenChars].
   ///
   /// Returns `true` if any forbidden character is found, otherwise `false`.
-  static bool _containsForbiddenChars(
-    String? value,
-    Set<String> forbiddenChars,
-  ) {
+  static bool _containsForbiddenChars(String? value, Set<String> forbiddenChars) {
     return value != null && forbiddenChars.any((char) => value.contains(char));
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gmana_flutter/design_system/spacing.dart';
+import 'package:gmana/design_system/spacing.dart';
 
 /// A widget that adds vertical spacing using a SizedBox with a specified height.
 class SizedBoxHeight extends StatelessWidget {

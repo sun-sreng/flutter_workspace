@@ -17,35 +17,29 @@ export 'validators.dart';
 /// Validates an email address using [ValidationRules.email].
 ///
 /// Returns an error message if validation fails, or `null` if valid.
-String? validateEmail(String? value) =>
-    Validators.validate(value, ValidationRules.email);
+String? validateEmail(String? value) => Validators.validate(value, ValidationRules.email);
 
 /// Validates an OTP (one-time password) using [ValidationRules.otp].
 ///
 /// Returns an error message if validation fails, or `null` if valid.
-String? validateOtp(String? value) =>
-    Validators.validate(value, ValidationRules.otp);
+String? validateOtp(String? value) => Validators.validate(value, ValidationRules.otp);
 
 /// Validates a password using [ValidationRules.password].
 ///
 /// Returns an error message if validation fails, or `null` if valid.
-String? validatePassword(String? value) =>
-    Validators.validate(value, ValidationRules.password);
+String? validatePassword(String? value) => Validators.validate(value, ValidationRules.password);
 
 /// Validates a phone number using [Validators.phoneNumber].
 ///
 /// Returns an error message if validation fails, or `null` if valid.
-String? validatePhoneNumber(String? value) =>
-    Validators.validate(value, [Validators.phoneNumber()]);
+String? validatePhoneNumber(String? value) => Validators.validate(value, [Validators.phoneNumber()]);
 
 /// Validates a URL using [Validators.url].
 ///
 /// Returns an error message if validation fails, or `null` if valid.
-String? validateUrl(String? value) =>
-    Validators.validate(value, [Validators.url()]);
+String? validateUrl(String? value) => Validators.validate(value, [Validators.url()]);
 
 /// Validates a username using [ValidationRules.username].
 ///
 /// Returns an error message if validation fails, or `null` if valid.
-String? validateUsername(String? value) =>
-    Validators.validate(value, ValidationRules.username);
+String? validateUsername(String? value) => Validators.validate(value, ValidationRules.username);
