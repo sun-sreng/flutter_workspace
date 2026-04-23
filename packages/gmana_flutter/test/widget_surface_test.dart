@@ -1,22 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gmana/validation.dart' hide isNull;
-import 'package:gmana_flutter/form/buttons/elevated_button.dart';
-import 'package:gmana_flutter/form/fields/confirm_password_field.dart';
-import 'package:gmana_flutter/form/fields/email_field.dart';
-import 'package:gmana_flutter/form/fields/number_field.dart';
-import 'package:gmana_flutter/form/fields/password_field.dart';
-import 'package:gmana_flutter/form/fields/text_field.dart';
-import 'package:gmana_flutter/form/models/field_config.dart';
-import 'package:gmana_flutter/form/validators/confirm_password_validator.dart';
-import 'package:gmana_flutter/form/widgets/configured_text_form_field.dart';
-import 'package:gmana_flutter/spinner/g_circular_spinner.dart';
-import 'package:gmana_flutter/spinner/g_linear_spinner.dart';
-import 'package:gmana_flutter/spinner/g_spinner_wave_dot.dart';
-import 'package:gmana_flutter/spinner/g_wave_spinner.dart';
-import 'package:gmana_flutter/spinner/spinner_dot.dart';
+import 'package:gmana_flutter/gmana_flutter.dart';
 
 void main() {
+  group('public entrypoint', () {
+    test('exports design tokens, extensions, services, and helpers', () {
+      expect(GColors.primary, const Color(0xFFF57224));
+      expect(GFontWeight.bold, FontWeight.w700);
+      expect(Breakpoints.tablet, 730);
+      expect(ThemeMode.dark.toLabel(), 'Dark Mode');
+      expect('system'.toThemeMode(), ThemeMode.system);
+      expect('#F57224'.toColor(), GColors.primary);
+      expect(GColors.primary.toHexRGB(), '#F57224');
+      expect(GColors.primary.contrastText, Colors.black);
+      expect(ColorService.tryParseHex('#F57224'), GColors.primary);
+      expect(fromLocale(const Locale('en', 'US')), 'en_US');
+      expect(toLocale('km_KH'), const Locale('km', 'KH'));
+      expect(const TimeOfDay(hour: 13, minute: 5).toCustomString(), '01:05 PM');
+
+      final json = Icons.home.toJsonString();
+      expect(IconDataExt.tryParse(json)?.codePoint, Icons.home.codePoint);
+    });
+
+    testWidgets('BuildContext helpers work together from the main import', (
+      tester,
+    ) async {
+      late Size screenSize;
+      late int columns;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              screenSize = context.screenSize;
+              columns = context.responsive(mobile: 1, tablet: 2, desktop: 3);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      expect(
+        screenSize,
+        tester.view.physicalSize / tester.view.devicePixelRatio,
+      );
+      expect(columns, 2);
+    });
+  });
+
   group('form widgets', () {
     testWidgets('GConfiguredTextFormField wires config into TextFormField', (
       tester,

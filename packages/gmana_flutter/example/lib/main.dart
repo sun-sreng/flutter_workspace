@@ -1,6 +1,5 @@
 import 'package:example/views/color_ext_view.dart';
 import 'package:flutter/material.dart';
-import 'package:gmana_flutter/design_system/colors.dart';
 import 'package:gmana_flutter/gmana_flutter.dart';
 
 void main() {

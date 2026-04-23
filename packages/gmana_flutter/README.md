@@ -1,164 +1,190 @@
 # gmana_flutter
 
-<p align="center">
-  A comprehensive Flutter utility package designed to accelerate UI development and enforce consistency across applications. 
-</p>
+A Flutter UI utility package with form fields, loading indicators, theme helpers,
+color utilities, responsive extensions, and small design-system tokens.
 
----
+Use `gmana_flutter` when you want app-level Flutter conveniences on top of the
+core [`gmana`](https://pub.dev/packages/gmana) validation and utility package.
 
-> **Note:** This package is built specifically for **Flutter**. For pure Dart functional programming utilities, validation logic, and extensions, please see the core [gmana](https://pub.dev/packages/gmana) package.
-
-## 🚀 Installation
-
-Add `gmana_flutter` to your `pubspec.yaml` dependencies:
-
-```yaml
-dependencies:
-  gmana_flutter: ^0.0.8 # Please check pub.dev for the latest version
-```
-
-Or install it via CLI:
+## Installation
 
 ```bash
 flutter pub add gmana_flutter
 ```
 
----
+Or add it manually:
 
-## 🎨 Features Overview
-
-`gmana_flutter` provides branded `G*` widgets, customized form helpers, theme management logic, and UI-aware extensions to speed up development.
-
-- [**Custom Widgets**](#custom-widgets) (`SizedBoxHeight`, `StarRatingBar`, `GAppBar`)
-- [**Form Fields & Buttons**](#form-controls) (`GEmailField`, `GPasswordField`, `GElevatedButton`)
-- [**Loading Spinners**](#loading-spinners) (`GCircularSpinner`, `GSpinnerDot`, `GSpinnerWaveDot`)
-- [**Theme & Color Services**](#services--extensions) (`ThemeModeService`, `ColorService`)
-- [**Flutter Extensions**](#services--extensions) (`ColorExt`, `ThemeModeExt`)
-
----
-
-## 🧩 Custom Widgets
-
-Standardized UI components built for reusability.
-
-```dart
-import 'package:gmana_flutter/gmana_flutter.dart';
-
-// GAppBar avoids boilerplate and centers titles beautifully
-Scaffold(
-  appBar: GAppBar(
-    title: 'Profile',
-    centerTitle: true,
-  ),
-  body: Column(
-    children: [
-      // Standardize your vertical spacing (uses design system tokens)
-      const SizedBoxHeight(spacing: 24.0),
-
-      // Feature-rich star rating bars
-      StarRatingBar(
-        ratingValue: 4.5,
-        starSize: 20.0,
-        enableHalfStar: true,
-      ),
-    ],
-  )
-)
+```yaml
+dependencies:
+  gmana_flutter: ^0.0.8
 ```
 
----
+## Import
 
-## 📝 Form Controls
+Most public APIs are available from the main entrypoint:
 
-Ready-to-use form fields that wrap `gmana`'s canonical validators with
-config-first APIs and form-friendly defaults.
+```dart
+import 'package:flutter/material.dart';
+import 'package:gmana_flutter/gmana_flutter.dart';
+```
+
+For validator configuration types such as `PasswordValidationConfig` and
+`NumberValidationConfig`, import the core validation entrypoint too:
 
 ```dart
 import 'package:gmana/validation.dart';
+```
+
+## What's Included
+
+- `GAppBar`, `GListTile`, `SizedBoxHeight`, and `StarRatingBar`
+- `GEmailField`, `GPasswordField`, `GNumberField`, `GTextField`, and `GConfirmPasswordField`
+- `GElevatedButton` with a built-in loading state
+- `GCircularSpinner`, `GLinearSpinner`, `GSpinnerDot`, `GWaveSpinner`, and `GSpinnerWaveDot`
+- `GColors` and `GFontWeight` design-system tokens
+- `ColorExt`, `StringColorExtension`, `ThemeModeExt`, `ContextExt`, responsive breakpoints, and icon serialization helpers
+- `ThemeModeService`, `ColorService`, locale conversion helpers, and error handler registration
+
+## App Theme
+
+```dart
+MaterialApp(
+  title: 'gmana_flutter Demo',
+  theme: GColors.lightTheme,
+  darkTheme: GColors.darkTheme,
+  themeMode: 'system'.toThemeMode(),
+  home: const DemoHome(),
+);
+```
+
+## Form Controls
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:gmana/validation.dart';
 import 'package:gmana_flutter/gmana_flutter.dart';
 
-Column(
-  children: [
-    GEmailField(
-      controller: emailController,
-      labelText: 'Email Address',
-      onChanged: (val) => print(val),
-    ),
-    const SizedBoxHeight(),
-    GPasswordField(
-      controller: passwordController,
-      validationConfig: PasswordValidationConfig.strong(),
-      onChanged: (val) => print(val),
-    ),
-    const SizedBoxHeight(),
-    GNumberField(
-      controller: ageController,
-      labelText: 'Age',
-      validationConfig: NumberValidationConfig.positiveInteger(min: 18),
-    ),
-    const SizedBoxHeight(),
-    GElevatedButton(
-      isLoading: false,
-      onPressed: () => submitForm(),
-      text: 'Submit',
-    ),
-  ],
-)
+class SignInForm extends StatelessWidget {
+  const SignInForm({
+    super.key,
+    required this.emailController,
+    required this.passwordController,
+    required this.onSubmit,
+    this.isSubmitting = false,
+  });
+
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final VoidCallback onSubmit;
+  final bool isSubmitting;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        GEmailField(
+          controller: emailController,
+          labelText: 'Email Address',
+        ),
+        const SizedBoxHeight(),
+        GPasswordField(
+          controller: passwordController,
+          validationConfig: PasswordValidationConfig.strong(),
+        ),
+        const SizedBoxHeight(),
+        GElevatedButton(
+          isLoading: isSubmitting,
+          onPressed: onSubmit,
+          text: 'Sign in',
+        ),
+      ],
+    );
+  }
+}
 ```
 
----
-
-## ⏳ Loading Spinners
-
-Ditch raw Material loaders for stylized, branded loading indicators.
+## Loading Indicators
 
 ```dart
-// Easily throw in pre-built spinners across your app
 const GCircularSpinner();
-const GSpinnerDot(color: Colors.blue);
 const GLinearSpinner();
+const GSpinnerDot(color: Colors.blue);
 const GSpinnerWaveDot(size: 24, color: Colors.blue);
+const SizedBox(
+  width: 48,
+  height: 48,
+  child: GWaveSpinner(color: Colors.green),
+);
 ```
 
----
-
-## 🛠 Services & Extensions
-
-### Colors & Contrast Engine
-
-Ensure your text is always readable over dynamic background colors!
+## Color Utilities
 
 ```dart
-final primaryColor = Color(0xFF0055FF);
+const primaryColor = Color(0xFF0055FF);
 
-print(primaryColor.isDark); // true
-print(primaryColor.toHex()); // "#0055FF"
-
-// Automatically returns white/black depending on what's safe
+final hex = primaryColor.toHexRGB(); // '#0055FF'
+final withAlpha = primaryColor.toHexARGB(); // '#FF0055FF'
 final safeTextColor = primaryColor.contrastText;
-
-// Easily lighten/darken UI elements
 final hoverColor = primaryColor.lighten(0.1);
-final activeColor = primaryColor.darken(0.2);
+final pressedColor = primaryColor.darken(0.2);
+
+final parsed = ColorService.tryParseHex('#0055FF');
+final shorthand = '#F50'.toColor();
 ```
 
-### Theme Mode Management
-
-Provides strongly typed `ThemeMode` parsers and human-readable tags for your Settings pages.
+## Theme Mode Helpers
 
 ```dart
-// Convert ThemeModes to Icons or Strings easily
-ThemeMode.dark.toIcon(); // Icons.dark_mode
-ThemeMode.dark.toLabel(); // "Dark Mode"
-
-// Convert from strings (useful when reading from SharedPreferences/SecureStorage)
-'light'.toThemeMode(); // ThemeMode.light
-'system'.toThemeIcon(); // Icons.brightness_6
+final mode = 'dark'.toThemeMode(); // ThemeMode.dark
+final icon = ThemeMode.dark.toIcon(); // Icons.dark_mode
+final label = ThemeMode.dark.toLabel(); // 'Dark Mode'
 ```
 
----
+## Responsive Helpers
 
-## 🎯 Putting it all together
+```dart
+LayoutBuilder(
+  builder: (context, constraints) {
+    final columns = constraints.resolve(
+      mobile: 1,
+      tablet: 2,
+      desktop: 3,
+      widescreen: 4,
+    );
+
+    return GridView.count(
+      crossAxisCount: columns,
+      children: const [],
+    );
+  },
+);
+```
+
+You can also resolve values from a `BuildContext`:
+
+```dart
+final horizontalPadding = context.responsive(
+  mobile: 16.0,
+  tablet: 24.0,
+  desktop: 32.0,
+);
+```
+
+## Icon Serialization
+
+```dart
+final json = Icons.home.toJsonString();
+final icon = IconDataExt.tryParse(json) ?? Icons.broken_image;
+```
+
+## Locale Helpers
+
+```dart
+final tag = fromLocale(const Locale('en', 'US')); // 'en_US'
+final locale = toLocale('km_KH'); // Locale('km', 'KH')
+```
+
+## Complete Mini Example
 
 ```dart
 import 'package:flutter/material.dart';
@@ -172,10 +198,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'gmana_flutter Demo',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeMode: 'system'.toThemeMode(), // Handled elegantly by gmana_flutter
+      theme: GColors.lightTheme,
+      darkTheme: GColors.darkTheme,
+      themeMode: 'system'.toThemeMode(),
       home: const DemoHome(),
     );
   }
@@ -187,18 +212,16 @@ class DemoHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const GAppBar(title: 'Welcome'),
+      appBar: const GAppBar(title: 'gmana_flutter'),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const GSpinnerWaveDot(size: 24, color: Colors.blue),
+            const GSpinnerWaveDot(size: 28, color: GColors.primary),
             const SizedBoxHeight(),
-            Text('Processing Theme Settings...',
-              style: TextStyle(
-                // Auto-contrast!
-                color: Theme.of(context).primaryColor.contrastText
-              )
+            Text(
+              ThemeMode.dark.toLabel(),
+              style: TextStyle(color: GColors.primary.contrastText),
             ),
           ],
         ),
@@ -208,27 +231,8 @@ class DemoHome extends StatelessWidget {
 }
 ```
 
-```dart
-Duration(hours: 1, minutes: 3, seconds: 7).toClockString()      // "1:03:07"
-Duration(minutes: 4, seconds: 2).toClockString()                // "4:02"
-Duration(hours: 2, minutes: 3).toHumanizedString()              // "2 hours 3 minutes"
-Duration(seconds: 45).toHumanizedString()                       // "45 seconds"
-Duration(minutes: 5).toRelativeString()                         // "in 5 minutes"
-Duration(minutes: -3).toRelativeString()                        // "3 minutes ago"
-Duration(seconds: 3).toRelativeString()                         // "just now"
-Duration(hours: 2, minutes: 3).toCompactString()                // "2h 3m"
-Duration(minutes: 1, milliseconds: 500).toVerboseString()       // "1m 0s 500ms"
-```
+## Related Packages
 
-```dart
-// Serialize
-final json = Icons.home.toJsonString();
-
-// Parse — null-safe, caller decides fallback
-final icon = IconDataExt.tryParse(json);             // IconData?
-final icon = IconDataExt.parse(json);                // Icons.question_mark on failure
-final icon = IconDataExt.parse(json, fallback: Icons.error); // custom fallback
-
-// In a widget
-Icon(IconDataExt.tryParse(storedString) ?? Icons.broken_image)
-```
+For pure Dart extensions, functional helpers, and validator logic, use
+[`gmana`](https://pub.dev/packages/gmana). For domain-style value objects, use
+`gmana_value_objects` when it is available on pub.dev.

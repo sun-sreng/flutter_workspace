@@ -121,7 +121,7 @@ extension BreakpointUtils on BoxConstraints {
 
 // ── BuildContext extension ─────────────────────────────────────────────────
 extension ResponsiveContext on BuildContext {
-  Breakpoint get breakpoint => switch (screenSize.width) {
+  Breakpoint get breakpoint => switch (_mq.size.width) {
     < Breakpoints.tablet => Breakpoint.mobile,
     < Breakpoints.desktop => Breakpoint.tablet,
     < Breakpoints.widescreen => Breakpoint.desktop,
@@ -135,7 +135,6 @@ extension ResponsiveContext on BuildContext {
   bool get isMobile => breakpoint.isMobile;
   bool get isTablet => breakpoint.isTablet;
   bool get isWidescreen => breakpoint.isWidescreen;
-  Size get screenSize => _mq.size;
   MediaQueryData get _mq => MediaQuery.of(this);
 
   /// Shorthand for breakpoint-driven value resolution.

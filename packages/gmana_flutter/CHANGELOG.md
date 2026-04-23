@@ -2,6 +2,10 @@
 
 - breaking: rename canonical spinner widgets to `GCircularSpinner`, `GLinearSpinner`, `GWaveSpinner`, and `GSpinnerWaveDot`
 - breaking: remove deprecated spinner aliases and add widget tests for the public form/spinner surface
+- breaking: require Flutter 3.29 or newer to match the package's Dart SDK and modern Flutter API usage
+- breaking: remove the duplicate `ResponsiveContext.screenSize` extension member; use `ContextExt.screenSize` instead
+- polish: expand the main `gmana_flutter.dart` export surface for design tokens, responsive/context helpers, icon serialization, locale helpers, and string/time extensions
+- doc: refresh README examples so the primary import and color APIs are copy-pasteable
 
 ## 0.0.7
 

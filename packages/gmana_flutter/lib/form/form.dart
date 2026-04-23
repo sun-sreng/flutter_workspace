@@ -5,6 +5,8 @@ export 'fields/email_field.dart';
 export 'fields/number_field.dart';
 export 'fields/password_field.dart';
 export 'fields/text_field.dart';
+export 'models/field_config.dart';
+export 'models/input_formatter_provider.dart';
 export 'validators/confirm_password_validator.dart';
 export 'widgets/configured_text_form_field.dart';
 export 'widgets/obscurable_text_form_field.dart';
