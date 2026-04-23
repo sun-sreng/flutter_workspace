@@ -182,23 +182,26 @@ print('Jane Doe'.isValidName); // true
 
 > Wait, there's more! Comprehensive match packages for UUIDs, IPv4/IPv6, Base64, hex colors, and ISBNs are baked in via the `is` and `regex` submodules.
 
-### Form Validator Chains
+### Canonical Validators
 
-A configurable validation engine built around reusable rules and field adapters.
+Typed validators return structured issues via `Either`, and `asFormValidator`
+adapts them to `String? Function(String?)` for Flutter forms.
 
 ```dart
-final passwordRules = [
-  Validators.required(message: 'Password is required'),
-  Validators.minLength(8, message: 'Minimum 8 characters'),
-  Validators.oneUpperCase(message: 'Add an uppercase letter'),
-  Validators.oneSpecial(message: 'Add a special character'),
-];
+final emailResult = const EmailValidator().validate(' User@Example.com ');
+print(emailResult.getRight()); // "user@example.com"
 
-final error = Validators.validate('weakpass', passwordRules);
-print(error); // "Add an uppercase letter"
+final passwordResult = const PasswordValidator().validate('weakpass');
+print(
+  passwordResult.fold(resolvePasswordValidationIssue, (_) => null),
+); // "Minimum 8 characters"
 
-final emailValidator = const EmailFieldValidator();
-print(emailValidator.validate('user@example.com')); // null
+final emailFormValidator = asFormValidator(
+  validate: const EmailValidator().validate,
+  resolve: resolveEmailValidationIssue,
+);
+
+print(emailFormValidator('invalid-email')); // "Please enter a valid email address"
 ```
 
 ---

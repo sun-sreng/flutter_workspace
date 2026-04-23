@@ -1,31 +1,54 @@
-import 'package:gmana/validator/number_field_validator.dart';
+import 'package:gmana/validation.dart' hide isNull;
 import 'package:test/test.dart';
 
 void main() {
-  group('NumberFieldValidator', () {
+  group('NumberValidator', () {
     test('rejects empty values', () {
-      expect(
-        const NumberFieldValidator().validate(null),
-        'Please enter a number',
-      );
-      expect(
-        const NumberFieldValidator().validate(''),
-        'Please enter a number',
-      );
+      final result = const NumberValidator().validate('');
+
+      expect(result.leftOrNull(), isA<NumberEmptyIssue>());
     });
 
-    test('rejects non-numeric values', () {
-      expect(
-        const NumberFieldValidator().validate('abc'),
-        'Please enter a valid number',
-      );
+    test('trims and parses valid numbers', () {
+      final result = const NumberValidator().validate(' 12.5 ');
+
+      expect(result.rightOrNull(), 12.5);
     });
 
-    test('validates bounds', () {
-      const validator = NumberFieldValidator(minValue: 10, maxValue: 20);
-      expect(validator.validate('9'), 'Number must be at least 10');
-      expect(validator.validate('21'), 'Number must be at most 20');
-      expect(validator.validate('15'), isNull);
+    test('rejects malformed values', () {
+      final result = const NumberValidator().validate('abc');
+
+      expect(result.leftOrNull(), isA<NumberInvalidFormatIssue>());
+    });
+
+    test('enforces integer-only validation', () {
+      final result = NumberValidator(
+        const NumberValidationConfig(integerOnly: true),
+      ).validate('12.5');
+
+      expect(result.leftOrNull(), isA<NumberNotIntegerIssue>());
+    });
+
+    test('enforces negativity and bounds', () {
+      final validator = NumberValidator(
+        const NumberValidationConfig(allowNegative: false, min: 10, max: 20),
+      );
+
+      expect(
+        validator.validate('-1').leftOrNull(),
+        isA<NumberNegativeNotAllowedIssue>(),
+      );
+      expect(validator.validate('9').leftOrNull(), isA<NumberTooSmallIssue>());
+      expect(validator.validate('21').leftOrNull(), isA<NumberTooLargeIssue>());
+      expect(validator.validate('15').rightOrNull(), 15);
+    });
+
+    test('enforces decimal-place limits', () {
+      final result = NumberValidator(
+        const NumberValidationConfig(maxDecimalPlaces: 2),
+      ).validate('1.234');
+
+      expect(result.leftOrNull(), isA<NumberDecimalPlacesExceededIssue>());
     });
   });
 }

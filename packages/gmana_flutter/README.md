@@ -70,9 +70,13 @@ Scaffold(
 
 ## 📝 Form Controls
 
-Ready-to-use form fields that wrap robust validation out of the box (when paired with `gmana`'s text validators).
+Ready-to-use form fields that wrap `gmana`'s canonical validators with
+config-first APIs and form-friendly defaults.
 
 ```dart
+import 'package:gmana/validation.dart';
+import 'package:gmana_flutter/gmana_flutter.dart';
+
 Column(
   children: [
     GEmailField(
@@ -83,7 +87,14 @@ Column(
     const SizedBoxHeight(),
     GPasswordField(
       controller: passwordController,
+      validationConfig: PasswordValidationConfig.strong(),
       onChanged: (val) => print(val),
+    ),
+    const SizedBoxHeight(),
+    GNumberField(
+      controller: ageController,
+      labelText: 'Age',
+      validationConfig: NumberValidationConfig.positiveInteger(min: 18),
     ),
     const SizedBoxHeight(),
     GElevatedButton(

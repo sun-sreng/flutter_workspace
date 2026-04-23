@@ -1,10 +1,11 @@
 import 'package:gmana/is/is_alpha.dart' as v_alpha;
 import 'package:gmana/is/is_alpha_numeric.dart' as v_alphanumeric;
 import 'package:gmana/is/is_credit_card.dart' as v_credit_card;
-import 'package:gmana/is/is_email.dart' as v_email;
 import 'package:gmana/is/is_hex_color.dart' as v_hex_color;
 import 'package:gmana/is/is_numeric.dart' as v_numeric;
 import 'package:gmana/is/is_uuid.dart' as v_uuid;
+import 'package:gmana/validator/email_validator.dart';
+import 'package:gmana/validator/password_validator.dart';
 
 /// Represents the strength grading of a given password.
 class PasswordStrength {
@@ -95,7 +96,7 @@ extension StringValidation on String {
 
   /// RFC-5321-aligned. Handles subdomains, hyphens, multi-part TLDs.
   /// Still a heuristic — true validation requires sending a mail.
-  bool get isValidEmail => v_email.isEmail(trim());
+  bool get isValidEmail => const EmailValidator().validate(this).isRight();
 
   /// Checks if the string is a valid hexadecimal color mapping (e.g. #FFF or #FFFFFF).
   bool get isValidHexColor => v_hex_color.isHexColor(this);
@@ -129,12 +130,7 @@ extension StringValidation on String {
   /// At least 8 chars, one uppercase, one lowercase, one digit,
   /// one non-alphanumeric character (any — not a fixed whitelist).
   bool get isValidPassword {
-    if (length < 8) return false;
-    final hasUpper = RegExp(r'[A-Z]').hasMatch(this);
-    final hasLower = RegExp(r'[a-z]').hasMatch(this);
-    final hasDigit = RegExp(r'\d').hasMatch(this);
-    final hasSpecial = RegExp(r'[^A-Za-z\d]').hasMatch(this);
-    return hasUpper && hasLower && hasDigit && hasSpecial;
+    return const PasswordValidator().validate(this).isRight();
   }
 
   /// Strips formatting then checks for 7–15 digits (ITU-T E.164 range).
@@ -160,12 +156,13 @@ extension StringValidation on String {
 
   /// Returns which password requirements are unmet — useful for live UI feedback.
   PasswordStrength get passwordStrength {
+    const config = PasswordValidationConfig();
     return PasswordStrength(
-      hasMinLength: length >= 8,
-      hasUppercase: RegExp(r'[A-Z]').hasMatch(this),
-      hasLowercase: RegExp(r'[a-z]').hasMatch(this),
-      hasDigit: RegExp(r'\d').hasMatch(this),
-      hasSpecial: RegExp(r'[^A-Za-z\d]').hasMatch(this),
+      hasMinLength: length >= config.minLength,
+      hasUppercase: PasswordValidator.hasUppercase(this),
+      hasLowercase: PasswordValidator.hasLowercase(this),
+      hasDigit: PasswordValidator.hasDigit(this),
+      hasSpecial: PasswordValidator.hasSpecialCharacter(this),
     );
   }
 

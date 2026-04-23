@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gmana/validator/email_field_validator.dart';
+import 'package:gmana/validation.dart';
 import 'package:gmana_flutter/form/models/field_config.dart';
 
 import '../widgets/configured_text_form_field.dart';
@@ -15,7 +15,9 @@ class GEmailField extends GBaseField {
     String? hintText,
     TextInputAction? textInputAction,
     List<TextInputFormatter>? inputFormatters,
-    String? Function(String?)? additionalValidator,
+    EmailValidationConfig? validationConfig,
+    ValidationMessageResolver<EmailValidationIssue>? validationMessageResolver,
+    String? Function(String?)? validatorOverride,
     void Function(String)? onChanged,
     IconData? prefixIcon,
   }) : super(
@@ -26,10 +28,14 @@ class GEmailField extends GBaseField {
            keyboardType: TextInputType.emailAddress,
            textInputAction: textInputAction ?? TextInputAction.next,
            inputFormatters: inputFormatters,
-           validator:
-               EmailFieldValidator(
-                 additionalValidator: additionalValidator,
-               ).validate,
+           validator: asFormValidator(
+             validate:
+                 EmailValidator(
+                   validationConfig ?? const EmailValidationConfig(),
+                 ).validate,
+             resolve: validationMessageResolver ?? resolveEmailValidationIssue,
+             validatorOverride: validatorOverride,
+           ),
            onChanged: onChanged,
            prefixIcon: prefixIcon ?? Icons.email,
          ),

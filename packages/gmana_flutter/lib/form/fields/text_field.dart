@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gmana/validation.dart';
 
 import '../models/field_config.dart';
 import '../widgets/configured_text_form_field.dart';
@@ -14,7 +15,9 @@ class GTextField extends GBaseField {
     String? hintText,
     TextInputAction? textInputAction,
     List<TextInputFormatter>? inputFormatters,
-    String? Function(String?)? validator,
+    TextValidationConfig? validationConfig,
+    ValidationMessageResolver<TextValidationIssue>? validationMessageResolver,
+    String? Function(String?)? validatorOverride,
     void Function(String)? onChanged,
     IconData? prefixIcon,
   }) : super(
@@ -25,7 +28,14 @@ class GTextField extends GBaseField {
            keyboardType: TextInputType.text,
            textInputAction: textInputAction ?? TextInputAction.next,
            inputFormatters: inputFormatters,
-           validator: validator,
+           validator: asFormValidator(
+             validate:
+                 TextValidator(
+                   validationConfig ?? const TextValidationConfig(),
+                 ).validate,
+             resolve: validationMessageResolver ?? resolveTextValidationIssue,
+             validatorOverride: validatorOverride,
+           ),
            onChanged: onChanged,
            prefixIcon: prefixIcon ?? Icons.text_fields,
          ),

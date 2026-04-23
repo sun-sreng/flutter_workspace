@@ -1,24 +1,81 @@
-import 'package:flutter/material.dart';
-import 'package:gmana/validator/string_field_validator.dart';
+import 'package:gmana/functional.dart';
+import 'package:gmana/validation.dart';
 
-/// Validator for confirming passwords match.
-class ConfirmPasswordValidator implements StringFieldValidator {
-  final TextEditingController passwordController;
-  final String? Function(String?)? additionalValidator;
+/// Configuration for confirm-password validation.
+final class ConfirmPasswordValidationConfig {
+  /// Whether an empty confirmation is allowed.
+  final bool requireConfirmation;
 
-  const ConfirmPasswordValidator({
-    required this.passwordController,
-    this.additionalValidator,
+  /// Whether both values should be trimmed before comparison.
+  final bool trimWhitespace;
+
+  /// Creates a confirm-password validation config.
+  const ConfirmPasswordValidationConfig({
+    this.requireConfirmation = true,
+    this.trimWhitespace = false,
   });
+}
+
+/// Base type for confirm-password validation failures.
+sealed class ConfirmPasswordValidationIssue extends ValidationIssue {
+  const ConfirmPasswordValidationIssue();
+}
+
+/// Confirmation input is empty.
+final class ConfirmPasswordEmptyIssue extends ConfirmPasswordValidationIssue {
+  const ConfirmPasswordEmptyIssue();
 
   @override
-  String? validate(String? value) {
-    if (value != passwordController.text) {
-      return 'Passwords do not match';
+  String get code => 'confirmPassword.empty';
+}
+
+/// Confirmation input does not match the original password.
+final class ConfirmPasswordMismatchIssue
+    extends ConfirmPasswordValidationIssue {
+  const ConfirmPasswordMismatchIssue();
+
+  @override
+  String get code => 'confirmPassword.mismatch';
+}
+
+/// Default English messages for confirm-password validation issues.
+String resolveConfirmPasswordValidationIssue(
+  ConfirmPasswordValidationIssue issue,
+) {
+  return switch (issue) {
+    ConfirmPasswordEmptyIssue() => 'Please confirm your password',
+    ConfirmPasswordMismatchIssue() => 'Passwords do not match',
+  };
+}
+
+/// Validator for confirm-password values.
+final class ConfirmPasswordValidator {
+  /// Rules used during validation.
+  final ConfirmPasswordValidationConfig config;
+
+  /// Creates a confirm-password validator.
+  const ConfirmPasswordValidator([
+    this.config = const ConfirmPasswordValidationConfig(),
+  ]);
+
+  /// Validates a password/confirmation pair.
+  ValidationResult<ConfirmPasswordValidationIssue, String> validate({
+    required String password,
+    required String confirmation,
+  }) {
+    final normalizedPassword =
+        config.trimWhitespace ? password.trim() : password;
+    final normalizedConfirmation =
+        config.trimWhitespace ? confirmation.trim() : confirmation;
+
+    if (config.requireConfirmation && normalizedConfirmation.isEmpty) {
+      return const Left(ConfirmPasswordEmptyIssue());
     }
-    if (additionalValidator != null) {
-      return additionalValidator!(value);
+
+    if (normalizedConfirmation != normalizedPassword) {
+      return const Left(ConfirmPasswordMismatchIssue());
     }
-    return null;
+
+    return Right(normalizedConfirmation);
   }
 }

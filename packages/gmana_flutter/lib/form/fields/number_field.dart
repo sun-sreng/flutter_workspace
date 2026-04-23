@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gmana/validator/number_field_validator.dart';
+import 'package:gmana/validation.dart';
 
 import '../models/field_config.dart';
 import '../widgets/configured_text_form_field.dart';
@@ -14,28 +14,33 @@ class GNumberField extends GBaseField {
     required String labelText,
     String? hintText,
     TextInputAction? textInputAction,
-    List<TextInputFormatter>? additionalFormatters,
-    String? Function(String?)? additionalValidator,
+    List<TextInputFormatter>? inputFormatters,
+    NumberValidationConfig? validationConfig,
+    ValidationMessageResolver<NumberValidationIssue>? validationMessageResolver,
+    String? Function(String?)? validatorOverride,
     void Function(String)? onChanged,
-    int? minValue,
-    int? maxValue,
   }) : super(
          config: GFieldConfig(
            controller: controller,
            labelText: labelText,
            hintText: hintText ?? '',
-           keyboardType: TextInputType.number,
+           keyboardType: TextInputType.numberWithOptions(
+             signed: _effectiveValidationConfig(validationConfig).allowNegative,
+             decimal: !_effectiveValidationConfig(validationConfig).integerOnly,
+           ),
            textInputAction: textInputAction ?? TextInputAction.next,
-           inputFormatters: [
-             FilteringTextInputFormatter.digitsOnly,
-             if (additionalFormatters != null) ...additionalFormatters,
-           ],
-           validator:
-               NumberFieldValidator(
-                 minValue: minValue,
-                 maxValue: maxValue,
-                 additionalValidator: additionalValidator,
-               ).validate,
+           inputFormatters: _buildInputFormatters(
+             inputFormatters: inputFormatters,
+             validationConfig: validationConfig,
+           ),
+           validator: asFormValidator(
+             validate:
+                 NumberValidator(
+                   _effectiveValidationConfig(validationConfig),
+                 ).validate,
+             resolve: validationMessageResolver ?? resolveNumberValidationIssue,
+             validatorOverride: validatorOverride,
+           ),
            onChanged: onChanged,
            prefixIcon: Icons.onetwothree,
          ),
@@ -44,5 +49,34 @@ class GNumberField extends GBaseField {
   @override
   Widget build(BuildContext context) {
     return GConfiguredTextFormField(config: config);
+  }
+
+  static NumberValidationConfig _effectiveValidationConfig(
+    NumberValidationConfig? validationConfig,
+  ) {
+    return validationConfig ??
+        const NumberValidationConfig(allowNegative: false, integerOnly: true);
+  }
+
+  static List<TextInputFormatter>? _buildInputFormatters({
+    required List<TextInputFormatter>? inputFormatters,
+    required NumberValidationConfig? validationConfig,
+  }) {
+    final config = _effectiveValidationConfig(validationConfig);
+    final defaultFormatter = switch ((
+      config.integerOnly,
+      config.allowNegative,
+    )) {
+      (true, false) => FilteringTextInputFormatter.digitsOnly,
+      (true, true) => FilteringTextInputFormatter.allow(RegExp(r'^-?\d*$')),
+      (false, false) => FilteringTextInputFormatter.allow(
+        RegExp(r'^\d*\.?\d*$'),
+      ),
+      (false, true) => FilteringTextInputFormatter.allow(
+        RegExp(r'^-?\d*\.?\d*$'),
+      ),
+    };
+
+    return [defaultFormatter, if (inputFormatters != null) ...inputFormatters];
   }
 }

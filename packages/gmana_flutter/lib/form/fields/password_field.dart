@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gmana/validation.dart';
 
 import '../models/field_config.dart';
 import '../widgets/obscurable_text_form_field.dart';
@@ -13,7 +14,10 @@ class GPasswordField extends GBaseField {
     String? hintText,
     TextInputAction? textInputAction,
     List<TextInputFormatter>? inputFormatters,
-    String? Function(String?)? validator,
+    PasswordValidationConfig? validationConfig,
+    ValidationMessageResolver<PasswordValidationIssue>?
+    validationMessageResolver,
+    String? Function(String?)? validatorOverride,
     void Function(String)? onChanged,
   }) : super(
          config: GFieldConfig(
@@ -23,7 +27,15 @@ class GPasswordField extends GBaseField {
            keyboardType: TextInputType.visiblePassword,
            textInputAction: textInputAction ?? TextInputAction.done,
            inputFormatters: inputFormatters,
-           validator: validator,
+           validator: asFormValidator(
+             validate:
+                 PasswordValidator(
+                   validationConfig ?? const PasswordValidationConfig(),
+                 ).validate,
+             resolve:
+                 validationMessageResolver ?? resolvePasswordValidationIssue,
+             validatorOverride: validatorOverride,
+           ),
            onChanged: onChanged,
            prefixIcon: Icons.lock,
          ),
