@@ -1,248 +1,239 @@
 # gmana_value_objects
 
-<p align="center">
-  Production-ready domain value objects with configurable validation for Email, Password, Text, Number, and Money types, built on gmana.
-</p>
+Production-ready domain value objects with configurable validation for Email,
+Password, Text, Number, and Money types, built on top of `gmana`.
 
----
+`gmana_value_objects` is pure Dart and framework independent. Use it in CLI
+apps, Dart servers, Flutter apps, or shared domain packages when you want typed
+values, `Either`-based validation, and rich error models.
 
-> **Note:** This package is **pure Dart** and perfectly framework independent. You can run these validation objects in your CLI APIs, dart servers, or native Flutter applications.
-> Use `gmana` for low-level rules and field validators; use `gmana_value_objects` when you want typed domain validation and rich error models.
+Use `gmana` for low-level rules and field validators. Use
+`gmana_value_objects` when input should become a typed domain value before it
+moves deeper into your application.
 
-For a complete API guide with examples for every value object, validator, and
-error type, see [doc/api.md](doc/api.md).
-For ecommerce money modeling details, see [doc/money.md](doc/money.md).
+For complete API examples, see [doc/api.md](doc/api.md). For ecommerce money
+modeling, see [doc/money.md](doc/money.md).
 
-## 🚀 Installation
-
-Add `gmana_value_objects` to your `pubspec.yaml` dependencies:
+## Installation
 
 ```yaml
 dependencies:
-  gmana_value_objects: ^0.0.4 # Please check pub.dev for the latest version
+  gmana_value_objects: ^0.0.5
 ```
 
-Or install it via CLI:
+Or install it from the command line:
 
 ```bash
 dart pub add gmana_value_objects
 ```
 
----
+## Features
 
-## 🎨 Features Overview
+- Typed value objects for `Email`, `Password`, `TextValue`, `NumberValue`, and
+  `Money`.
+- Pure validators for each type when you want `Either<ValidationError, T>`
+  without constructing a value object.
+- Sealed error hierarchies for exhaustive `switch` handling.
+- Stable `ValidationError.code` values for logs, APIs, analytics, and UI keys.
+- Configurable validation presets for common application constraints.
+- Default English validation messages with a small interface for i18n.
+- Currency-aware money stored as exact integer minor units.
 
-- ✅ **Type-safe validation:** Extensively uses sealed error hierarchies allowing easy pattern-matching via `switch`.
-- ✅ **Configurable Ensembles:** Custom `ValidationConfig`s adapt identically required constraints directly (Strictness rules, pattern-overrides).
-- ✅ **Domain Separated:** Prevents 'string-ly typed' architectures by securely validating input the moment it enters the application domain.
-- ✅ **i18n ready:** Localize error results via simple switch maps over the `ValidationError` base classes.
-
----
-
-## 🧩 Usage Models
-
-### Formulating Emails
+## Quick Start
 
 ```dart
 import 'package:gmana_value_objects/gmana_value_objects.dart';
 
-// Basic Usage
 final email = Email('user@example.com');
 
 if (email.isValid) {
-  print('Email is safe: ${email.valueOrNull}');
+  print(email.valueOrNull); // user@example.com
 } else {
-  print('Rejection Trigger: ${email.errorOrNull}');
+  print(email.errorOrNull?.code);
 }
+```
 
-// Configurable constraints: Automatically block temporary mail structures
+Every value object exposes:
+
+| API | Meaning |
+| --- | --- |
+| `value` | Full `Either<ValidationError, T>` validation result. |
+| `isValid` / `isInvalid` | Boolean validation state. |
+| `valueOrNull` | Valid typed value, or `null`. |
+| `errorOrNull` | Validation error, or `null`. |
+| `isSensitive` | `true` for sensitive objects such as `Password`. |
+
+## Email
+
+```dart
+final email = Email('USER@Example.COM');
+print(email.valueOrNull); // user@example.com
+
 final strictEmail = Email(
   'user@tempmail.com',
   config: EmailValidationConfig.strict(),
 );
+
+switch (strictEmail.errorOrNull) {
+  case EmailDisposableDomain(:final domain):
+    print('Disposable domain: $domain');
+  case null:
+    print('Valid email');
+  default:
+    print('Invalid email');
+}
 ```
 
-### Guarding Passwords
+Email validation supports format checks, max lengths, disposable domains, and
+custom blocked domains.
 
-Never roll your own password complexity algorithms! Pre-tested templates assure compliance.
+## Password
 
 ```dart
-// Enforce standard enterprise leniency or strictness
-final lenientPassword = Password('test', config: PasswordValidationConfig.lenient());
-final strictPassword = Password('MyP@ssw0rd!2024', config: PasswordValidationConfig.strict());
-
-// Custom Security Needs
-final customPassword = Password(
-  'mypassword',
-  config: PasswordValidationConfig(
-    minLength: 12,
-    minComplexityScore: 3,
-    commonPasswords: {'mypassword', 'companyname123'},
-  ),
+final password = Password(
+  'MyP@ssw0rd!2026',
+  config: PasswordValidationConfig.strict(),
 );
+
+print(password.isSensitive); // true
+print(password.toString()); // Password(valid)
 ```
 
-### Contextual Text Parsing
+Password validation supports min/max length, ASCII-only rules, common password
+checks, predictable sequence checks, and complexity scoring.
 
-Easily guard text models against dangerous payloads using standard presets or bespoke configurations.
+## Text
 
 ```dart
-final username = TextValue('john_doe', config: TextValidationConfig.username());
-final firstName = TextValue('John', config: TextValidationConfig.name());
-final description = TextValue('A longer description...', config: TextValidationConfig.mediumText());
+final username = TextValue(
+  'john_doe',
+  config: TextValidationConfig.username(),
+);
 
-// Custom Text validation regex and filtering
-final filteredText = TextValue(
+final title = TextValue(
   'Hello World',
   config: TextValidationConfig(
     minLength: 5,
     maxLength: 50,
     pattern: r'^[a-zA-Z\s]+$',
     blacklistedWords: {'spam', 'banned'},
-    trimWhitespace: true,
   ),
 );
 ```
 
-### Controlling Numbers
+Text validation supports trimming, empty/whitespace rules, length bounds,
+regular expressions, allowed characters, blacklisted words, and common presets.
 
-Preventing negative integers magically without `double.tryParse` headaches.
+## Number
 
 ```dart
 final age = NumberValue('25', config: NumberValidationConfig.age());
 final price = NumberValue('19.99', config: NumberValidationConfig.price());
-final rating = NumberValue('4', config: NumberValidationConfig.rating());
-final percentage = NumberValue('85.5', config: NumberValidationConfig.percentage());
-
-// Create securely directly from num instead of parsing strings!
-final quantity = NumberValue.fromNum(10, config: NumberValidationConfig.positiveInteger());
+final quantity = NumberValue.fromNum(
+  10,
+  config: NumberValidationConfig.positiveInteger(),
+);
 ```
 
-### Modeling Money
+Number validation supports min/max bounds, integer-only mode, negative controls,
+decimal-place limits, finite number checks, and presets for age, rating,
+percentage, prices, and integer values.
 
-Represent prices and balances with a currency-aware value object backed by exact minor units.
+## Money
+
+`Money` stores exact integer minor units with currency metadata, so arithmetic
+does not depend on floating-point decimal storage.
 
 ```dart
-final usd = Money.fromDecimalString('19.99', Currency.usd);
-final khr = Money.fromDecimalString('1200', Currency.khr);
-const exact = Money(minorUnits: 1234, currency: Currency.usd); // USD 12.34
-
-print(usd.minorUnits); // 1999
-print(usd.currency.code); // USD
-
-// Ecommerce-safe line totals and discounts use exact minor units.
 final unitPrice = Money.fromDecimalString('19.99', Currency.usd);
 final shipping = Money.fromDecimalString('5.00', Currency.usd);
 final total = unitPrice * 2 + shipping;
 final discounted = total.applyDiscountPercent(10);
 
+print(unitPrice.minorUnits); // 1999
 print(discounted.formatted); // $40.48
 ```
 
----
+Money supports:
 
-## 🎯 Clean Architecture Workflows
-
-### Native Flutter Forms
-
-Take advantage of the natively-bundled `DefaultValidationErrorMessages` for super-fast prototypes!
+- exact minor-unit storage, such as cents for USD
+- zero, major/minor, decimal string, numeric, and `MoneyAmount` constructors
+- same-currency arithmetic and comparison
+- half-up rounding for multiplication and percentages
+- proportional allocation without losing remainders
+- deterministic display strings and API decimal strings
+- `MoneyValidator` for `Either`-based form and pipeline validation
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:gmana_value_objects/gmana_value_objects.dart';
+final result = MoneyValidator(MoneyValidationConfig.ecommerce())
+    .validate('1,234.56', currency: 'USD');
 
-class _SignUpFormState extends State<SignUpForm> {
-  Email? _email;
-  final _messages = DefaultValidationErrorMessages();
+result.fold(
+  (error) => print(DefaultValidationErrorMessages().getMessage(error)),
+  (amount) => print(amount.formattedWithCode), // USD 1234.56
+);
+```
 
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: 'Email',
-        errorText: _email?.errorOrNull != null
-          ? _messages.getMessage(_email!.errorOrNull!)
-          : null,
-      ),
-      onChanged: (val) => setState(() => _email = Email(val)),
-    );
-  }
+## Default Messages
+
+```dart
+final messages = DefaultValidationErrorMessages();
+final email = Email('invalid');
+
+if (email.errorOrNull case final error?) {
+  print(messages.getMessage(error)); // Invalid email format
 }
 ```
 
-### Tying cleanly to state providers (Riverpod etc.)
-
-Your provider logic should never leak Domain validation details to Presentation. Ensure the entire state holds safe values!
+For app-specific localization, switch on `ValidationError` subclasses directly:
 
 ```dart
-class SignUpNotifier extends StateNotifier<SignUpState> {
-  SignUpNotifier() : super(const SignUpState());
-
-  void onEmailChanged(String value) {
-    state = state.copyWith(email: Email(value));
-  }
-
-  Future<void> submit() async {
-    // Prevent interaction explicitly
-    if (state.email?.isValid != true) return;
-
-    // We securely unwrap valueOrNull securely knowing it is completely filtered.
-    await _authService.signUp(
-      email: state.email!.valueOrNull!,
-    );
-  }
+String localize(ValidationError error) {
+  return switch (error) {
+    EmailEmpty() => 'Email is required',
+    EmailInvalidFormat() => 'Enter a valid email',
+    PasswordTooShort(:final minLength) =>
+      'Use at least $minLength characters',
+    _ => DefaultValidationErrorMessages().getMessage(error),
+  };
 }
 ```
 
-### I18N (Localizing your validation exceptions)
+## Composing With gmana
 
-Translating validation is extremely intuitive effectively leaning on Dart 3 pattern matching!
-
-```dart
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:gmana_value_objects/gmana_value_objects.dart';
-
-extension ValidationErrorL10n on ValidationError {
-  String localize(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    return switch (this) {
-      EmailEmpty() => l10n.errorEmailEmpty,
-      EmailInvalidFormat() => l10n.errorEmailInvalid,
-      PasswordTooShort(:final minLength) => l10n.errorPasswordTooShort(minLength),
-
-      // Fallback
-      _ => DefaultValidationErrorMessages().getMessage(this),
-    };
-  }
-}
-```
-
----
-
-## ⛓ Mapping to your Core Architectures (`gmana`)
-
-`gmana_value_objects` uses `gmana`'s `Either<ValidationError, T>` under the hood and re-exports `Either`, `Left`, and `Right`, so the value-object API stays aligned with the rest of the `gmana` package family.
+This package re-exports `Either`, `Left`, and `Right` from `gmana`, so value
+object validation can compose with your own domain failures.
 
 ```dart
 import 'package:gmana_value_objects/gmana_value_objects.dart' as vo;
 
 sealed class Failure {}
+
 final class ValidationFailure extends Failure {
-  final vo.ValidationError error;
   ValidationFailure(this.error);
+
+  final vo.ValidationError error;
 }
 
 final class AppEmail {
-  final vo.Either<Failure, String> value;
+  const AppEmail._(this.value);
 
   factory AppEmail(String input) {
     return AppEmail._(
-      // Safely swap value-object errors for native Domain Failure variants
-      vo.Email(input).value.mapLeft((error) => ValidationFailure(error)),
+      vo.Email(input).value.mapLeft(ValidationFailure.new),
     );
   }
 
-  const AppEmail._(this.value);
+  final vo.Either<Failure, String> value;
 }
 ```
+
+## Documentation
+
+- [API guide](doc/api.md)
+- [Email](doc/email.md)
+- [Password](doc/password.md)
+- [Text](doc/text.md)
+- [Number](doc/number.md)
+- [Money](doc/money.md)
+- [Default validation messages](doc/default_validation_error_messages.md)

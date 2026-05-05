@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.0.5 - 2026-05-05
+
+### Added
+
+- Add `Money`, `MoneyAmount`, `Currency`, `MoneyValidator`, money validation errors, and money validation config for currency-aware ecommerce amounts stored in exact minor units.
+- Add money documentation covering construction, parsing, formatting, arithmetic, allocation, validation, and DTO mapping.
+- Add `ValidationError.code` for stable machine-readable error codes derived from validation error type names.
+- Add focused API docs for email, password, text, number, money, and default validation messages.
+- Add broader test coverage for all value objects, validators, default messages, money arithmetic, money parsing, and validator edge cases.
+
+### Changed
+
+- Money decimal parsing now rejects excess fractional digits instead of silently truncating them.
+- Money precision now consistently comes from `Currency` metadata.
+- Email domain deny/disposable lists are normalized before comparison.
+- Number validation rejects non-finite values and counts decimal places from decimal input text.
+
 ## 0.0.4 - 2026-04-23
 
 ### Changed
