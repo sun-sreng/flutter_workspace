@@ -52,12 +52,18 @@ void main() {
       const validator = TextValidator(
         TextValidationConfig(minLength: 3, maxLength: 5),
       );
-      validator
-          .validate('hi')
-          .fold((l) => expect(l, isA<TextTooShort>()), (r) => fail(''));
-      validator
-          .validate('hello!')
-          .fold((l) => expect(l, isA<TextTooLong>()), (r) => fail(''));
+      validator.validate('hi').fold((l) {
+        expect(l, isA<TextTooShort>());
+        final error = l as TextTooShort;
+        expect(error.currentLength, 2);
+        expect(error.minLength, 3);
+      }, (r) => fail(''));
+      validator.validate('hello!').fold((l) {
+        expect(l, isA<TextTooLong>());
+        final error = l as TextTooLong;
+        expect(error.currentLength, 6);
+        expect(error.maxLength, 5);
+      }, (r) => fail(''));
       expect(validator.validate('hey').isRight(), true);
     });
 
@@ -66,9 +72,10 @@ void main() {
         TextValidationConfig(pattern: r'^[0-9]+$'),
       );
       expect(validator.validate('12345').isRight(), true);
-      validator
-          .validate('123a')
-          .fold((l) => expect(l, isA<TextInvalidPattern>()), (r) => fail(''));
+      validator.validate('123a').fold((l) {
+        expect(l, isA<TextInvalidPattern>());
+        expect((l as TextInvalidPattern).pattern, r'^[0-9]+$');
+      }, (r) => fail(''));
     });
 
     test('validates allowedCharacters', () {
@@ -86,12 +93,10 @@ void main() {
       const validator = TextValidator(
         TextValidationConfig(blacklistedWords: {'bad', 'ugly'}),
       );
-      validator
-          .validate('this is a bAd word')
-          .fold(
-            (l) => expect(l, isA<TextContainsBlacklisted>()),
-            (r) => fail(''),
-          );
+      validator.validate('this is a bAd word').fold((l) {
+        expect(l, isA<TextContainsBlacklisted>());
+        expect((l as TextContainsBlacklisted).foundWords, ['bad']);
+      }, (r) => fail(''));
       expect(validator.validate('good words only').isRight(), true);
     });
 
@@ -117,6 +122,24 @@ void main() {
         ).validate('abc123').isRight(),
         true,
       );
+      expect(
+        TextValidator(
+          TextValidationConfig.shortText(),
+        ).validate('Short title').isRight(),
+        true,
+      );
+      expect(
+        TextValidator(
+          TextValidationConfig.mediumText(),
+        ).validate('A medium description').isRight(),
+        true,
+      );
+      expect(
+        TextValidator(
+          TextValidationConfig.longText(),
+        ).validate('A long body of text').isRight(),
+        true,
+      );
     });
   });
 
@@ -125,6 +148,7 @@ void main() {
       final text = TextValue('hello');
       expect(text.isValid, true);
       expect(text.valueOrNull, 'hello');
+      expect(text.errorOrNull, null);
       expect(text.toString(), 'TextValue(hello)');
     });
 
@@ -136,6 +160,14 @@ void main() {
       expect(text.isInvalid, true);
       expect(text.errorOrNull, isA<TextEmpty>());
       expect(text.toString(), 'TextValue(invalid)');
+    });
+
+    test('creates TextValue from validated result', () {
+      final validated = TextValidator().validate('hello');
+      final text = TextValue.validated(validated);
+
+      expect(text.isValid, true);
+      expect(text.valueOrNull, 'hello');
     });
   });
 }

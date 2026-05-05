@@ -17,6 +17,17 @@ void main() {
       });
     });
 
+    test('uses normalized default currency', () {
+      const validator = MoneyValidator(
+        MoneyValidationConfig(defaultCurrency: ' usd '),
+      );
+
+      validator.validate('12.34').fold((l) => fail('should be right'), (money) {
+        expect(money.currency, Currency.usd);
+        expect(money.minorUnits, 1234);
+      });
+    });
+
     test('returns MoneyEmpty for empty string', () {
       const validator = MoneyValidator();
       final result = validator.validate('');
@@ -29,12 +40,20 @@ void main() {
 
     test('returns MoneyInvalidFormat for unparsable amount', () {
       const validator = MoneyValidator();
-      final result = validator.validate('12.3.4');
-
-      result.fold(
-        (l) => expect(l, isA<MoneyInvalidFormat>()),
-        (r) => fail('should be left'),
-      );
+      for (final input in [
+        '12.3.4',
+        'NaN',
+        'Infinity',
+        '1,23.45',
+        '1,234,56',
+      ]) {
+        validator
+            .validate(input)
+            .fold(
+              (l) => expect(l, isA<MoneyInvalidFormat>()),
+              (r) => fail('should be left'),
+            );
+      }
     });
 
     test('rejects too many decimal places for validator input', () {
@@ -114,6 +133,58 @@ void main() {
       expect(validator.validate('5.00').isRight(), true);
     });
 
+    test('validates exact minor-unit input', () {
+      const validator = MoneyValidator(
+        MoneyValidationConfig(minMinorUnits: 100, maxMinorUnits: 500),
+      );
+
+      validator.validateMinorUnits(123, currency: 'USD').fold(
+        (l) => fail('should be right'),
+        (money) {
+          expect(money.currency, Currency.usd);
+          expect(money.minorUnits, 123);
+          expect(money.decimalString, '1.23');
+        },
+      );
+
+      validator
+          .validateMinorUnits(-1)
+          .fold(
+            (l) => expect(l, isA<MoneyNegativeNotAllowed>()),
+            (r) => fail('should be left'),
+          );
+      validator
+          .validateMinorUnits(99)
+          .fold(
+            (l) => expect(l, isA<MoneyTooSmall>()),
+            (r) => fail('should be left'),
+          );
+      validator
+          .validateMinorUnits(501)
+          .fold(
+            (l) => expect(l, isA<MoneyTooLarge>()),
+            (r) => fail('should be left'),
+          );
+    });
+
+    test('validates numeric input', () {
+      const validator = MoneyValidator();
+
+      validator
+          .validateNum(12.3, currency: 'USD')
+          .fold(
+            (l) => fail('should be right'),
+            (money) => expect(money.minorUnits, 1230),
+          );
+
+      validator
+          .validateNum(double.nan)
+          .fold(
+            (l) => expect(l, isA<MoneyInvalidFormat>()),
+            (r) => fail('should be left'),
+          );
+    });
+
     test('uses currency-specific decimal digits', () {
       final validator = MoneyValidator(MoneyValidationConfig.ecommerce());
 
@@ -152,6 +223,12 @@ void main() {
             (l) => fail('should be right'),
             (money) => expect(money.minorUnits, 123456),
           );
+      validator
+          .validate('+1,234.56', currency: 'USD')
+          .fold(
+            (l) => fail('should be right'),
+            (money) => expect(money.minorUnits, 123456),
+          );
     });
 
     test('rejects thousands separators when disabled', () {
@@ -163,6 +240,20 @@ void main() {
           .validate('1,234.56', currency: 'USD')
           .fold(
             (l) => expect(l, isA<MoneyInvalidFormat>()),
+            (r) => fail('should be left'),
+          );
+    });
+
+    test('normalizes allowed currencies', () {
+      const validator = MoneyValidator(
+        MoneyValidationConfig(allowedCurrencies: {' usd '}),
+      );
+
+      expect(validator.validate('1.00', currency: 'USD').isRight(), true);
+      validator
+          .validate('1.00', currency: 'EUR')
+          .fold(
+            (l) => expect(l, isA<MoneyUnsupportedCurrency>()),
             (r) => fail('should be left'),
           );
     });

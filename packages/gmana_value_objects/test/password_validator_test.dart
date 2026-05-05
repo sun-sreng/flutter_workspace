@@ -3,6 +3,13 @@ import 'package:gmana_value_objects/gmana_value_objects.dart';
 
 void main() {
   group('PasswordValidator', () {
+    test('returns PasswordEmpty for empty string', () {
+      const validator = PasswordValidator();
+      validator
+          .validate('')
+          .fold((l) => expect(l, isA<PasswordEmpty>()), (r) => fail(''));
+    });
+
     test('validates strong password', () {
       const validator = PasswordValidator();
       expect(validator.validate('StrongP@ssw0rd!').isRight(), true);
@@ -36,12 +43,18 @@ void main() {
       const validator = PasswordValidator(
         PasswordValidationConfig(minLength: 5, maxLength: 8),
       );
-      validator
-          .validate('12ab')
-          .fold((l) => expect(l, isA<PasswordTooShort>()), (r) => fail(''));
-      validator
-          .validate('1234abcd!')
-          .fold((l) => expect(l, isA<PasswordTooLong>()), (r) => fail(''));
+      validator.validate('12ab').fold((l) {
+        expect(l, isA<PasswordTooShort>());
+        final error = l as PasswordTooShort;
+        expect(error.currentLength, 4);
+        expect(error.minLength, 5);
+      }, (r) => fail(''));
+      validator.validate('1234abcd!').fold((l) {
+        expect(l, isA<PasswordTooLong>());
+        final error = l as PasswordTooLong;
+        expect(error.currentLength, 9);
+        expect(error.maxLength, 8);
+      }, (r) => fail(''));
     });
 
     test('detects non-ascii', () {
@@ -80,6 +93,19 @@ void main() {
             (r) => fail(''),
           );
     });
+
+    test('returns complexity score details', () {
+      const validator = PasswordValidator(
+        PasswordValidationConfig(minComplexityScore: 4),
+      );
+
+      validator.validate('lowercase1').fold((l) {
+        expect(l, isA<PasswordComplexityRequired>());
+        final error = l as PasswordComplexityRequired;
+        expect(error.currentScore, 2);
+        expect(error.requiredScore, 4);
+      }, (r) => fail(''));
+    });
   });
 
   group('Password Value Object', () {
@@ -87,13 +113,24 @@ void main() {
       final pass = Password('StrongP@ssw0rd!');
       expect(pass.isValid, true);
       expect(pass.isSensitive, true);
+      expect(pass.valueOrNull, 'StrongP@ssw0rd!');
       expect(pass.toString(), 'Password(valid)');
     });
 
     test('creates invalid Password', () {
       final pass = Password('short');
       expect(pass.isInvalid, true);
+      expect(pass.valueOrNull, null);
+      expect(pass.errorOrNull, isA<PasswordTooShort>());
       expect(pass.toString(), 'Password(invalid)');
+    });
+
+    test('creates Password from validated result', () {
+      final validated = PasswordValidator().validate('StrongP@ssw0rd!');
+      final pass = Password.validated(validated);
+
+      expect(pass.isValid, true);
+      expect(pass.valueOrNull, 'StrongP@ssw0rd!');
     });
   });
 }

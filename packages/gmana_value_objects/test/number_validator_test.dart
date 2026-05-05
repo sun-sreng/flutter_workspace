@@ -42,18 +42,34 @@ void main() {
       );
 
       final minVal = validator.validate('-1');
-      minVal.fold(
-        (l) => expect(l, isA<NumberTooSmall>()),
-        (r) => fail('should be left'),
-      );
+      minVal.fold((l) {
+        expect(l, isA<NumberTooSmall>());
+        final error = l as NumberTooSmall;
+        expect(error.currentValue, -1);
+        expect(error.minValue, 0);
+      }, (r) => fail('should be left'));
 
       final maxVal = validator.validate('101');
-      maxVal.fold(
-        (l) => expect(l, isA<NumberTooLarge>()),
-        (r) => fail('should be left'),
-      );
+      maxVal.fold((l) {
+        expect(l, isA<NumberTooLarge>());
+        final error = l as NumberTooLarge;
+        expect(error.currentValue, 101);
+        expect(error.maxValue, 100);
+      }, (r) => fail('should be left'));
 
       expect(validator.validate('50').isRight(), true);
+    });
+
+    test('enforces integer-only config', () {
+      const validator = NumberValidator(
+        NumberValidationConfig(integerOnly: true),
+      );
+
+      expect(validator.validate('42').isRight(), true);
+      validator.validate('42.5').fold((l) {
+        expect(l, isA<NumberNotInteger>());
+        expect((l as NumberNotInteger).currentValue, 42.5);
+      }, (r) => fail('should be left'));
     });
 
     test('counts decimal places from decimal input', () {
@@ -91,6 +107,37 @@ void main() {
             (l) => expect(l, isA<NumberTooLarge>()),
             (r) => fail('should be left'),
           );
+    });
+
+    test('validates presets', () {
+      expect(
+        NumberValidator(
+          NumberValidationConfig.positiveInteger(),
+        ).validate('0').isRight(),
+        true,
+      );
+      NumberValidator(NumberValidationConfig.naturalNumber())
+          .validate('0')
+          .fold((l) => expect(l, isA<NumberTooSmall>()), (r) => fail(''));
+      expect(
+        NumberValidator(
+          NumberValidationConfig.price(),
+        ).validate('10.99').isRight(),
+        true,
+      );
+      NumberValidator(NumberValidationConfig.price())
+          .validate('10.999')
+          .fold(
+            (l) => expect(l, isA<NumberDecimalPlacesExceeded>()),
+            (r) => fail(''),
+          );
+      expect(
+        NumberValidator(NumberValidationConfig.age()).validate('30').isRight(),
+        true,
+      );
+      NumberValidator(NumberValidationConfig.rating())
+          .validate('6')
+          .fold((l) => expect(l, isA<NumberTooLarge>()), (r) => fail(''));
     });
   });
 }

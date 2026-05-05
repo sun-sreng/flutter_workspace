@@ -16,10 +16,20 @@ void main() {
       expect(value.isInvalid, true);
       expect(value.valueOrNull, null);
       expect(value.errorOrNull, isA<NumberInvalidFormat>());
+      expect(value.asInt, null);
+      expect(value.asDouble, null);
     });
 
     test('creates from num', () {
       final value = NumberValue.fromNum(42);
+      expect(value.isValid, true);
+      expect(value.valueOrNull, 42);
+    });
+
+    test('creates from validated result', () {
+      final validated = NumberValidator().validate('42');
+      final value = NumberValue.validated(validated);
+
       expect(value.isValid, true);
       expect(value.valueOrNull, 42);
     });
