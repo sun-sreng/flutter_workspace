@@ -43,9 +43,7 @@ extension StringX on String {
   bool get isBlank => trim().isEmpty;
 
   /// Returns true if the string is a valid email format.
-  bool get isEmail => RegExp(
-    r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$',
-  ).hasMatch(trim());
+  bool get isEmail => RegExp(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$').hasMatch(trim());
 
   /// Returns true if the string contains non-whitespace characters.
   bool get isNotBlank => trim().isNotEmpty;
@@ -89,8 +87,7 @@ extension StringX on String {
   String get toCamelCase {
     final words = _words;
     if (words.isEmpty) return this;
-    return words.first.toLowerCase() +
-        words.skip(1).map((w) => w.toSentenceCase).join();
+    return words.first.toLowerCase() + words.skip(1).map((w) => w.toSentenceCase).join();
   }
 
   /// Parses to [double], returns `null` on failure.
@@ -145,11 +142,8 @@ extension StringX on String {
   String get toSnakeCase => _words.map((w) => w.toLowerCase()).join('_');
 
   /// Capitalizes the first letter of each whitespace-delimited word.
-  String get toTitleCase => trim()
-      .split(RegExp(r'\s+'))
-      .where((w) => w.isNotEmpty)
-      .map((w) => w.toSentenceCase)
-      .join(' ');
+  String get toTitleCase =>
+      trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).map((w) => w.toSentenceCase).join(' ');
 
   // ── Whitespace / blank ────────────────────────────────────────────────────
 
@@ -209,10 +203,7 @@ extension StringX on String {
 
     return switch (parts.length) {
       1 => Duration(seconds: parse(parts[0], 'seconds')),
-      2 => Duration(
-        minutes: parse(parts[0], 'minutes'),
-        seconds: parse(parts[1], 'seconds'),
-      ),
+      2 => Duration(minutes: parse(parts[0], 'minutes'), seconds: parse(parts[1], 'seconds')),
       3 => Duration(
         hours: parse(parts[0], 'hours', max: 23),
         minutes: parse(parts[1], 'minutes'),
@@ -227,10 +218,7 @@ extension StringX on String {
   /// 'Hello World'.truncate(7); // 'Hell...'
   /// ```
   String truncate(int maxLength, {String ellipsis = '...'}) {
-    assert(
-      maxLength > ellipsis.length,
-      'maxLength must exceed ellipsis length',
-    );
+    assert(maxLength > ellipsis.length, 'maxLength must exceed ellipsis length');
     if (length <= maxLength) return this;
     return substring(0, maxLength - ellipsis.length) + ellipsis;
   }
@@ -248,6 +236,5 @@ extension StringX on String {
   /// 'world'.wrap('**');        // '**world**'
   /// 'note'.wrap('<', '>');     // '<note>'
   /// ```
-  String wrap(String prefix, [String? suffix]) =>
-      '$prefix$this${suffix ?? prefix}';
+  String wrap(String prefix, [String? suffix]) => '$prefix$this${suffix ?? prefix}';
 }

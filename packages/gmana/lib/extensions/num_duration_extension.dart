@@ -47,21 +47,18 @@ extension DurationX on Duration {
   /// ```dart
   /// 2.seconds * 3; // 6 seconds
   /// ```
-  Duration operator *(num factor) =>
-      Duration(microseconds: (inMicroseconds * factor).round());
+  Duration operator *(num factor) => Duration(microseconds: (inMicroseconds * factor).round());
 
   /// Divides this duration by [factor].
   ///
   /// ```dart
   /// 6.seconds / 2; // 3 seconds
   /// ```
-  Duration operator /(num factor) =>
-      Duration(microseconds: (inMicroseconds / factor).round());
+  Duration operator /(num factor) => Duration(microseconds: (inMicroseconds / factor).round());
 
   /// Clamps this duration between [min] and [max].
-  Duration clamp(Duration min, Duration max) => Duration(
-    microseconds: inMicroseconds.clamp(min.inMicroseconds, max.inMicroseconds),
-  );
+  Duration clamp(Duration min, Duration max) =>
+      Duration(microseconds: inMicroseconds.clamp(min.inMicroseconds, max.inMicroseconds));
 
   /// Ensures this duration is at least [min].
   Duration coerceAtLeast(Duration min) => this < min ? min : this;

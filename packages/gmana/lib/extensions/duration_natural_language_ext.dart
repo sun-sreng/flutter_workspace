@@ -39,11 +39,7 @@ extension DurationNaturalLanguageX on Duration {
     final m = d.inMinutes % 60;
     final s = d.inSeconds % 60;
 
-    final parts = <String>[
-      if (h > 0) '${h}h',
-      if (m > 0) '${m}m',
-      if (s > 0 || (h == 0 && m == 0)) '${s}s',
-    ];
+    final parts = <String>[if (h > 0) '${h}h', if (m > 0) '${m}m', if (s > 0 || (h == 0 && m == 0)) '${s}s'];
 
     final body = parts.take(2).join(' ');
     return isNegative ? '-$body' : body;
@@ -56,8 +52,7 @@ extension DurationNaturalLanguageX on Duration {
     final m = d.inMinutes % 60;
     final s = d.inSeconds % 60;
 
-    String unit(int n, String singular) =>
-        '$n ${n == 1 ? singular : '${singular}s'}';
+    String unit(int n, String singular) => '$n ${n == 1 ? singular : '${singular}s'}';
 
     final parts = <String>[
       if (h > 0) unit(h, 'hour'),
@@ -83,12 +78,7 @@ extension DurationNaturalLanguageX on Duration {
     final s = d.inSeconds % 60;
     final ms = d.inMilliseconds % 1000;
 
-    final parts = <String>[
-      if (h > 0) '${h}h',
-      if (h > 0 || m > 0) '${m}m',
-      '${s}s',
-      if (ms > 0) '${ms}ms',
-    ];
+    final parts = <String>[if (h > 0) '${h}h', if (h > 0 || m > 0) '${m}m', '${s}s', if (ms > 0) '${ms}ms'];
 
     final body = parts.join(' ');
     return isNegative ? '-$body' : body;

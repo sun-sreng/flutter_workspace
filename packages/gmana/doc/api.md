@@ -227,24 +227,70 @@ final result = EmailValidator().validate('user@example.com');
 final message = result.fold(resolveEmailValidationIssue, (_) => null);
 ```
 
-| API                                         | Use it for                                                                                 |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `EmailValidationConfig`                     | Configure email length, local/domain limits, disposable domains, and blocked domains.      |
-| `EmailValidator(config).validate(value)`    | Validate an email string.                                                                  |
-| `resolveEmailValidationIssue(issue)`        | Convert email validation issues to English messages.                                       |
-| `PasswordValidationConfig`                  | Configure password length, character classes, common-password checks, and pattern checks.  |
-| `PasswordValidator(config).validate(value)` | Validate a password string.                                                                |
-| `resolvePasswordValidationIssue(issue)`     | Convert password validation issues to English messages.                                    |
-| `NumberValidationConfig`                    | Configure number bounds, integer-only mode, negatives, and decimal places.                 |
-| `NumberValidator(config).validate(value)`   | Validate and normalize numeric text.                                                       |
-| `resolveNumberValidationIssue(issue)`       | Convert number validation issues to English messages.                                      |
-| `TextValidationConfig`                      | Configure required text, trimming, length, pattern, allowed characters, and blocked words. |
-| `TextValidator(config).validate(value)`     | Validate and normalize text.                                                               |
-| `resolveTextValidationIssue(issue)`         | Convert text validation issues to English messages.                                        |
-| `asFormValidator(...)`                      | Adapt a validator into a Flutter-style `String? Function(String?)`.                        |
-| `ValidationIssue.code`                      | Stable machine-readable error code.                                                        |
-| `ValidationResult<TIssue, TValue>`          | Alias for `Either<TIssue, TValue>`.                                                        |
-| `ValidationMessageResolver<TIssue>`         | Alias for an issue-to-message function.                                                    |
+Email validation normalizes successful values by trimming whitespace and
+lowercasing the address. It also rejects invalid local-part dot placement such
+as `.user@example.com`, `user.@example.com`, and `user..name@example.com`.
+
+```dart
+const validator = EmailValidator(
+  EmailValidationConfig(
+    blockedDomains: {'blocked.example'},
+    disposableDomains: {'mailinator.com'},
+    rejectDisposable: true,
+  ),
+);
+
+final blocked = validator.validate('User@Blocked.Example');
+print(blocked.leftOrNull()?.code); // email.blockedDomain
+
+final disposable = validator.validate('user@mailinator.com');
+print(disposable.leftOrNull()?.code); // email.disposableDomain
+```
+
+Configured domains are trimmed and compared case-insensitively. Domain policies
+match subdomains by default, so `blocked.example` also matches
+`mail.blocked.example`. Use `matchSubdomains: false` for exact matches only.
+
+```dart
+const validator = EmailValidator(
+  EmailValidationConfig(
+    blockedDomains: {'blocked.example'},
+    matchSubdomains: false,
+  ),
+);
+
+print(validator.validate('user@mail.blocked.example').rightOrNull());
+// user@mail.blocked.example
+```
+
+| API                                                | Use it for                                                                                 |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `EmailValidationConfig`                            | Configure email length, local/domain limits, disposable domains, and blocked domains.      |
+| `EmailValidationConfig.strict()`                   | Reject disposable domains using the default disposable-domain list.                        |
+| `EmailValidationConfig.matchSubdomains`            | Decide whether configured domains also match subdomains.                                   |
+| `EmailValidator(config).validate(value)`           | Validate and normalize an email string.                                                    |
+| `EmailValidationIssue`                             | Base type for typed email validation failures.                                             |
+| `EmailEmptyIssue`                                  | Input is empty after trimming.                                                             |
+| `EmailInvalidFormatIssue`                          | Input does not match the supported email format.                                           |
+| `EmailTooLongIssue`                                | Full address exceeds the configured maximum length.                                        |
+| `EmailLocalPartTooLongIssue`                       | Local part before `@` exceeds the configured maximum length.                               |
+| `EmailDomainTooLongIssue`                          | Domain after `@` exceeds the configured maximum length.                                    |
+| `EmailDisposableDomainIssue`                       | Domain is disposable and disposable domains are rejected.                                  |
+| `EmailBlockedDomainIssue`                          | Domain is in the configured block list.                                                     |
+| `resolveEmailValidationIssue(issue)`               | Convert email validation issues to English messages.                                       |
+| `PasswordValidationConfig`                         | Configure password length, character classes, common-password checks, and pattern checks.  |
+| `PasswordValidator(config).validate(value)`        | Validate a password string.                                                                |
+| `resolvePasswordValidationIssue(issue)`            | Convert password validation issues to English messages.                                    |
+| `NumberValidationConfig`                           | Configure number bounds, integer-only mode, negatives, and decimal places.                 |
+| `NumberValidator(config).validate(value)`          | Validate and normalize numeric text.                                                       |
+| `resolveNumberValidationIssue(issue)`              | Convert number validation issues to English messages.                                      |
+| `TextValidationConfig`                             | Configure required text, trimming, length, pattern, allowed characters, and blocked words. |
+| `TextValidator(config).validate(value)`            | Validate and normalize text.                                                               |
+| `resolveTextValidationIssue(issue)`                | Convert text validation issues to English messages.                                        |
+| `asFormValidator(...)`                             | Adapt a validator into a Flutter-style `String? Function(String?)`.                        |
+| `ValidationIssue.code`                             | Stable machine-readable error code.                                                        |
+| `ValidationResult<TIssue, TValue>`                 | Alias for `Either<TIssue, TValue>`.                                                        |
+| `ValidationMessageResolver<TIssue>`                | Alias for an issue-to-message function.                                                    |
 
 ## Predicate Functions And Regex Constants
 

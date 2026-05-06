@@ -1,233 +1,79 @@
-// ignore_for_file: public_member_api_docs
+// text_validator.dart
+import 'package:gmana/either/left.dart';
+import 'package:gmana/either/right.dart';
+import 'package:gmana/validator/text_validation_issue.dart';
 
-import '../either/left.dart';
-import '../either/right.dart';
+import 'text_validation_config.dart';
 import 'validation_issue.dart';
 
-/// Configuration for generic text validation.
-final class TextValidationConfig {
-  /// Whether empty values are allowed.
-  final bool allowEmpty;
-
-  /// Whether whitespace-only values are allowed.
-  final bool allowOnlyWhitespace;
-
-  /// Whether the input should be trimmed before validation.
-  final bool trimWhitespace;
-
-  /// Minimum allowed length.
-  final int? minLength;
-
-  /// Maximum allowed length.
-  final int? maxLength;
-
-  /// Required pattern.
-  final String? pattern;
-
-  /// Allowed characters, if restricted.
-  final String? allowedCharacters;
-
-  /// Blacklisted words.
-  final Set<String> blacklistedWords;
-
-  /// Creates a text validation config.
-  const TextValidationConfig({
-    this.allowEmpty = true,
-    this.allowOnlyWhitespace = true,
-    this.trimWhitespace = false,
-    this.minLength,
-    this.maxLength,
-    this.pattern,
-    this.allowedCharacters,
-    this.blacklistedWords = const {},
-  });
-
-  /// Preset for required text input.
-  factory TextValidationConfig.required({
-    int? minLength,
-    int? maxLength,
-    String? pattern,
-    String? allowedCharacters,
-    Set<String> blacklistedWords = const {},
-    bool trimWhitespace = true,
-  }) {
-    return TextValidationConfig(
-      allowEmpty: false,
-      allowOnlyWhitespace: false,
-      trimWhitespace: trimWhitespace,
-      minLength: minLength,
-      maxLength: maxLength,
-      pattern: pattern,
-      allowedCharacters: allowedCharacters,
-      blacklistedWords: blacklistedWords,
-    );
-  }
-}
-
-/// Base type for text validation failures.
-sealed class TextValidationIssue extends ValidationIssue {
-  const TextValidationIssue();
-}
-
-/// Text input is empty.
-final class TextEmptyIssue extends TextValidationIssue {
-  const TextEmptyIssue();
-
-  @override
-  String get code => 'text.empty';
-}
-
-/// Text contains only whitespace.
-final class TextOnlyWhitespaceIssue extends TextValidationIssue {
-  const TextOnlyWhitespaceIssue();
-
-  @override
-  String get code => 'text.onlyWhitespace';
-}
-
-/// Text is shorter than allowed.
-final class TextTooShortIssue extends TextValidationIssue {
-  final int currentLength;
-  final int minLength;
-
-  const TextTooShortIssue({
-    required this.currentLength,
-    required this.minLength,
-  });
-
-  @override
-  String get code => 'text.tooShort';
-}
-
-/// Text is longer than allowed.
-final class TextTooLongIssue extends TextValidationIssue {
-  final int currentLength;
-  final int maxLength;
-
-  const TextTooLongIssue({
-    required this.currentLength,
-    required this.maxLength,
-  });
-
-  @override
-  String get code => 'text.tooLong';
-}
-
-/// Text does not match the required pattern.
-final class TextInvalidPatternIssue extends TextValidationIssue {
-  final String pattern;
-
-  const TextInvalidPatternIssue(this.pattern);
-
-  @override
-  String get code => 'text.invalidPattern';
-}
-
-/// Text includes disallowed characters.
-final class TextInvalidCharactersIssue extends TextValidationIssue {
-  final String invalidCharacters;
-
-  const TextInvalidCharactersIssue(this.invalidCharacters);
-
-  @override
-  String get code => 'text.invalidCharacters';
-}
-
-/// Text contains blacklisted words.
-final class TextContainsBlacklistedIssue extends TextValidationIssue {
-  final List<String> foundWords;
-
-  const TextContainsBlacklistedIssue(this.foundWords);
-
-  @override
-  String get code => 'text.blacklistedWords';
-}
-
-/// Default English messages for text validation issues.
-String resolveTextValidationIssue(TextValidationIssue issue) {
-  return switch (issue) {
-    TextEmptyIssue() => 'This field is required',
-    TextOnlyWhitespaceIssue() => 'This field cannot contain only whitespace',
-    TextTooShortIssue(:final minLength) =>
-      'Please enter at least $minLength characters',
-    TextTooLongIssue(:final maxLength) =>
-      'Please enter no more than $maxLength characters',
-    TextInvalidPatternIssue() => 'This field has an invalid format',
-    TextInvalidCharactersIssue(:final invalidCharacters) =>
-      'Contains invalid characters: $invalidCharacters',
-    TextContainsBlacklistedIssue(:final foundWords) =>
-      'Contains blocked words: ${foundWords.join(', ')}',
-  };
-}
-
-/// Canonical validator for generic text inputs.
 final class TextValidator {
-  /// Rules used during validation.
   final TextValidationConfig config;
 
-  /// Creates a text validator.
-  const TextValidator([this.config = const TextValidationConfig()]);
+  // Pre-built for allowedCharacterSet check
+  final RegExp? _disallowedPattern;
 
-  /// Validates and optionally normalizes a text value.
+  TextValidator([this.config = const TextValidationConfig()])
+    : _disallowedPattern =
+          config.allowedCharacterSet != null ? RegExp('[^${RegExp.escape(config.allowedCharacterSet!.join())}]') : null;
+
   ValidationResult<TextValidationIssue, String> validate(String input) {
     final value = config.trimWhitespace ? input.trim() : input;
 
     if (value.isEmpty) {
-      if (config.allowEmpty) {
-        return Right(value);
-      }
-      return const Left(TextEmptyIssue());
+      return config.allowEmpty ? Right(value) : const Left(TextEmptyIssue());
     }
 
+    // Only reachable when trimWhitespace=false, otherwise empty catch above fires
     if (!config.allowOnlyWhitespace && value.trim().isEmpty) {
       return const Left(TextOnlyWhitespaceIssue());
     }
 
-    if (config.minLength != null && value.length < config.minLength!) {
-      return Left(
-        TextTooShortIssue(
-          currentLength: value.length,
-          minLength: config.minLength!,
-        ),
-      );
+    final length = value.length;
+
+    if (config.minLength case final min? when length < min) {
+      return Left(TextTooShortIssue(currentLength: length, minLength: min));
     }
 
-    if (config.maxLength != null && value.length > config.maxLength!) {
-      return Left(
-        TextTooLongIssue(
-          currentLength: value.length,
-          maxLength: config.maxLength!,
-        ),
-      );
+    if (config.maxLength case final max? when length > max) {
+      return Left(TextTooLongIssue(currentLength: length, maxLength: max));
     }
 
-    if (config.pattern != null && !RegExp(config.pattern!).hasMatch(value)) {
-      return Left(TextInvalidPatternIssue(config.pattern!));
+    if (config.pattern case final re? when !re.hasMatch(value)) {
+      return const Left(TextInvalidPatternIssue());
     }
 
-    if (config.allowedCharacters != null) {
-      final invalidCharacters =
-          value
-              .split('')
-              .where((char) => !config.allowedCharacters!.contains(char))
-              .toSet()
-              .join();
-      if (invalidCharacters.isNotEmpty) {
-        return Left(TextInvalidCharactersIssue(invalidCharacters));
+    if (_disallowedPattern case final re?) {
+      final invalid = re.allMatches(value).map((m) => m.group(0)!).toSet().join();
+      if (invalid.isNotEmpty) {
+        return Left(TextInvalidCharactersIssue(invalid));
       }
     }
 
     if (config.blacklistedWords.isNotEmpty) {
       final lowered = value.toLowerCase();
-      final foundWords =
-          config.blacklistedWords
-              .where((word) => lowered.contains(word.toLowerCase()))
-              .toList();
-      if (foundWords.isNotEmpty) {
-        return Left(TextContainsBlacklistedIssue(foundWords));
-      }
+      final found =
+          config.blacklistedWords.where((word) {
+            final w = word.toLowerCase();
+            if (!config.wholeWordBlacklist) return lowered.contains(w);
+            // Word boundary check without regex overhead
+            final idx = lowered.indexOf(w);
+            if (idx == -1) return false;
+            final before = idx == 0 || !_isWordChar(lowered[idx - 1]);
+            final after = idx + w.length == lowered.length || !_isWordChar(lowered[idx + w.length]);
+            return before && after;
+          }).toList();
+
+      if (found.isNotEmpty) return Left(TextContainsBlacklistedIssue(found));
     }
 
     return Right(value);
+  }
+
+  static bool _isWordChar(String char) {
+    final c = char.codeUnitAt(0);
+    return (c >= 65 && c <= 90) || // A-Z
+        (c >= 97 && c <= 122) || // a-z
+        (c >= 48 && c <= 57) || // 0-9
+        c == 95; // _
   }
 }

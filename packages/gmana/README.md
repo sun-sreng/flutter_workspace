@@ -270,6 +270,48 @@ final result = validator.validate('person@mailinator.com');
 print(result.leftOrNull()?.code); // email.disposableDomain
 ```
 
+Email validation is designed for product forms and domain input, not SMTP
+delivery checks. It trims whitespace, lowercases the returned address, rejects
+invalid local-part dot placement, enforces RFC email length limits, and returns
+typed issues you can map to your own localized messages.
+
+```dart
+const validator = EmailValidator(
+  EmailValidationConfig(
+    blockedDomains: {'example.test', 'internal.company'},
+    disposableDomains: {'mailinator.com', 'tempmail.com'},
+    rejectDisposable: true,
+  ),
+);
+
+final result = validator.validate(' Person@MAIL.Example.Test ');
+
+result.fold(
+  (issue) {
+    print(issue.code); // email.blockedDomain
+    print(resolveEmailValidationIssue(issue));
+  },
+  (email) => print(email),
+);
+```
+
+Configured domains are trimmed and compared case-insensitively. By default a
+configured domain also matches subdomains, so `example.com` blocks
+`mail.example.com`. Set `matchSubdomains: false` when you only want exact
+domain matches.
+
+```dart
+const exactOnly = EmailValidator(
+  EmailValidationConfig(
+    blockedDomains: {'example.com'},
+    matchSubdomains: false,
+  ),
+);
+
+print(exactOnly.validate('user@mail.example.com').rightOrNull());
+// user@mail.example.com
+```
+
 Password validation:
 
 ```dart

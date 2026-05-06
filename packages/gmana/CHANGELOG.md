@@ -4,7 +4,9 @@
 - feat: add `Either` convenience helpers including `getOrNull`, `contains`, `exists`, `all`, `tap`, and `tapLeft`
 - feat: add `StreamEither`, `StreamEitherUnit`, and `StreamUseCase` for fallible streaming use cases
 - feat: expand `Failure` with optional `code` and structured `details`
+- feat: enhance email validation with normalized domain policies, subdomain matching, and local-part dot checks
 - doc: update README and API guide for the new functional helpers
+- doc: expand public email validation examples and API reference
 
 ## 0.1.5 - 2026-04-23
 
