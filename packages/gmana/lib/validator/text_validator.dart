@@ -1,21 +1,23 @@
-// text_validator.dart
-import 'package:gmana/either/left.dart';
-import 'package:gmana/either/right.dart';
-import 'package:gmana/validator/text_validation_issue.dart';
+import '../either/left.dart';
+import '../either/right.dart';
 
 import 'text_validation_config.dart';
+import 'text_validation_issue.dart';
 import 'validation_issue.dart';
 
+/// Canonical validator for text inputs.
 final class TextValidator {
+  /// Rules used during validation.
   final TextValidationConfig config;
 
-  // Pre-built for allowedCharacterSet check
   final RegExp? _disallowedPattern;
 
+  /// Creates a text validator.
   TextValidator([this.config = const TextValidationConfig()])
     : _disallowedPattern =
-          config.allowedCharacterSet != null ? RegExp('[^${RegExp.escape(config.allowedCharacterSet!.join())}]') : null;
+          config.allowedCharacters != null ? RegExp('[^${RegExp.escape(config.allowedCharacters!)}]') : null;
 
+  /// Validates and normalizes [input].
   ValidationResult<TextValidationIssue, String> validate(String input) {
     final value = config.trimWhitespace ? input.trim() : input;
 

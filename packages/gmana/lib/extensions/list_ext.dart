@@ -1,4 +1,3 @@
-// ─── Null-safety utilities ────────────────────────────────────────────────
 
 /// Extension on [Iterable] providing utilities for filtering and transforming nullable elements safely.
 extension IterableNullableX<T extends Object> on Iterable<T?> {
@@ -10,7 +9,7 @@ extension IterableNullableX<T extends Object> on Iterable<T?> {
   Iterable<T> get whereNotNull => whereType<T>();
 
   /// Shorthand for [compactMap] when you only want to strip nulls with
-  /// no transformation — just `whereNotNull` as a method call for
+  /// no transformation - just `whereNotNull` as a method call for
   /// symmetry with [compactMap].
   Iterable<T> compact() => whereNotNull;
 
@@ -26,7 +25,6 @@ extension IterableNullableX<T extends Object> on Iterable<T?> {
   Iterable<R> compactMap<R extends Object>(R? Function(T?) transform) => map(transform).whereType<R>();
 }
 
-// ─── Flatten / FlatMap ───────────────────────────────────────────────────
 
 /// Extension on [Iterable] of [Iterable]s providing methods to flatten nested collections.
 extension IterableOfIterablesX<E> on Iterable<Iterable<E>> {

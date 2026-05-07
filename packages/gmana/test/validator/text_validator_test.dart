@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('TextValidator', () {
     test('allows empty values by default', () {
-      final result = const TextValidator().validate('');
+      final result = TextValidator().validate('');
 
       expect(result.rightOrNull(), '');
     });
@@ -50,7 +50,7 @@ void main() {
 
     test('applies pattern, allowed-characters, and blacklist rules', () {
       final patternResult = TextValidator(
-        const TextValidationConfig(pattern: r'^[A-Z]+$'),
+        TextValidationConfig(pattern: RegExp(r'^[A-Z]+$')),
       ).validate('abc');
       final allowedCharactersResult = TextValidator(
         const TextValidationConfig(allowedCharacters: 'abc123'),

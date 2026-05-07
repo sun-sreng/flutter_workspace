@@ -1,7 +1,7 @@
 /// A map of UUID versions (as strings) to their corresponding regular expressions.
 ///
 /// This is used to validate UUID (Universally Unique Identifier) strings
-/// according to their version—v3, v4, v5—or a general catch-all pattern.
+/// according to their version-v3, v4, v5-or a general catch-all pattern.
 ///
 /// All patterns match uppercase hexadecimal UUIDs. If needed, convert input to uppercase
 /// before applying the regex, or make the regex case-insensitive.

@@ -36,7 +36,7 @@ Manual `pubspec.yaml` setup:
 
 ```yaml
 dependencies:
-  gmana: ^0.1.5
+  gmana: ^0.2.0
   gmana_flutter: ^0.0.8
 ```
 

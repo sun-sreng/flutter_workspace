@@ -1,3 +1,12 @@
+# Change Log
+
+## 0.2.0 - Unreleased
+
+- breaking: replace `EitherFailure`, `FutureEither`, and `StreamEither` aliases with `Result`, `FutureResult`, and `StreamResult`
+- breaking: remove public `IdGeneratorService` and `IdGeneratorUtils`; use `IdGenerator`
+- breaking: consolidate exported duration helpers so `duration_ext.dart` is the only exported `Duration` extension API
+- refactor: clean self-package imports, validator docs, and text validator allowed-character configuration
+
 ## 0.1.6 - 2026-05-06
 
 - feat: add async `Either` helpers with `mapAsync`, `flatMapAsync`, and `foldAsync`

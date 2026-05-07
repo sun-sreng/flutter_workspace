@@ -1,6 +1,5 @@
 import 'dart:async';
 
-// ─── Stream<List<T>> — collection-oriented operators ─────────────────────
 
 /// Extension providing collection-oriented functional operations for Streams emitting Lists.
 extension StreamListX<T> on Stream<List<T>> {
@@ -27,14 +26,12 @@ extension StreamListX<T> on Stream<List<T>> {
   Stream<List<T>> sortedBy(Comparator<T> compare) => map((items) => [...items]..sort(compare));
 }
 
-// ─── Stream<T> — general-purpose operators ────────────────────────────────
 
 /// General-purpose utility extension on [Stream] providing enhanced filtering,
 /// timing controls (like debounce/throttle), error handling, and scanning operators.
 extension StreamX<T> on Stream<T> {
-  // ── Filtering ────────────────────────────────────────────────────────────
 
-  /// Emits `(index, value)` pairs — like `enumerate` in Python.
+  /// Emits `(index, value)` pairs - like `enumerate` in Python.
   Stream<(int, T)> get indexed {
     var i = 0;
     return map((value) => (i++, value));
@@ -92,7 +89,6 @@ extension StreamX<T> on Stream<T> {
     }
   }
 
-  // ── Timing ───────────────────────────────────────────────────────────────
 
   /// Emits the stream's last value as a [Future], or [orElse] if the stream
   /// closes empty.
@@ -108,7 +104,6 @@ extension StreamX<T> on Stream<T> {
   Stream<T> onErrorReturn(T fallback) =>
       transform(StreamTransformer.fromHandlers(handleError: (_, _, sink) => sink.add(fallback)));
 
-  // ── Error handling ───────────────────────────────────────────────────────
 
   /// Recovers from errors by emitting the result of [recover].
   Stream<T> onErrorReturnWith(T Function(Object error) recover) =>
@@ -127,7 +122,6 @@ extension StreamX<T> on Stream<T> {
     }
   }
 
-  // ── Utilities ────────────────────────────────────────────────────────────
 
   /// Discards events until [predicate] returns `true`, then emits all subsequent ones.
   Stream<T> skipUntil(bool Function(T) predicate) async* {

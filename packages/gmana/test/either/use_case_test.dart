@@ -63,14 +63,14 @@ void main() {
 
 class _GreetingUseCase implements UseCase<String, NoParams> {
   @override
-  FutureEither<String> call(NoParams params) async {
+  FutureResult<String> call(NoParams params) async {
     return const Right<Failure, String>('hello');
   }
 }
 
 class _CounterUseCase implements StreamUseCase<int, NoParams> {
   @override
-  StreamEither<int> call(NoParams params) async* {
+  StreamResult<int> call(NoParams params) async* {
     yield const Right<Failure, int>(1);
     yield const Left<Failure, int>(Failure('stopped', 'counter'));
   }

@@ -1,4 +1,4 @@
-/// Disposable domain list — extend this or inject your own.
+/// Disposable domain list - extend this or inject your own.
 /// Consider loading from a remote source in production.
 const Set<String> kDefaultDisposableDomains = {
   '10minutemail.com',

@@ -1,6 +1,6 @@
-import 'package:gmana/either/left.dart';
-import 'package:gmana/either/right.dart';
-import 'package:gmana/regex/email_reg.dart';
+import '../either/left.dart';
+import '../either/right.dart';
+import '../regex/email_reg.dart';
 
 import 'email_validation_config.dart';
 import 'email_validation_issue.dart';

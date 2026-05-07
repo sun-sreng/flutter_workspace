@@ -90,7 +90,6 @@ extension IntX on int {
   }
 }
 
-// ─── int ─────────────────────────────────────────────────────────────────
 
 /// Extensions for nullable [num] values providing safe defaults.
 extension NumNullableX on num? {
@@ -104,11 +103,9 @@ extension NumNullableX on num? {
   num orDefault(num fallback) => this ?? fallback;
 }
 
-// ─── num (shared int + double) ────────────────────────────────────────────
 
 /// Shared mathematical, formatting, and conversion extensions on [num] (covering both int and double).
 extension NumX on num {
-  // ── Temperature ────────────────────────────────────────────────────────
 
   /// Converts Celsius to Fahrenheit.
   double get celsiusToFahrenheit => this * 9 / 5 + 32;
@@ -128,7 +125,6 @@ extension NumX on num {
   /// Converts Kelvin to Celsius.
   double get kelvinToCelsius => toDouble() - 273.15;
 
-  // ── Rounding ────────────────────────────────────────────────────────────
 
   /// Converts Kelvin to Fahrenheit.
   double get kelvinToFahrenheit => kelvinToCelsius.celsiusToFahrenheit;
@@ -148,9 +144,8 @@ extension NumX on num {
   /// Checks if the number is between [min] and [max] inclusively.
   bool isBetween(num min, num max) => this >= min && this <= max;
 
-  // ── Normalization ───────────────────────────────────────────────────────
 
-  /// Linear interpolation between [a] and [b] where [this] is `t ∈ [0, 1]`.
+  /// Linear interpolation between [a] and [b] where [this] is `t in [0, 1]`.
   /// ```dart
   /// 0.25.lerp(0, 100); // 25.0
   /// ```
@@ -169,7 +164,6 @@ extension NumX on num {
   double normalizedClamped(num fromMin, num fromMax, [num toMin = 0.0, num toMax = 1.0]) =>
       normalized(fromMin, fromMax, toMin, toMax).clamp(toMin.toDouble(), toMax.toDouble());
 
-  // ── Predicates ──────────────────────────────────────────────────────────
 
   /// Rounds to [places] decimal places.
   /// ```dart
@@ -194,7 +188,6 @@ extension NumX on num {
     return (this / multiple).round() * multiple;
   }
 
-  // ── Misc ────────────────────────────────────────────────────────────────
 
   /// Like [normalized] but returns [fallback] instead of throwing when
   /// source range is zero. Useful in reactive/UI code where division by

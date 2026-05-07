@@ -1,22 +1,6 @@
-// text_validation_config.dart
+/// Configuration for text validation.
 final class TextValidationConfig {
-  final bool allowEmpty;
-  final bool allowOnlyWhitespace;
-  final bool trimWhitespace;
-  final int? minLength;
-  final int? maxLength;
-
-  // Pre-compiled — not raw strings
-  final RegExp? pattern;
-
-  /// Allowed character set. Null means all characters allowed.
-  final Set<String>? allowedCharacterSet;
-
-  /// Whole-word blacklist matching. Set [wholeWordBlacklist] to false
-  /// for substring matching (e.g. profanity filters).
-  final Set<String> blacklistedWords;
-  final bool wholeWordBlacklist;
-
+  /// Creates text validation rules.
   const TextValidationConfig({
     this.allowEmpty = true,
     this.allowOnlyWhitespace = true,
@@ -24,16 +8,47 @@ final class TextValidationConfig {
     this.minLength,
     this.maxLength,
     this.pattern,
-    this.allowedCharacterSet,
+    this.allowedCharacters,
     this.blacklistedWords = const {},
     this.wholeWordBlacklist = true,
-  }) : assert(!(allowEmpty && !allowOnlyWhitespace), 'allowEmpty=true with allowOnlyWhitespace=false is contradictory');
+  }) : assert(
+         !(allowEmpty && !allowOnlyWhitespace),
+         'allowEmpty=true with allowOnlyWhitespace=false is contradictory',
+       );
 
+  /// Whether empty input is accepted.
+  final bool allowEmpty;
+
+  /// Whether whitespace-only input is accepted.
+  final bool allowOnlyWhitespace;
+
+  /// Whether input is trimmed before validation and returned trimmed.
+  final bool trimWhitespace;
+
+  /// Minimum allowed input length after optional trimming.
+  final int? minLength;
+
+  /// Maximum allowed input length after optional trimming.
+  final int? maxLength;
+
+  /// Optional pattern that the whole value must match.
+  final RegExp? pattern;
+
+  /// Allowed characters. Null means all characters are allowed.
+  final String? allowedCharacters;
+
+  /// Words that are not allowed in the input.
+  final Set<String> blacklistedWords;
+
+  /// Whether blacklisted words must match whole words only.
+  final bool wholeWordBlacklist;
+
+  /// Preset for required text fields.
   factory TextValidationConfig.required({
     int? minLength,
     int? maxLength,
     RegExp? pattern,
-    Set<String>? allowedCharacterSet,
+    String? allowedCharacters,
     Set<String> blacklistedWords = const {},
     bool wholeWordBlacklist = true,
     bool trimWhitespace = true,
@@ -45,7 +60,7 @@ final class TextValidationConfig {
       minLength: minLength,
       maxLength: maxLength,
       pattern: pattern,
-      allowedCharacterSet: allowedCharacterSet,
+      allowedCharacters: allowedCharacters,
       blacklistedWords: blacklistedWords,
       wholeWordBlacklist: wholeWordBlacklist,
     );

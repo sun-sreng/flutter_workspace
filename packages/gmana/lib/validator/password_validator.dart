@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
 import '../either/left.dart';
 import '../either/right.dart';
 import 'validation_issue.dart';
@@ -86,9 +84,13 @@ final class PasswordTooCommonIssue extends PasswordValidationIssue {
 
 /// Password is longer than allowed.
 final class PasswordTooLongIssue extends PasswordValidationIssue {
+  /// The provided password length.
   final int currentLength;
+
+  /// The configured maximum length.
   final int maxLength;
 
+  /// Creates a too-long issue.
   const PasswordTooLongIssue({required this.currentLength, required this.maxLength});
 
   @override
@@ -97,9 +99,13 @@ final class PasswordTooLongIssue extends PasswordValidationIssue {
 
 /// Password is shorter than allowed.
 final class PasswordTooShortIssue extends PasswordValidationIssue {
+  /// The provided password length.
   final int currentLength;
+
+  /// The configured minimum length.
   final int minLength;
 
+  /// Creates a too-short issue.
   const PasswordTooShortIssue({required this.currentLength, required this.minLength});
 
   @override
@@ -196,6 +202,7 @@ final class PasswordValidationConfig {
 
 /// Base type for password validation failures.
 sealed class PasswordValidationIssue extends ValidationIssue {
+  /// Creates a password validation issue.
   const PasswordValidationIssue();
 }
 

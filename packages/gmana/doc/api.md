@@ -32,35 +32,36 @@ final message = parseCount('4').fold(
 );
 ```
 
-| API                              | Use it for                                                        |
-| -------------------------------- | ----------------------------------------------------------------- |
-| `Either<L, R>`                   | Model a value that is either a left failure or a right success.   |
-| `Left<L, R>`                     | Return or construct a failed result.                              |
-| `Right<L, R>`                    | Return or construct a successful result.                          |
-| `fold(left, right)`              | Convert either branch into one return value.                      |
-| `foldAsync(left, right)`         | Convert either branch with async callbacks.                       |
-| `map(transform)`                 | Transform only the right value.                                   |
-| `mapAsync(transform)`            | Transform only the right value with an async callback.            |
-| `flatMap(transform)`             | Chain another `Either`-returning operation.                       |
-| `flatMapAsync(transform)`        | Chain another async `Either`-returning operation.                 |
-| `mapLeft(transform)`             | Transform only the left value.                                    |
-| `getOrElse(fallback)`            | Extract the right value or derive a fallback from the left value. |
-| `leftOrNull()` / `rightOrNull()` | Read one side as nullable.                                        |
-| `getOrNull()`                    | Alias for reading the right value as nullable.                    |
-| `contains(value)`                | Check whether this is a right value equal to `value`.             |
-| `exists(test)` / `all(test)`     | Run predicates against the right value.                           |
-| `tap(callback)` / `tapLeft(...)` | Run side effects for the matching side and keep the same `Either`.|
-| `isLeft()` / `isRight()`         | Check which side is present.                                      |
-| `Failure`                        | Standard failure object with message, code, and optional details. |
-| `NoParams`                       | Placeholder params object for use cases without input.            |
-| `Unit` / `unit`                  | Success marker for operations with no meaningful return value.    |
-| `UseCase<T, P>`                  | Clean-architecture callable interface.                            |
-| `FutureEither<T>`                | Alias for `Future<Either<Failure, T>>`.                           |
-| `FutureEitherUnit`               | Alias for `FutureEither<Unit>`.                                   |
+| API                              | Use it for                                                         |
+| -------------------------------- | ------------------------------------------------------------------ |
+| `Either<L, R>`                   | Model a value that is either a left failure or a right success.    |
+| `Left<L, R>`                     | Return or construct a failed result.                               |
+| `Right<L, R>`                    | Return or construct a successful result.                           |
+| `fold(left, right)`              | Convert either branch into one return value.                       |
+| `foldAsync(left, right)`         | Convert either branch with async callbacks.                        |
+| `map(transform)`                 | Transform only the right value.                                    |
+| `mapAsync(transform)`            | Transform only the right value with an async callback.             |
+| `flatMap(transform)`             | Chain another `Either`-returning operation.                        |
+| `flatMapAsync(transform)`        | Chain another async `Either`-returning operation.                  |
+| `mapLeft(transform)`             | Transform only the left value.                                     |
+| `getOrElse(fallback)`            | Extract the right value or derive a fallback from the left value.  |
+| `leftOrNull()` / `rightOrNull()` | Read one side as nullable.                                         |
+| `getOrNull()`                    | Alias for reading the right value as nullable.                     |
+| `contains(value)`                | Check whether this is a right value equal to `value`.              |
+| `exists(test)` / `all(test)`     | Run predicates against the right value.                            |
+| `tap(callback)` / `tapLeft(...)` | Run side effects for the matching side and keep the same `Either`. |
+| `isLeft()` / `isRight()`         | Check which side is present.                                       |
+| `Result<T>`                      | Alias for `Either<Failure, T>`.                                    |
+| `ResultUnit`                     | Alias for `Result<Unit>`.                                          |
+| `Failure`                        | Standard failure object with message, code, and optional details.  |
+| `NoParams`                       | Placeholder params object for use cases without input.             |
+| `Unit` / `unit`                  | Success marker for operations with no meaningful return value.     |
+| `UseCase<T, P>`                  | Clean-architecture callable interface.                             |
+| `FutureResult<T>`                | Alias for `Future<Either<Failure, T>>`.                            |
+| `FutureResultUnit`               | Alias for `FutureResult<Unit>`.                                    |
 | `StreamUseCase<T, P>`            | Clean-architecture interface for fallible streams.                 |
-| `StreamEither<T>`                | Alias for `Stream<Either<Failure, T>>`.                           |
-| `StreamEitherUnit`               | Alias for `StreamEither<Unit>`.                                   |
-| `GMap`                           | Alias for `Map<String, dynamic>`.                                 |
+| `StreamResult<T>`                | Alias for `Stream<Either<Failure, T>>`.                            |
+| `StreamResultUnit`               | Alias for `StreamResult<Unit>`.                                    |
 
 ## String Extensions
 
@@ -144,6 +145,10 @@ final duration = Duration(hours: 1, minutes: 2, seconds: 34);
 duration.toHumanizedString(); // 1:02:34
 duration.toWordString(); // 1 hour, 2 minutes, 34 seconds
 ```
+
+`package:gmana/extensions.dart` exports a single `Duration` extension API from
+`duration_ext.dart`. The alternative natural-language duration helpers remain
+available only by direct import from `extensions/duration_natural_language_ext.dart`.
 
 | API                                                                     | Use it for                                          |
 | ----------------------------------------------------------------------- | --------------------------------------------------- |
@@ -263,34 +268,34 @@ print(validator.validate('user@mail.blocked.example').rightOrNull());
 // user@mail.blocked.example
 ```
 
-| API                                                | Use it for                                                                                 |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `EmailValidationConfig`                            | Configure email length, local/domain limits, disposable domains, and blocked domains.      |
-| `EmailValidationConfig.strict()`                   | Reject disposable domains using the default disposable-domain list.                        |
-| `EmailValidationConfig.matchSubdomains`            | Decide whether configured domains also match subdomains.                                   |
-| `EmailValidator(config).validate(value)`           | Validate and normalize an email string.                                                    |
-| `EmailValidationIssue`                             | Base type for typed email validation failures.                                             |
-| `EmailEmptyIssue`                                  | Input is empty after trimming.                                                             |
-| `EmailInvalidFormatIssue`                          | Input does not match the supported email format.                                           |
-| `EmailTooLongIssue`                                | Full address exceeds the configured maximum length.                                        |
-| `EmailLocalPartTooLongIssue`                       | Local part before `@` exceeds the configured maximum length.                               |
-| `EmailDomainTooLongIssue`                          | Domain after `@` exceeds the configured maximum length.                                    |
-| `EmailDisposableDomainIssue`                       | Domain is disposable and disposable domains are rejected.                                  |
-| `EmailBlockedDomainIssue`                          | Domain is in the configured block list.                                                     |
-| `resolveEmailValidationIssue(issue)`               | Convert email validation issues to English messages.                                       |
-| `PasswordValidationConfig`                         | Configure password length, character classes, common-password checks, and pattern checks.  |
-| `PasswordValidator(config).validate(value)`        | Validate a password string.                                                                |
-| `resolvePasswordValidationIssue(issue)`            | Convert password validation issues to English messages.                                    |
-| `NumberValidationConfig`                           | Configure number bounds, integer-only mode, negatives, and decimal places.                 |
-| `NumberValidator(config).validate(value)`          | Validate and normalize numeric text.                                                       |
-| `resolveNumberValidationIssue(issue)`              | Convert number validation issues to English messages.                                      |
-| `TextValidationConfig`                             | Configure required text, trimming, length, pattern, allowed characters, and blocked words. |
-| `TextValidator(config).validate(value)`            | Validate and normalize text.                                                               |
-| `resolveTextValidationIssue(issue)`                | Convert text validation issues to English messages.                                        |
-| `asFormValidator(...)`                             | Adapt a validator into a Flutter-style `String? Function(String?)`.                        |
-| `ValidationIssue.code`                             | Stable machine-readable error code.                                                        |
-| `ValidationResult<TIssue, TValue>`                 | Alias for `Either<TIssue, TValue>`.                                                        |
-| `ValidationMessageResolver<TIssue>`                | Alias for an issue-to-message function.                                                    |
+| API                                         | Use it for                                                                                 |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `EmailValidationConfig`                     | Configure email length, local/domain limits, disposable domains, and blocked domains.      |
+| `EmailValidationConfig.strict()`            | Reject disposable domains using the default disposable-domain list.                        |
+| `EmailValidationConfig.matchSubdomains`     | Decide whether configured domains also match subdomains.                                   |
+| `EmailValidator(config).validate(value)`    | Validate and normalize an email string.                                                    |
+| `EmailValidationIssue`                      | Base type for typed email validation failures.                                             |
+| `EmailEmptyIssue`                           | Input is empty after trimming.                                                             |
+| `EmailInvalidFormatIssue`                   | Input does not match the supported email format.                                           |
+| `EmailTooLongIssue`                         | Full address exceeds the configured maximum length.                                        |
+| `EmailLocalPartTooLongIssue`                | Local part before `@` exceeds the configured maximum length.                               |
+| `EmailDomainTooLongIssue`                   | Domain after `@` exceeds the configured maximum length.                                    |
+| `EmailDisposableDomainIssue`                | Domain is disposable and disposable domains are rejected.                                  |
+| `EmailBlockedDomainIssue`                   | Domain is in the configured block list.                                                    |
+| `resolveEmailValidationIssue(issue)`        | Convert email validation issues to English messages.                                       |
+| `PasswordValidationConfig`                  | Configure password length, character classes, common-password checks, and pattern checks.  |
+| `PasswordValidator(config).validate(value)` | Validate a password string.                                                                |
+| `resolvePasswordValidationIssue(issue)`     | Convert password validation issues to English messages.                                    |
+| `NumberValidationConfig`                    | Configure number bounds, integer-only mode, negatives, and decimal places.                 |
+| `NumberValidator(config).validate(value)`   | Validate and normalize numeric text.                                                       |
+| `resolveNumberValidationIssue(issue)`       | Convert number validation issues to English messages.                                      |
+| `TextValidationConfig`                      | Configure required text, trimming, length, pattern, allowed characters, and blocked words. |
+| `TextValidator(config).validate(value)`     | Validate and normalize text.                                                               |
+| `resolveTextValidationIssue(issue)`         | Convert text validation issues to English messages.                                        |
+| `asFormValidator(...)`                      | Adapt a validator into a Flutter-style `String? Function(String?)`.                        |
+| `ValidationIssue.code`                      | Stable machine-readable error code.                                                        |
+| `ValidationResult<TIssue, TValue>`          | Alias for `Either<TIssue, TValue>`.                                                        |
+| `ValidationMessageResolver<TIssue>`         | Alias for an issue-to-message function.                                                    |
 
 ## Predicate Functions And Regex Constants
 
@@ -325,14 +330,17 @@ final debouncer = Debouncer(milliseconds: 300);
 debouncer.run(() => print('Search'));
 ```
 
-| API                                                       | Use it for                                                                  |
-| --------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `IdGenerator` / `IdGeneratorService` / `IdGeneratorUtils` | Generate UUIDs, nano IDs, random strings, timestamp IDs, and Base64 values. |
-| `Debouncer.run(action)`                                   | Run only the last action after a quiet period.                              |
-| `Debouncer.dispose()`                                     | Cancel pending debounced work.                                              |
-| `Throttler.run(action)`                                   | Run an action at most once per cooldown window.                             |
-| `Throttler.dispose()`                                     | Cancel pending throttler state.                                             |
-| `callback.debounce(...)`                                  | Run a zero-arg function through a one-off debouncer.                        |
-| `callback.throttle(...)`                                  | Run a zero-arg function through a one-off throttler.                        |
-| `GSpacing`                                                | Shared spacing constants.                                                   |
-| `waveVerticalOffset(...)`                                 | Calculate a sine-wave vertical offset for painters/animations.              |
+`IdGenerator` uses non-cryptographic randomness and reversible Base64 encoding.
+Do not use it for secrets or security-sensitive tokens.
+
+| API                       | Use it for                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| `IdGenerator`             | Generate UUID-shaped IDs, nano IDs, random strings, timestamp IDs, and Base64 values. |
+| `Debouncer.run(action)`   | Run only the last action after a quiet period.                                        |
+| `Debouncer.dispose()`     | Cancel pending debounced work.                                                        |
+| `Throttler.run(action)`   | Run an action at most once per cooldown window.                                       |
+| `Throttler.dispose()`     | Cancel pending throttler state.                                                       |
+| `callback.debounce(...)`  | Run a zero-arg function through a one-off debouncer.                                  |
+| `callback.throttle(...)`  | Run a zero-arg function through a one-off throttler.                                  |
+| `GSpacing`                | Shared spacing constants.                                                             |
+| `waveVerticalOffset(...)` | Calculate a sine-wave vertical offset for painters/animations.                        |

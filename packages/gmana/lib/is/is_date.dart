@@ -1,9 +1,4 @@
-/// check if the string is a date
-bool isDate(String str) {
-  try {
-    DateTime.parse(str);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
+import 'package:gmana/is/parse.dart';
+
+/// Returns true if [str] is a parseable ISO 8601 date string.
+bool isDate(String str) => tryParseDate(str) != null;

@@ -1,4 +1,5 @@
 import 'package:gmana/extensions/num_duration_extension.dart';
+import 'package:gmana/extensions/duration_ext.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -128,7 +129,7 @@ void main() {
     });
 
     test('toHuman', () {
-      expect(500.microseconds.toHuman(), equals('500µs'));
+      expect(500.microseconds.toHuman(), equals('500us'));
       expect(500.milliseconds.toHuman(), equals('500ms'));
       expect(45.seconds.toHuman(), equals('45.0s'));
       expect(90.seconds.toHuman(), equals('1m 30s'));

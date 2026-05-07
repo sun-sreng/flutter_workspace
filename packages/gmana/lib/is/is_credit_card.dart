@@ -1,4 +1,4 @@
-import 'package:gmana/regex/credit_card_reg.dart';
+import '../regex/credit_card_reg.dart';
 
 /// Validates whether the given string is a valid credit card number using the Luhn algorithm.
 ///

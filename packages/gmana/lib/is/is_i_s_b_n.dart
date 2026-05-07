@@ -1,5 +1,5 @@
-import 'package:gmana/regex/isbn10_maybe_reg.dart';
-import 'package:gmana/regex/isbn13_maybe_reg.dart';
+import '../regex/isbn10_maybe_reg.dart';
+import '../regex/isbn13_maybe_reg.dart';
 
 /// check if the string is an ISBN (version 10 or 13)
 bool isISBN(String? str, [String? version]) {

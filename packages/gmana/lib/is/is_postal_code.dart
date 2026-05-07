@@ -1,4 +1,4 @@
-import 'package:gmana/regex/postal_code_patterns.dart';
+import '../regex/postal_code_patterns.dart';
 
 /// Checks if the given [text] matches the postal code pattern for the specified [locale].
 ///

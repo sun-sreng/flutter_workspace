@@ -25,7 +25,7 @@ Manual `pubspec.yaml` setup:
 
 ```yaml
 dependencies:
-  gmana: ^0.1.6
+  gmana: ^0.2.0
 ```
 
 ## Imports
@@ -49,7 +49,7 @@ import 'package:gmana/validation.dart';
 
 | Area                           | APIs                                                                        |
 | ------------------------------ | --------------------------------------------------------------------------- |
-| Functional results             | `Either`, `Left`, `Right`, `Failure`, `Unit`, `UseCase`, `StreamUseCase`    |
+| Functional results             | `Either`, `Result`, `FutureResult`, `Failure`, `Unit`, `UseCase`            |
 | String extensions              | casing, parsing, blank handling, slugs, duration parsing, truncation        |
 | Number and duration extensions | `5.seconds`, `2.hours`, rounding, normalization, time formatting            |
 | Iterable and list extensions   | `sum`, `average`, `median`, `chunked`, `groupBy`, `flatten`, `whereNotNull` |
@@ -118,7 +118,7 @@ class LoginParams {
 
 class LoginUseCase implements UseCase<String, LoginParams> {
   @override
-  FutureEither<String> call(LoginParams params) async {
+  FutureResult<String> call(LoginParams params) async {
     if (params.email.trim().isEmpty) {
       return const Left(Failure('Email is required'));
     }
@@ -131,7 +131,7 @@ class LoginUseCase implements UseCase<String, LoginParams> {
 For operations with no meaningful success value, return `unit`:
 
 ```dart
-FutureEitherUnit saveSettings() async {
+FutureResultUnit saveSettings() async {
   return const Right(unit);
 }
 ```
@@ -141,7 +141,7 @@ Use `StreamUseCase` when a use case emits fallible values over time:
 ```dart
 class WatchCountUseCase implements StreamUseCase<int, NoParams> {
   @override
-  StreamEither<int> call(NoParams params) async* {
+  StreamResult<int> call(NoParams params) async* {
     yield const Right<Failure, int>(1);
     yield const Left<Failure, int>(Failure('Stream stopped', 'counter_stopped'));
   }
@@ -330,7 +330,7 @@ final number = const NumberValidator(
   NumberValidationConfig(allowNegative: false, integerOnly: true),
 ).validate('42');
 
-final text = const TextValidator(
+final text = TextValidator(
   TextValidationConfig(trimWhitespace: true, minLength: 3),
 ).validate('  abc  ');
 
@@ -386,6 +386,9 @@ final timestampId = IdGenerator.timestampId();
 final random = IdGenerator.randomString(length: 12);
 final encoded = IdGenerator.encodeToBase64(['user', 123]);
 ```
+
+`IdGenerator` uses non-cryptographic randomness. Do not use these helpers for
+secrets, reset tokens, or security-sensitive identifiers.
 
 Debounce and throttle repeated work:
 

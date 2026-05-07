@@ -32,11 +32,9 @@ extension StringNullableX on String? {
   }
 }
 
-// ─── Nullable ─────────────────────────────────────────────────────────────
 
 /// Main extension on String providing comprehensive conversion and formatting tools.
 extension StringX on String {
-  // ── Parsing ───────────────────────────────────────────────────────────────
 
   /// Returns `null` if blank, otherwise `this`. Useful for form validation chains.
   /// ```dart
@@ -62,7 +60,6 @@ extension StringX on String {
   /// Returns true if the string represents a valid number.
   bool get isNumeric => double.tryParse(this) != null;
 
-  // ── Duration ─────────────────────────────────────────────────────────────
 
   /// Returns true if the string is a valid URL.
   bool get isUrl {
@@ -81,7 +78,6 @@ extension StringX on String {
     }
   }
 
-  // ── Case formatting ───────────────────────────────────────────────────────
 
   /// Estimates the reading time in minutes (225 words per minute).
   int get readingTimeMinutes {
@@ -99,7 +95,7 @@ extension StringX on String {
   /// Parses string as boolean (`'true'` evaluates to `true`, else `false`).
   bool get toBool => trim().toLowerCase() == 'true';
 
-  /// `'Hello World'` → `'helloWorld'`
+  /// `'Hello World'` -> `'helloWorld'`
   String get toCamelCase {
     final words = _words;
     if (words.isEmpty) return this;
@@ -112,7 +108,6 @@ extension StringX on String {
   /// Parses to [double], returns `0.0` on failure.
   double get toDoubleOrZero => double.tryParse(this) ?? 0.0;
 
-  // ── Slug / identifiers ────────────────────────────────────────────────────
 
   /// Parses `"SS"`, `"MM:SS"`, or `"HH:MM:SS"` into a [Duration], returns null on failure.
   Duration? get toDurationOrNull {
@@ -123,7 +118,6 @@ extension StringX on String {
     }
   }
 
-  // ── Truncation ────────────────────────────────────────────────────────────
 
   /// Parses to [int], returns `null` on failure.
   int? get toIntOrNull => int.tryParse(this);
@@ -131,12 +125,11 @@ extension StringX on String {
   /// Parses to [int], returns `0` on failure.
   int get toIntOrZero => int.tryParse(this) ?? 0;
 
-  // ── Validation ────────────────────────────────────────────────────────────
 
-  /// `'Hello World'` / `'helloWorld'` → `'hello-world'`
+  /// `'Hello World'` / `'helloWorld'` -> `'hello-world'`
   String get toKebabCase => _words.map((w) => w.toLowerCase()).join('-');
 
-  /// `'hello world'` → `'HELLO_WORLD'`
+  /// `'hello world'` -> `'HELLO_WORLD'`
   String get toScreamingSnakeCase => toSnakeCase.toUpperCase();
 
   /// Capitalizes only the first character.
@@ -145,8 +138,8 @@ extension StringX on String {
     return this[0].toUpperCase() + substring(1);
   }
 
-  /// URL-safe slug: lowercased, spaces→hyphens, non-alphanumeric stripped.
-  /// `'Hello World! 2024'` → `'hello-world-2024'`
+  /// URL-safe slug: lowercased, spaces->hyphens, non-alphanumeric stripped.
+  /// `'Hello World! 2024'` -> `'hello-world-2024'`
   String get toSlug =>
       toLowerCase()
           .replaceAll(_whitespaceRegExp, '-')
@@ -154,7 +147,7 @@ extension StringX on String {
           .replaceAll(_slugHyphenRegExp, '-')
           .trimHyphens();
 
-  /// `'Hello World'` / `'helloWorld'` → `'hello_world'`
+  /// `'Hello World'` / `'helloWorld'` -> `'hello_world'`
   String get toSnakeCase => _words.map((w) => w.toLowerCase()).join('_');
 
   /// Capitalizes the first letter of each whitespace-delimited word.
@@ -165,7 +158,6 @@ extension StringX on String {
           .map((w) => w.toSentenceCase)
           .join(' ');
 
-  // ── Whitespace / blank ────────────────────────────────────────────────────
 
   /// Parses string to [Uri], returns `null` on failure.
   Uri? get toUriOrNull => Uri.tryParse(this);
@@ -192,7 +184,6 @@ extension StringX on String {
     return count;
   }
 
-  // ── Reading time ──────────────────────────────────────────────────────────
 
   /// Passes if length falls within [[min], [max]] after trimming.
   bool hasLengthBetween(int min, int max) {
@@ -211,7 +202,6 @@ extension StringX on String {
     return l >= min && l <= max;
   }
 
-  // ── Misc ──────────────────────────────────────────────────────────────────
 
   /// Repeats this string [count] times.
   /// ```dart

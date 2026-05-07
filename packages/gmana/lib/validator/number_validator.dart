@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
 import '../either/left.dart';
 import '../either/right.dart';
 import 'validation_issue.dart';
@@ -19,9 +17,13 @@ String resolveNumberValidationIssue(NumberValidationIssue issue) {
 
 /// Number has too many decimal places.
 final class NumberDecimalPlacesExceededIssue extends NumberValidationIssue {
+  /// The provided decimal-place count.
   final int currentPlaces;
+
+  /// The configured maximum decimal-place count.
   final int maxPlaces;
 
+  /// Creates a decimal-places-exceeded issue.
   const NumberDecimalPlacesExceededIssue({required this.currentPlaces, required this.maxPlaces});
 
   @override
@@ -46,8 +48,10 @@ final class NumberInvalidFormatIssue extends NumberValidationIssue {
 
 /// Negative values are not allowed.
 final class NumberNegativeNotAllowedIssue extends NumberValidationIssue {
+  /// The provided negative value.
   final num currentValue;
 
+  /// Creates a negative-not-allowed issue.
   const NumberNegativeNotAllowedIssue(this.currentValue);
 
   @override
@@ -56,8 +60,10 @@ final class NumberNegativeNotAllowedIssue extends NumberValidationIssue {
 
 /// A whole number is required.
 final class NumberNotIntegerIssue extends NumberValidationIssue {
+  /// The provided non-integer value.
   final num currentValue;
 
+  /// Creates a not-integer issue.
   const NumberNotIntegerIssue(this.currentValue);
 
   @override
@@ -66,9 +72,13 @@ final class NumberNotIntegerIssue extends NumberValidationIssue {
 
 /// Number is larger than the allowed maximum.
 final class NumberTooLargeIssue extends NumberValidationIssue {
+  /// The provided value.
   final num currentValue;
+
+  /// The configured maximum value.
   final num maxValue;
 
+  /// Creates a too-large issue.
   const NumberTooLargeIssue({required this.currentValue, required this.maxValue});
 
   @override
@@ -77,9 +87,13 @@ final class NumberTooLargeIssue extends NumberValidationIssue {
 
 /// Number is smaller than the allowed minimum.
 final class NumberTooSmallIssue extends NumberValidationIssue {
+  /// The provided value.
   final num currentValue;
+
+  /// The configured minimum value.
   final num minValue;
 
+  /// Creates a too-small issue.
   const NumberTooSmallIssue({required this.currentValue, required this.minValue});
 
   @override
@@ -120,6 +134,7 @@ final class NumberValidationConfig {
 
 /// Base type for number validation failures.
 sealed class NumberValidationIssue extends ValidationIssue {
+  /// Creates a number validation issue.
   const NumberValidationIssue();
 }
 
