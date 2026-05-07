@@ -55,22 +55,22 @@ void main() {
 
     group('calendar properties', () {
       test('isWeekend identifies Saturday and Sunday', () {
-        expect('2024-03-16'.isWeekend, isTrue);
-        expect('2024-03-17'.isWeekend, isTrue);
-        expect('2024-03-15'.isWeekend, isFalse);
+        expect('2024-03-16T12:00:00Z'.isWeekend, isTrue);
+        expect('2024-03-17T12:00:00Z'.isWeekend, isTrue);
+        expect('2024-03-15T12:00:00Z'.isWeekend, isFalse);
       });
 
       test('isWeekday identifies Monday through Friday', () {
-        expect('2024-03-15'.isWeekday, isTrue);
-        expect('2024-03-18'.isWeekday, isTrue);
-        expect('2024-03-16'.isWeekday, isFalse);
+        expect('2024-03-15T12:00:00Z'.isWeekday, isTrue);
+        expect('2024-03-18T12:00:00Z'.isWeekday, isTrue);
+        expect('2024-03-16T12:00:00Z'.isWeekday, isFalse);
       });
 
       test('isLeapYear applies leap year rules', () {
-        expect('2024-01-01'.isLeapYear, isTrue);
-        expect('2023-01-01'.isLeapYear, isFalse);
-        expect('2000-01-01'.isLeapYear, isTrue);
-        expect('1900-01-01'.isLeapYear, isFalse);
+        expect('2024-01-01T12:00:00Z'.isLeapYear, isTrue);
+        expect('2023-01-01T12:00:00Z'.isLeapYear, isFalse);
+        expect('2000-01-01T12:00:00Z'.isLeapYear, isTrue);
+        expect('1900-01-01T12:00:00Z'.isLeapYear, isFalse);
       });
     });
 

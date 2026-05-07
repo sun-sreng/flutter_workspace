@@ -46,6 +46,14 @@ void main() {
       expect(result.leftOrNull(), isA<EmailDisposableDomainIssue>());
     });
 
+    test('rejects expanded default disposable domains in strict mode', () {
+      final result = EmailValidator(
+        EmailValidationConfig.strict(),
+      ).validate('user@getnada.com');
+
+      expect(result.leftOrNull(), isA<EmailDisposableDomainIssue>());
+    });
+
     test('normalizes configured disposable domains before matching', () {
       final result = EmailValidator(
         const EmailValidationConfig(
