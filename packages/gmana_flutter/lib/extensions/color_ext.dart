@@ -57,7 +57,10 @@ extension ColorExt on Color {
 
   // ── Opacity ──────────────────────────────────────────────────────────────
   Color withAlphaOpacity(double opacity) {
-    assert(opacity >= 0 && opacity <= 1);
+    if (opacity.isNaN || opacity < 0 || opacity > 1) {
+      throw ArgumentError.value(opacity, 'opacity', 'must be between 0 and 1');
+    }
+
     return withAlpha((opacity * 255).round());
   }
 }

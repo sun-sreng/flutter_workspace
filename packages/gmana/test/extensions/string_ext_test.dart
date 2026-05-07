@@ -109,7 +109,8 @@ void main() {
   group('StringX Slug', () {
     test('toSlug', () {
       expect('Hello World! 2024'.toSlug, equals('hello-world-2024'));
-      expect('  Some   Text--Here  '.toSlug, equals('-some-text-here-'));
+      expect('  Some   Text--Here  '.toSlug, equals('some-text-here'));
+      expect('---Already---Slug---'.toSlug, equals('already-slug'));
     });
   });
 
@@ -117,6 +118,7 @@ void main() {
     test('truncate', () {
       expect('Hello World'.truncate(7), equals('Hell...'));
       expect('Hello'.truncate(10), equals('Hello'));
+      expect(() => 'Hello'.truncate(3), throwsArgumentError);
     });
 
     test('truncateWords', () {
@@ -126,6 +128,7 @@ void main() {
       );
       expect('HelloWorldEveryone'.truncateWords(15), equals('HelloWorldEv...'));
       expect('Hello'.truncateWords(10), equals('Hello'));
+      expect(() => 'Hello'.truncateWords(3), throwsArgumentError);
     });
   });
 
@@ -137,8 +140,10 @@ void main() {
 
     test('isUrl', () {
       expect('https://google.com/'.isUrl, isTrue);
+      expect('https://google.com'.isUrl, isTrue);
       expect('http://localhost/'.isUrl, isTrue);
-      expect('https://google.com'.isUrl, isFalse);
+      expect(' ftp://example.com '.isUrl, isFalse);
+      expect('example.com'.isUrl, isFalse);
     });
 
     test('isNumeric', () {
@@ -163,6 +168,8 @@ void main() {
       expect('abc'.hasLengthBetween(2, 4), isTrue);
       expect('abc'.hasLengthBetween(4, 5), isFalse);
       expect(' abc '.hasLengthBetween(1, 3), isTrue);
+      expect(() => 'abc'.hasLengthBetween(-1, 3), throwsArgumentError);
+      expect(() => 'abc'.hasLengthBetween(4, 3), throwsArgumentError);
     });
   });
 
@@ -196,6 +203,8 @@ void main() {
   group('StringX Misc', () {
     test('repeat', () {
       expect('-'.repeat(10), equals('----------'));
+      expect('-'.repeat(0), equals(''));
+      expect(() => '-'.repeat(-1), throwsArgumentError);
     });
 
     test('reversed', () {
@@ -217,6 +226,12 @@ void main() {
     test('wrap', () {
       expect('world'.wrap('**'), equals('**world**'));
       expect('note'.wrap('<', '>'), equals('<note>'));
+    });
+
+    test('trimHyphens', () {
+      expect('---hello-world---'.trimHyphens(), equals('hello-world'));
+      expect('hello-world'.trimHyphens(), equals('hello-world'));
+      expect('---'.trimHyphens(), equals(''));
     });
   });
 

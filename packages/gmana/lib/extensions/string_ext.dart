@@ -1,5 +1,16 @@
 import 'dart:convert';
 
+final RegExp _alphaRegExp = RegExp(r'^[a-zA-Z]+$');
+final RegExp _alphanumericRegExp = RegExp(r'^[a-zA-Z0-9]+$');
+final RegExp _camelBoundaryRegExp = RegExp(r'([a-z])([A-Z])');
+final RegExp _emailRegExp = RegExp(
+  r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$',
+);
+final RegExp _slugHyphenRegExp = RegExp(r'-+');
+final RegExp _slugUnsafeRegExp = RegExp(r'[^a-z0-9\-]');
+final RegExp _whitespaceRegExp = RegExp(r'\s+');
+final RegExp _wordSeparatorRegExp = RegExp(r'[\s_\-]+');
+
 /// Extension on nullable [String] providing safe fallback and mapping methods.
 extension StringNullableX on String? {
   /// Returns true if the string is null or entirely whitespace.
@@ -34,16 +45,16 @@ extension StringX on String {
   String? get blankToNull => isBlank ? null : this;
 
   /// Returns true if the string only contains letters.
-  bool get isAlpha => RegExp(r'^[a-zA-Z]+$').hasMatch(this);
+  bool get isAlpha => _alphaRegExp.hasMatch(this);
 
   /// Returns true if the string only contains letters and numbers.
-  bool get isAlphanumeric => RegExp(r'^[a-zA-Z0-9]+$').hasMatch(this);
+  bool get isAlphanumeric => _alphanumericRegExp.hasMatch(this);
 
   /// Returns true if the string is purely whitespace or empty.
   bool get isBlank => trim().isEmpty;
 
   /// Returns true if the string is a valid email format.
-  bool get isEmail => RegExp(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$').hasMatch(trim());
+  bool get isEmail => _emailRegExp.hasMatch(trim());
 
   /// Returns true if the string contains non-whitespace characters.
   bool get isNotBlank => trim().isNotEmpty;
@@ -54,7 +65,12 @@ extension StringX on String {
   // ── Duration ─────────────────────────────────────────────────────────────
 
   /// Returns true if the string is a valid URL.
-  bool get isUrl => Uri.tryParse(this)?.hasAbsolutePath ?? false;
+  bool get isUrl {
+    final uri = Uri.tryParse(trim());
+    return uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
+  }
 
   /// Decodes JSON, returns `null` on failure instead of throwing.
   dynamic get jsonDecodeOrNull {
@@ -71,11 +87,11 @@ extension StringX on String {
   int get readingTimeMinutes {
     final trimmed = trim();
     if (trimmed.isEmpty) return 0;
-    return (trimmed.split(RegExp(r'\s+')).length / 225).ceil();
+    return (trimmed.split(_whitespaceRegExp).length / 225).ceil();
   }
 
   /// Removes all whitespace, including internal.
-  String get removeWhitespace => replaceAll(RegExp(r'\s+'), '');
+  String get removeWhitespace => replaceAll(_whitespaceRegExp, '');
 
   /// Reverses the string (Unicode-safe via runes).
   String get reversed => String.fromCharCodes(runes.toList().reversed);
@@ -133,17 +149,21 @@ extension StringX on String {
   /// `'Hello World! 2024'` → `'hello-world-2024'`
   String get toSlug =>
       toLowerCase()
-          .replaceAll(RegExp(r'\s+'), '-')
-          .replaceAll(RegExp(r'[^a-z0-9\-]'), '')
-          .replaceAll(RegExp(r'-+'), '-')
-          .trim();
+          .replaceAll(_whitespaceRegExp, '-')
+          .replaceAll(_slugUnsafeRegExp, '')
+          .replaceAll(_slugHyphenRegExp, '-')
+          .trimHyphens();
 
   /// `'Hello World'` / `'helloWorld'` → `'hello_world'`
   String get toSnakeCase => _words.map((w) => w.toLowerCase()).join('_');
 
   /// Capitalizes the first letter of each whitespace-delimited word.
   String get toTitleCase =>
-      trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).map((w) => w.toSentenceCase).join(' ');
+      trim()
+          .split(_whitespaceRegExp)
+          .where((w) => w.isNotEmpty)
+          .map((w) => w.toSentenceCase)
+          .join(' ');
 
   // ── Whitespace / blank ────────────────────────────────────────────────────
 
@@ -153,8 +173,8 @@ extension StringX on String {
   /// Splits on whitespace, underscores, hyphens, and camelCase boundaries.
   List<String> get _words =>
       trim()
-          .replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (m) => '${m[1]} ${m[2]}')
-          .split(RegExp(r'[\s_\-]+'))
+          .replaceAllMapped(_camelBoundaryRegExp, (m) => '${m[1]} ${m[2]}')
+          .split(_wordSeparatorRegExp)
           .where((w) => w.isNotEmpty)
           .toList();
 
@@ -176,6 +196,17 @@ extension StringX on String {
 
   /// Passes if length falls within [[min], [max]] after trimming.
   bool hasLengthBetween(int min, int max) {
+    if (min < 0) {
+      throw ArgumentError.value(min, 'min', 'must not be negative');
+    }
+    if (max < min) {
+      throw ArgumentError.value(
+        max,
+        'max',
+        'must be greater than or equal to min',
+      );
+    }
+
     final l = trim().length;
     return l >= min && l <= max;
   }
@@ -186,7 +217,13 @@ extension StringX on String {
   /// ```dart
   /// '-'.repeat(10); // '----------'
   /// ```
-  String repeat(int count) => List.filled(count, this).join();
+  String repeat(int count) {
+    if (count < 0) {
+      throw ArgumentError.value(count, 'count', 'must not be negative');
+    }
+
+    return List.filled(count, this).join();
+  }
 
   /// Parses `"SS"`, `"MM:SS"`, or `"HH:MM:SS"` into a [Duration].
   Duration toDuration() {
@@ -218,13 +255,14 @@ extension StringX on String {
   /// 'Hello World'.truncate(7); // 'Hell...'
   /// ```
   String truncate(int maxLength, {String ellipsis = '...'}) {
-    assert(maxLength > ellipsis.length, 'maxLength must exceed ellipsis length');
+    _checkTruncationLength(maxLength, ellipsis);
     if (length <= maxLength) return this;
     return substring(0, maxLength - ellipsis.length) + ellipsis;
   }
 
   /// Truncates at a word boundary instead of mid-word.
   String truncateWords(int maxLength, {String ellipsis = '...'}) {
+    _checkTruncationLength(maxLength, ellipsis);
     if (length <= maxLength) return this;
     final cut = substring(0, maxLength - ellipsis.length);
     final lastSpace = cut.lastIndexOf(' ');
@@ -236,5 +274,32 @@ extension StringX on String {
   /// 'world'.wrap('**');        // '**world**'
   /// 'note'.wrap('<', '>');     // '<note>'
   /// ```
-  String wrap(String prefix, [String? suffix]) => '$prefix$this${suffix ?? prefix}';
+  String wrap(String prefix, [String? suffix]) {
+    return '$prefix$this${suffix ?? prefix}';
+  }
+
+  /// Removes leading and trailing hyphens.
+  String trimHyphens() {
+    var start = 0;
+    var end = length;
+
+    while (start < end && codeUnitAt(start) == 45) {
+      start++;
+    }
+    while (end > start && codeUnitAt(end - 1) == 45) {
+      end--;
+    }
+
+    return substring(start, end);
+  }
+}
+
+void _checkTruncationLength(int maxLength, String ellipsis) {
+  if (maxLength <= ellipsis.length) {
+    throw ArgumentError.value(
+      maxLength,
+      'maxLength',
+      'must be greater than ellipsis length (${ellipsis.length})',
+    );
+  }
 }

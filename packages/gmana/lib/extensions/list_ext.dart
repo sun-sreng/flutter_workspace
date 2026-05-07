@@ -50,7 +50,10 @@ extension IterableX<T> on Iterable<T> {
   /// [1, 2, 3, 4, 5].chunked(2); // ([1,2], [3,4], [5])
   /// ```
   Iterable<List<T>> chunked(int size) sync* {
-    assert(size > 0, 'Chunk size must be > 0');
+    if (size <= 0) {
+      throw ArgumentError.value(size, 'size', 'must be greater than zero');
+    }
+
     var chunk = <T>[];
     for (final e in this) {
       chunk.add(e);

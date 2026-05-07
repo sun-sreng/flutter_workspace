@@ -23,6 +23,26 @@ void main() {
       expect(IconDataExt.tryParse(json)?.codePoint, Icons.home.codePoint);
     });
 
+    test('color helpers validate arguments in release-safe code paths', () {
+      expect(() => GColors.primary.lighten(-0.1), throwsArgumentError);
+      expect(() => GColors.primary.darken(1.1), throwsArgumentError);
+      expect(() => GColors.primary.saturate(-0.1), throwsArgumentError);
+      expect(() => GColors.primary.desaturate(double.nan), throwsArgumentError);
+      expect(
+        () => GColors.primary.mix(Colors.white, -0.1),
+        throwsArgumentError,
+      );
+      expect(() => GColors.primary.withAlphaOpacity(1.1), throwsArgumentError);
+      expect(
+        () => ColorService.analogous(GColors.primary, count: 0),
+        throwsArgumentError,
+      );
+      expect(
+        () => ColorService.bestContrast(GColors.primary, const []),
+        throwsArgumentError,
+      );
+    });
+
     testWidgets('BuildContext helpers work together from the main import', (
       tester,
     ) async {

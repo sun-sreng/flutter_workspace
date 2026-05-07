@@ -11,7 +11,7 @@ abstract final class ColorService {
     required double amount,
     required bool darken,
   }) {
-    assert(amount >= 0 && amount <= 1);
+    _checkUnitInterval(amount, 'amount');
     final hsl = HSLColor.fromColor(color);
     final l =
         darken
@@ -27,7 +27,7 @@ abstract final class ColorService {
     required double amount,
     required bool desaturate,
   }) {
-    assert(amount >= 0 && amount <= 1);
+    _checkUnitInterval(amount, 'amount');
     final hsl = HSLColor.fromColor(color);
     final s =
         desaturate
@@ -43,7 +43,10 @@ abstract final class ColorService {
     int count = 2,
     double spreadDegrees = 30,
   }) {
-    assert(count >= 1);
+    if (count < 1) {
+      throw ArgumentError.value(count, 'count', 'must be at least 1');
+    }
+
     final hsl = HSLColor.fromColor(color);
     final step = spreadDegrees / count;
     return [
@@ -62,7 +65,14 @@ abstract final class ColorService {
     Color background, [
     List<Color> candidates = const [Colors.white, Colors.black],
   ]) {
-    assert(candidates.isNotEmpty);
+    if (candidates.isEmpty) {
+      throw ArgumentError.value(
+        candidates,
+        'candidates',
+        'must not be empty',
+      );
+    }
+
     return candidates.reduce(
       (best, c) =>
           contrastRatio(c, background) > contrastRatio(best, background)
@@ -133,7 +143,7 @@ abstract final class ColorService {
   /// Linear interpolation between [a] and [b] in sRGB space.
   /// [t] = 0.0 → [a], [t] = 1.0 → [b].
   static Color mix(Color a, Color b, [double t = 0.5]) {
-    assert(t >= 0 && t <= 1);
+    _checkUnitInterval(t, 't');
     return Color.lerp(a, b, t)!;
   }
 
@@ -204,5 +214,11 @@ abstract final class ColorService {
       }(),
       _ => null,
     };
+  }
+
+  static void _checkUnitInterval(double value, String name) {
+    if (value.isNaN || value < 0 || value > 1) {
+      throw ArgumentError.value(value, name, 'must be between 0 and 1');
+    }
   }
 }

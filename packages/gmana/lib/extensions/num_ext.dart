@@ -74,7 +74,10 @@ extension IntX on int {
   /// 1.to(5); // (1, 2, 3, 4, 5)
   /// ```
   Iterable<int> to(int end, {int step = 1}) sync* {
-    assert(step > 0, 'step must be positive');
+    if (step <= 0) {
+      throw ArgumentError.value(step, 'step', 'must be positive');
+    }
+
     if (this <= end) {
       for (var i = this; i <= end; i += step) {
         yield i;
@@ -131,10 +134,16 @@ extension NumX on num {
   double get kelvinToFahrenheit => kelvinToCelsius.celsiusToFahrenheit;
 
   /// Ceil to the nearest [multiple].
-  num ceilToMultiple(num multiple) => (this / multiple).ceil() * multiple;
+  num ceilToMultiple(num multiple) {
+    _checkNonZeroMultiple(multiple);
+    return (this / multiple).ceil() * multiple;
+  }
 
   /// Floor to the nearest [multiple].
-  num floorToMultiple(num multiple) => (this / multiple).floor() * multiple;
+  num floorToMultiple(num multiple) {
+    _checkNonZeroMultiple(multiple);
+    return (this / multiple).floor() * multiple;
+  }
 
   /// Checks if the number is between [min] and [max] inclusively.
   bool isBetween(num min, num max) => this >= min && this <= max;
@@ -167,6 +176,10 @@ extension NumX on num {
   /// 3.14159.roundTo(2); // 3.14
   /// ```
   double roundTo(int places) {
+    if (places < 0) {
+      throw ArgumentError.value(places, 'places', 'must not be negative');
+    }
+
     final factor = pow(10, places).toDouble();
     return (this * factor).round() / factor;
   }
@@ -176,7 +189,10 @@ extension NumX on num {
   /// 27.roundToMultiple(5); // 25
   /// 28.roundToMultiple(5); // 30
   /// ```
-  num roundToMultiple(num multiple) => (this / multiple).round() * multiple;
+  num roundToMultiple(num multiple) {
+    _checkNonZeroMultiple(multiple);
+    return (this / multiple).round() * multiple;
+  }
 
   // ── Misc ────────────────────────────────────────────────────────────────
 
@@ -187,5 +203,11 @@ extension NumX on num {
     final range = fromMax - fromMin;
     if (range == 0) return fallback;
     return ((toMax - toMin) * ((this - fromMin) / range) + toMin).toDouble();
+  }
+}
+
+void _checkNonZeroMultiple(num multiple) {
+  if (multiple == 0) {
+    throw ArgumentError.value(multiple, 'multiple', 'must not be zero');
   }
 }

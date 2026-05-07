@@ -96,7 +96,8 @@ void main() {
 
       test('chunked throws error on invalid size', () {
         final list = [1, 2];
-        expect(() => list.chunked(0).toList(), throwsA(isA<AssertionError>()));
+        expect(() => list.chunked(0).toList(), throwsArgumentError);
+        expect(() => list.chunked(-1).toList(), throwsArgumentError);
       });
     });
   });

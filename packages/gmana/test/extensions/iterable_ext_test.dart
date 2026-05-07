@@ -8,6 +8,7 @@ void main() {
         expect([1, 2, 3].sum(), 6);
         expect([1.5, 2.5, 3.0].sum(), 7.0);
         expect(<int>[].sum(), 0); // default identity
+        expect(<double>[].sum(), 0.0);
         expect(<int>[].sum(identity: 10), 10);
       });
 
@@ -15,6 +16,7 @@ void main() {
         expect([2, 3, 4].product(), 24);
         expect([2.0, 3.5, 2.0].product(), 14.0);
         expect(<int>[].product(), 1); // default identity
+        expect(<double>[].product(), 1.0);
         expect(<int>[].product(identity: 5), 5);
       });
 
@@ -108,11 +110,13 @@ void main() {
 
       test('runningSum calculates prefix sums', () {
         expect([1, 2, 3, 4].runningSum().toList(), [1, 3, 6, 10]);
+        expect([1.5, 2.5].runningSum().toList(), [1.5, 4.0]);
         expect(<int>[].runningSum().toList(), isEmpty);
       });
 
       test('runningProduct calculates prefix products', () {
         expect([1, 2, 3, 4].runningProduct().toList(), [1, 2, 6, 24]);
+        expect([1.5, 2.0].runningProduct().toList(), [1.5, 3.0]);
         expect(<int>[].runningProduct().toList(), isEmpty);
       });
 
@@ -120,12 +124,14 @@ void main() {
         expect([1, 5, 2, 10, 4].top(3), [10, 5, 4]);
         expect([1, 2].top(5), [2, 1]); // handles larger n
         expect(<int>[].top(2), isEmpty);
+        expect(() => [1, 2].top(-1), throwsArgumentError);
       });
 
       test('bottom returns smallest elements', () {
         expect([1, 5, 2, 10, 4].bottom(3), [1, 2, 4]);
         expect([3, 2].bottom(5), [2, 3]); // handles larger n
         expect(<int>[].bottom(2), isEmpty);
+        expect(() => [1, 2].bottom(-1), throwsArgumentError);
       });
     });
   });

@@ -126,6 +126,8 @@ void main() {
       expect(5.to(1).toList(), equals([5, 4, 3, 2, 1]));
       expect(1.to(5, step: 2).toList(), equals([1, 3, 5]));
       expect(5.to(1, step: 2).toList(), equals([5, 3, 1]));
+      expect(() => 1.to(5, step: 0).toList(), throwsArgumentError);
+      expect(() => 1.to(5, step: -1).toList(), throwsArgumentError);
     });
   });
 
@@ -142,21 +144,26 @@ void main() {
     test('roundTo', () {
       expect(3.14159.roundTo(2), equals(3.14));
       expect(3.145.roundTo(2), equals(3.15));
+      expect(3.145.roundTo(0), equals(3.0));
+      expect(() => 3.145.roundTo(-1), throwsArgumentError);
     });
 
     test('roundToMultiple', () {
       expect(27.roundToMultiple(5), equals(25));
       expect(28.roundToMultiple(5), equals(30));
+      expect(() => 28.roundToMultiple(0), throwsArgumentError);
     });
 
     test('floorToMultiple', () {
       expect(27.floorToMultiple(5), equals(25));
       expect(29.floorToMultiple(5), equals(25));
+      expect(() => 29.floorToMultiple(0), throwsArgumentError);
     });
 
     test('ceilToMultiple', () {
       expect(21.ceilToMultiple(5), equals(25));
       expect(25.ceilToMultiple(5), equals(25));
+      expect(() => 25.ceilToMultiple(0), throwsArgumentError);
     });
 
     test('normalized / normalizedClamped / safeNormalized', () {

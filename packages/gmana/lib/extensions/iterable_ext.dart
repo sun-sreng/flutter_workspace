@@ -1,5 +1,15 @@
 import 'dart:math' as math;
 
+T _zeroFor<T extends num>() {
+  if (T == double) return 0.0 as T;
+  return 0 as T;
+}
+
+T _oneFor<T extends num>() {
+  if (T == double) return 1.0 as T;
+  return 1 as T;
+}
+
 /// Comprehensive extensions on [Iterable] for numeric types.
 extension IterableNumX<T extends num> on Iterable<T> {
   // ─── Aggregates ───────────────────────────────────────────────────────────
@@ -70,7 +80,10 @@ extension IterableNumX<T extends num> on Iterable<T> {
   // ─── Predicates ──────────────────────────────────────────────────────────
 
   /// Returns the [n] smallest elements in ascending order.
-  List<T> bottom(int n) => (toList()..sort()).take(n).toList();
+  List<T> bottom(int n) {
+    _checkNonNegativeCount(n);
+    return (toList()..sort()).take(n).toList();
+  }
 
   /// Clamps every element to [[lo], [hi]].
   Iterable<T> clampAll(T lo, T hi) => map((e) => e.clamp(lo, hi) as T);
@@ -88,13 +101,13 @@ extension IterableNumX<T extends num> on Iterable<T> {
 
   /// Product of all elements. Returns [identity] (default 1) if empty.
   T product({T? identity}) {
-    if (isEmpty) return (identity ?? 1) as T;
+    if (isEmpty) return identity ?? _oneFor<T>();
     return reduce((a, b) => (a * b) as T);
   }
 
   /// Cumulative product as a lazy iterable.
   Iterable<T> runningProduct() sync* {
-    T acc = (1 as T);
+    var acc = _oneFor<T>();
     for (final e in this) {
       acc = (acc * e) as T;
       yield acc;
@@ -103,7 +116,7 @@ extension IterableNumX<T extends num> on Iterable<T> {
 
   /// Running (prefix) sum as a lazy iterable.
   Iterable<T> runningSum() sync* {
-    T acc = (0 as T);
+    var acc = _zeroFor<T>();
     for (final e in this) {
       acc = (acc + e) as T;
       yield acc;
@@ -112,10 +125,19 @@ extension IterableNumX<T extends num> on Iterable<T> {
 
   /// Sum of all elements. Returns [identity] (default 0) if empty.
   T sum({T? identity}) {
-    if (isEmpty) return (identity ?? 0) as T;
+    if (isEmpty) return identity ?? _zeroFor<T>();
     return reduce((a, b) => (a + b) as T);
   }
 
   /// Returns the [n] largest elements in descending order.
-  List<T> top(int n) => (toList()..sort()).reversed.take(n).toList();
+  List<T> top(int n) {
+    _checkNonNegativeCount(n);
+    return (toList()..sort()).reversed.take(n).toList();
+  }
+}
+
+void _checkNonNegativeCount(int count) {
+  if (count < 0) {
+    throw ArgumentError.value(count, 'n', 'must not be negative');
+  }
 }
