@@ -20,6 +20,7 @@ String resolvePasswordValidationIssue(PasswordValidationIssue issue) {
 
 /// Password input is empty.
 final class PasswordEmptyIssue extends PasswordValidationIssue {
+  /// password empty issue
   const PasswordEmptyIssue();
 
   @override
@@ -28,6 +29,7 @@ final class PasswordEmptyIssue extends PasswordValidationIssue {
 
 /// Password is missing a digit.
 final class PasswordMissingDigitIssue extends PasswordValidationIssue {
+  /// Password missing digit issue
   const PasswordMissingDigitIssue();
 
   @override
@@ -36,6 +38,7 @@ final class PasswordMissingDigitIssue extends PasswordValidationIssue {
 
 /// Password is missing a lowercase letter.
 final class PasswordMissingLowercaseIssue extends PasswordValidationIssue {
+  /// Password missing lowercase issue
   const PasswordMissingLowercaseIssue();
 
   @override
@@ -44,6 +47,7 @@ final class PasswordMissingLowercaseIssue extends PasswordValidationIssue {
 
 /// Password is missing a special character.
 final class PasswordMissingSpecialCharacterIssue extends PasswordValidationIssue {
+  /// Password missing special character issue
   const PasswordMissingSpecialCharacterIssue();
 
   @override
@@ -52,6 +56,7 @@ final class PasswordMissingSpecialCharacterIssue extends PasswordValidationIssue
 
 /// Password is missing an uppercase letter.
 final class PasswordMissingUppercaseIssue extends PasswordValidationIssue {
+  /// Password missing uppercase issue
   const PasswordMissingUppercaseIssue();
 
   @override
@@ -60,6 +65,7 @@ final class PasswordMissingUppercaseIssue extends PasswordValidationIssue {
 
 /// Password uses a repeated-character pattern.
 final class PasswordRepeatedCharacterIssue extends PasswordValidationIssue {
+  /// Password repeated character issue
   const PasswordRepeatedCharacterIssue();
 
   @override
@@ -68,6 +74,7 @@ final class PasswordRepeatedCharacterIssue extends PasswordValidationIssue {
 
 /// Password uses a sequential pattern.
 final class PasswordSequentialPatternIssue extends PasswordValidationIssue {
+  /// Password sequential pattern issue
   const PasswordSequentialPatternIssue();
 
   @override
@@ -76,6 +83,7 @@ final class PasswordSequentialPatternIssue extends PasswordValidationIssue {
 
 /// Password is too common.
 final class PasswordTooCommonIssue extends PasswordValidationIssue {
+  /// Password too common issue
   const PasswordTooCommonIssue();
 
   @override

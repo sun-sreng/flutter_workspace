@@ -32,6 +32,7 @@ final class NumberDecimalPlacesExceededIssue extends NumberValidationIssue {
 
 /// Number input is empty.
 final class NumberEmptyIssue extends NumberValidationIssue {
+  /// Number empty issue
   const NumberEmptyIssue();
 
   @override
@@ -40,6 +41,7 @@ final class NumberEmptyIssue extends NumberValidationIssue {
 
 /// Number input is malformed.
 final class NumberInvalidFormatIssue extends NumberValidationIssue {
+  /// Number invalid format issue
   const NumberInvalidFormatIssue();
 
   @override
