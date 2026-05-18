@@ -2,27 +2,36 @@ import 'package:flutter/material.dart';
 
 extension ContextExt on BuildContext {
   double get bottomSafeArea => safeAreaPadding.bottom;
+
   bool get canPop => navigator.canPop();
+
   ColorScheme get colorScheme => theme.colorScheme;
 
   double get devicePixelRatio => mediaQuery.devicePixelRatio;
+
   bool get hasFocus => FocusScope.of(this).hasFocus;
+
   bool get isLandscape => mediaQuery.orientation == Orientation.landscape;
+
   bool get isPortrait => !isLandscape;
 
   MediaQueryData get mediaQuery => MediaQuery.of(this);
 
   NavigatorState get navigator => Navigator.of(this);
 
-  /// Safe area padding (notch, home indicator, etc.).
+  /// Safe area padding such as notch and home indicator insets.
   EdgeInsets get safeAreaPadding => mediaQuery.padding;
 
   ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
+
   double get screenHeight => screenSize.height;
 
   Size get screenSize => mediaQuery.size;
+
   double get screenWidth => screenSize.width;
+
   double get textScaleFactor => mediaQuery.textScaler.scale(1.0);
+
   TextTheme get textTheme => theme.textTheme;
 
   ThemeData get theme => Theme.of(this);
@@ -42,7 +51,7 @@ extension ContextExt on BuildContext {
   /// Pops all routes down to the root.
   void popToRoot() => navigator.popUntil((route) => route.isFirst);
 
-  /// Pops until [predicate] returns true, or to first route if none match.
+  /// Pops until [predicate] returns true.
   void popUntil(RoutePredicate predicate) => navigator.popUntil(predicate);
 
   Future<T?> push<T>(Widget widget) =>
@@ -110,6 +119,7 @@ extension ContextExt on BuildContext {
         ],
       ),
     );
+
     return result ?? false;
   }
 
@@ -161,6 +171,7 @@ extension ContextExt on BuildContext {
     duration: duration,
     action: action,
   );
+
   void showWarningSnackBar({
     required String message,
     Duration duration = const Duration(seconds: 4),

@@ -1,8 +1,8 @@
 # gmana_flutter
 
 Flutter UI utilities for production apps: form-field compatibility exports,
-loading indicator compatibility exports, theme helpers, color tools,
-responsive extensions, and small design-system tokens.
+loading indicator compatibility exports, theme helpers, extension compatibility
+exports, and small design-system tokens.
 
 For a full API guide covering every exported helper, widget, and function, see
 [doc/api.md](doc/api.md).
@@ -39,6 +39,13 @@ from `gmana_flutter` for compatibility:
 flutter pub add gmana_form
 ```
 
+Flutter extension methods now live in the focused `gmana_flutter_extensions`
+package and are re-exported from `gmana_flutter` for compatibility:
+
+```bash
+flutter pub add gmana_flutter_extensions
+```
+
 If you use validator configuration classes such as
 `PasswordValidationConfig`, add the core package too:
 
@@ -51,6 +58,7 @@ Manual `pubspec.yaml` setup:
 ```yaml
 dependencies:
   gmana: ^0.2.0
+  gmana_flutter_extensions: ^0.0.1
   gmana_form: ^0.0.1
   gmana_flutter: ^0.0.8
   gmana_spinner: ^0.0.1
@@ -106,15 +114,14 @@ class HomePage extends StatelessWidget {
 
 ## What You Can Use
 
-| Area      | APIs                                                                                                      |
-| --------- | --------------------------------------------------------------------------------------------------------- |
-| Widgets   | `GAppBar`, `GListTile`, `SizedBoxHeight`, `GStarRatingBar`                                                |
-| Forms     | `GEmailField`, `GPasswordField`, `GNumberField`, `GTextField`, `GConfirmPasswordField`, `GElevatedButton` |
-| Loading   | `GCircularSpinner`, `GLinearSpinner`, `GDotSpinner`, `GWaveSpinner`, `GWaveDotSpinner`                    |
-| Theme     | `GColors`, `GFontWeight`, `ThemeModeExt`, `ThemeModeService`                                              |
-| Color     | `ColorExt`, `StringColorExtension`, `ColorService`                                                        |
-| Layout    | `Breakpoint`, `Breakpoints`, `BreakpointUtils`, `ResponsiveContext`, `ContextExt`                         |
-| Utilities | `IconDataExt`, `IconDataSerialization`, `fromLocale`, `toLocale`, `registerErrorHandlers`                 |
+| Area       | APIs                                                                                                       |
+| ---------- | ---------------------------------------------------------------------------------------------------------- |
+| Widgets    | `GAppBar`, `GListTile`, `SizedBoxHeight`, `GStarRatingBar`                                                 |
+| Forms      | `GEmailField`, `GPasswordField`, `GNumberField`, `GTextField`, `GConfirmPasswordField`, `GElevatedButton`  |
+| Loading    | `GCircularSpinner`, `GLinearSpinner`, `GDotSpinner`, `GWaveSpinner`, `GWaveDotSpinner`                     |
+| Theme      | `GColors`, `GFontWeight`, plus re-exported `ThemeModeExt`, `ThemeModeService`                              |
+| Extensions | Re-exported `ColorExt`, `StringColorExtension`, `BreakpointUtils`, `ResponsiveContext`, `ContextExt`       |
+| Utilities  | Re-exported `IconDataExt`, `IconDataSerialization`, plus `fromLocale`, `toLocale`, `registerErrorHandlers` |
 
 ## Theme Setup
 
@@ -414,6 +421,8 @@ the package's UI components.
 
 - Use [`gmana`](https://pub.dev/packages/gmana) for pure Dart extensions,
   functional helpers, and validators.
+- Use `gmana_flutter_extensions` for focused Flutter extension methods and
+  helper services.
 - Use `gmana_form` for focused Flutter form fields, submit controls, and
   confirm-password validation.
 - Use `gmana_spinner` for focused Flutter loading indicators.

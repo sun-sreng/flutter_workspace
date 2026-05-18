@@ -5,6 +5,7 @@ environment:
 
 workspace:
   - packages/gmana
+  - packages/gmana_flutter_extensions
   - packages/gmana_form
   - packages/gmana_flutter
   - packages/gmana_spinner

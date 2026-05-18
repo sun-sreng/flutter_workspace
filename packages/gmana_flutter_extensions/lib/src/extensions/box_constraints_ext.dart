@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// ── Semantic breakpoint enum ───────────────────────────────────────────────
 enum Breakpoint {
   mobile,
   tablet,
@@ -13,8 +12,10 @@ enum Breakpoint {
 
   /// True for tablet and above.
   bool get isAtLeastTablet => index >= Breakpoint.tablet.index;
+
   bool get isDesktop =>
       this == Breakpoint.desktop || this == Breakpoint.widescreen;
+
   bool get isMobile => this == Breakpoint.mobile;
 
   bool get isTablet => this == Breakpoint.tablet;
@@ -47,7 +48,6 @@ enum Breakpoint {
   };
 }
 
-// ── Breakpoint thresholds ──────────────────────────────────────────────────
 abstract final class Breakpoints {
   static const double mobile = 0;
   static const double tablet = 730;
@@ -55,7 +55,6 @@ abstract final class Breakpoints {
   static const double widescreen = 1600;
 }
 
-// ── BoxConstraints extension ───────────────────────────────────────────────
 extension BreakpointUtils on BoxConstraints {
   Breakpoint get breakpoint => switch (maxWidth) {
     < Breakpoints.tablet => Breakpoint.mobile,
@@ -63,14 +62,16 @@ extension BreakpointUtils on BoxConstraints {
     < Breakpoints.widescreen => Breakpoint.desktop,
     _ => Breakpoint.widescreen,
   };
+
   bool get isAtLeastDesktop => maxWidth >= Breakpoints.desktop;
-  // Cumulative guards — useful for "at least tablet" style conditions.
+
   bool get isAtLeastTablet => maxWidth >= Breakpoints.tablet;
+
   bool get isDesktop =>
       maxWidth >= Breakpoints.desktop && maxWidth < Breakpoints.widescreen;
 
-  // Exclusive ranges — no overlap.
   bool get isMobile => maxWidth < Breakpoints.tablet;
+
   bool get isTablet =>
       maxWidth >= Breakpoints.tablet && maxWidth < Breakpoints.desktop;
 
@@ -80,7 +81,7 @@ extension BreakpointUtils on BoxConstraints {
   /// True when height is unbounded.
   bool get isUnboundedHeight => maxHeight == double.infinity;
 
-  /// True when width is unbounded (e.g. inside a scrollable).
+  /// True when width is unbounded.
   bool get isUnboundedWidth => maxWidth == double.infinity;
 
   bool get isWidescreen => maxWidth >= Breakpoints.widescreen;
@@ -97,11 +98,9 @@ extension BreakpointUtils on BoxConstraints {
     maxHeight: (maxHeight - insets.vertical).clamp(0.0, double.infinity),
   );
 
-  /// Resolves a value per breakpoint. Falls back up the chain when a tier
-  /// is omitted (mobile → tablet → desktop → widescreen).
+  /// Resolves a value per breakpoint, falling back from larger tiers to mobile.
   T resolve<T>({required T mobile, T? tablet, T? desktop, T? widescreen}) {
-    final bp = breakpoint;
-    return switch (bp) {
+    return switch (breakpoint) {
       Breakpoint.widescreen => widescreen ?? desktop ?? tablet ?? mobile,
       Breakpoint.desktop => desktop ?? tablet ?? mobile,
       Breakpoint.tablet => tablet ?? mobile,
@@ -112,6 +111,7 @@ extension BreakpointUtils on BoxConstraints {
   /// Clamps constraints to [size], respecting existing min/max bounds.
   BoxConstraints tightenMaxSize(Size? size) {
     if (size == null) return this;
+
     return copyWith(
       maxWidth: clampDouble(size.width, minWidth, maxWidth),
       maxHeight: clampDouble(size.height, minHeight, maxHeight),
@@ -119,7 +119,6 @@ extension BreakpointUtils on BoxConstraints {
   }
 }
 
-// ── BuildContext extension ─────────────────────────────────────────────────
 extension ResponsiveContext on BuildContext {
   Breakpoint get breakpoint => switch (_mq.size.width) {
     < Breakpoints.tablet => Breakpoint.mobile,
@@ -127,14 +126,19 @@ extension ResponsiveContext on BuildContext {
     < Breakpoints.widescreen => Breakpoint.desktop,
     _ => Breakpoint.widescreen,
   };
+
   bool get isAtLeastDesktop => breakpoint.isAtLeastDesktop;
 
   bool get isAtLeastTablet => breakpoint.isAtLeastTablet;
 
   bool get isDesktop => breakpoint.isDesktop;
+
   bool get isMobile => breakpoint.isMobile;
+
   bool get isTablet => breakpoint.isTablet;
+
   bool get isWidescreen => breakpoint.isWidescreen;
+
   MediaQueryData get _mq => MediaQuery.of(this);
 
   /// Shorthand for breakpoint-driven value resolution.

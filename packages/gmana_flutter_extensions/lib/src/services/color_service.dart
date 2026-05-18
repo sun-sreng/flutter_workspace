@@ -1,4 +1,3 @@
-// color_service.dart
 import 'package:flutter/material.dart';
 
 abstract final class ColorService {
@@ -11,11 +10,12 @@ abstract final class ColorService {
   }) {
     _checkUnitInterval(amount, 'amount');
     final hsl = HSLColor.fromColor(color);
-    final l =
+    final lightness =
         darken
             ? (hsl.lightness - amount).clamp(0.0, 1.0)
             : (hsl.lightness + amount).clamp(0.0, 1.0);
-    return hsl.withLightness(l).toColor();
+
+    return hsl.withLightness(lightness).toColor();
   }
 
   static Color adjustSaturation(
@@ -25,11 +25,12 @@ abstract final class ColorService {
   }) {
     _checkUnitInterval(amount, 'amount');
     final hsl = HSLColor.fromColor(color);
-    final s =
+    final saturation =
         desaturate
             ? (hsl.saturation - amount).clamp(0.0, 1.0)
             : (hsl.saturation + amount).clamp(0.0, 1.0);
-    return hsl.withSaturation(s).toColor();
+
+    return hsl.withSaturation(saturation).toColor();
   }
 
   /// Returns [count] analogous colors evenly spaced around [color].
@@ -44,6 +45,7 @@ abstract final class ColorService {
 
     final hsl = HSLColor.fromColor(color);
     final step = spreadDegrees / count;
+
     return [
       for (var i = 1; i <= count; i++) ...[
         hsl.withHue((hsl.hue - step * i) % 360).toColor(),
@@ -52,8 +54,7 @@ abstract final class ColorService {
     ];
   }
 
-  /// Picks whichever of [candidates] has the highest contrast against [background].
-  /// Defaults to black/white if no candidates supplied.
+  /// Picks whichever candidate has the highest contrast against [background].
   static Color bestContrast(
     Color background, [
     List<Color> candidates = const [Colors.white, Colors.black],
@@ -63,26 +64,29 @@ abstract final class ColorService {
     }
 
     return candidates.reduce(
-      (best, c) =>
-          contrastRatio(c, background) > contrastRatio(best, background)
-              ? c
+      (best, color) =>
+          contrastRatio(color, background) > contrastRatio(best, background)
+              ? color
               : best,
     );
   }
 
   static Color complementary(Color color) {
     final hsl = HSLColor.fromColor(color);
+
     return hsl.withHue((hsl.hue + 180) % 360).toColor();
   }
 
   static double contrastRatio(Color a, Color b) {
-    final la = a.computeLuminance() + 0.05;
-    final lb = b.computeLuminance() + 0.05;
-    return la > lb ? la / lb : lb / la;
+    final luminanceA = a.computeLuminance() + 0.05;
+    final luminanceB = b.computeLuminance() + 0.05;
+
+    return luminanceA > luminanceB
+        ? luminanceA / luminanceB
+        : luminanceB / luminanceA;
   }
 
-  /// Generates a [MaterialColor] swatch using HSL lightness steps so shades
-  /// match Material Design intent rather than raw RGB blending.
+  /// Generates a [MaterialColor] swatch using HSL lightness steps.
   static MaterialColor createMaterialColor(Color color) {
     final hsl = HSLColor.fromColor(color);
 
@@ -110,20 +114,20 @@ abstract final class ColorService {
   static Color greyscale(Color color) =>
       adjustSaturation(color, amount: 1.0, desaturate: true);
 
-  /// WCAG 2.1 relative luminance. Threshold 0.179 gives 4.5:1 contrast ratio.
+  /// WCAG 2.1 relative luminance. Threshold 0.179 gives 4.5:1 contrast.
   static bool isDark(Color color) => color.computeLuminance() < 0.179;
 
   static bool isLight(Color color) => !isDark(color);
 
-  /// AA = 4.5:1 for normal text, AAA = 7:1.
   static bool meetsWcagAA(Color foreground, Color background) =>
       contrastRatio(foreground, background) >= 4.5;
+
   static bool meetsWcagAAA(Color foreground, Color background) =>
       contrastRatio(foreground, background) >= 7.0;
 
-  /// Linear interpolation between [a] and [b] in sRGB space.
   static Color mix(Color a, Color b, [double t = 0.5]) {
     _checkUnitInterval(t, 't');
+
     return Color.lerp(a, b, t)!;
   }
 
@@ -133,6 +137,7 @@ abstract final class ColorService {
 
   static (Color, Color) splitComplementary(Color color) {
     final hsl = HSLColor.fromColor(color);
+
     return (
       hsl.withHue((hsl.hue + 150) % 360).toColor(),
       hsl.withHue((hsl.hue + 210) % 360).toColor(),
@@ -143,47 +148,54 @@ abstract final class ColorService {
   static Color tint(Color color, [double amount = 0.5]) =>
       mix(color, const Color(0xFFFFFFFF), amount);
 
-  /// Outputs 8-char ARGB hex including alpha: `#CCFF5500`.
+  /// Outputs 8-char ARGB hex including alpha, for example `#CCFF5500`.
   static String toHexARGB(Color color, {bool withHashSign = true}) {
     final hex =
         color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase();
+
     return withHashSign ? '#$hex' : hex;
   }
 
-  /// Outputs 6-char RGB hex, ignoring alpha: `#FF5500`.
+  /// Outputs 6-char RGB hex, ignoring alpha, for example `#FF5500`.
   static String toHexRGB(Color color, {bool withHashSign = true}) {
     final r = (color.r * 255).round().toRadixString(16).padLeft(2, '0');
     final g = (color.g * 255).round().toRadixString(16).padLeft(2, '0');
     final b = (color.b * 255).round().toRadixString(16).padLeft(2, '0');
     final hex = '$r$g$b'.toUpperCase();
+
     return withHashSign ? '#$hex' : hex;
   }
 
   static (Color, Color) triadic(Color color) {
     final hsl = HSLColor.fromColor(color);
+
     return (
       hsl.withHue((hsl.hue + 120) % 360).toColor(),
       hsl.withHue((hsl.hue + 240) % 360).toColor(),
     );
   }
 
-  /// Parses `#RGB`, `#RRGGBB`, `#AARRGGBB` (hash optional).
+  /// Parses `#RGB`, `#RRGGBB`, or `#AARRGGBB`, with optional hash prefix.
   static Color? tryParseHex(String hex) {
     final clean = hex.startsWith('#') ? hex.substring(1) : hex;
+
     return switch (clean.length) {
       3 => () {
         final r = clean[0] * 2;
         final g = clean[1] * 2;
         final b = clean[2] * 2;
         final value = int.tryParse('FF$r$g$b', radix: 16);
+
         return value != null ? Color(value) : null;
       }(),
       6 => () {
         final value = int.tryParse('FF$clean', radix: 16);
+
         return value != null ? Color(value) : null;
       }(),
       8 => () {
         final value = int.tryParse(clean, radix: 16);
+
         return value != null ? Color(value) : null;
       }(),
       _ => null,
