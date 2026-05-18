@@ -1,4 +1,4 @@
-import 'package:gmana/validation.dart' hide isNull;
+import 'package:gmana_validation/gmana_validation.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -24,42 +24,26 @@ void main() {
     test('rejects invalid dot placement in the local part', () {
       const validator = EmailValidator();
 
-      expect(
-        validator.validate('.user@example.com').leftOrNull(),
-        isA<EmailInvalidFormatIssue>(),
-      );
-      expect(
-        validator.validate('user.@example.com').leftOrNull(),
-        isA<EmailInvalidFormatIssue>(),
-      );
-      expect(
-        validator.validate('user..name@example.com').leftOrNull(),
-        isA<EmailInvalidFormatIssue>(),
-      );
+      expect(validator.validate('.user@example.com').leftOrNull(), isA<EmailInvalidFormatIssue>());
+      expect(validator.validate('user.@example.com').leftOrNull(), isA<EmailInvalidFormatIssue>());
+      expect(validator.validate('user..name@example.com').leftOrNull(), isA<EmailInvalidFormatIssue>());
     });
 
     test('rejects disposable domains in strict mode', () {
-      final result = EmailValidator(
-        EmailValidationConfig.strict(),
-      ).validate('user@mailinator.com');
+      final result = EmailValidator(EmailValidationConfig.strict()).validate('user@mailinator.com');
 
       expect(result.leftOrNull(), isA<EmailDisposableDomainIssue>());
     });
 
     test('rejects expanded default disposable domains in strict mode', () {
-      final result = EmailValidator(
-        EmailValidationConfig.strict(),
-      ).validate('user@getnada.com');
+      final result = EmailValidator(EmailValidationConfig.strict()).validate('user@getnada.com');
 
       expect(result.leftOrNull(), isA<EmailDisposableDomainIssue>());
     });
 
     test('normalizes configured disposable domains before matching', () {
       final result = EmailValidator(
-        const EmailValidationConfig(
-          disposableDomains: {' Mailinator.COM '},
-          rejectDisposable: true,
-        ),
+        const EmailValidationConfig(disposableDomains: {' Mailinator.COM '}, rejectDisposable: true),
       ).validate('user@mailinator.com');
 
       expect(result.leftOrNull(), isA<EmailDisposableDomainIssue>());
@@ -91,28 +75,20 @@ void main() {
 
     test('can limit domain policies to exact matches', () {
       final result = EmailValidator(
-        const EmailValidationConfig(
-          blockedDomains: {'blocked.com'},
-          matchSubdomains: false,
-        ),
+        const EmailValidationConfig(blockedDomains: {'blocked.com'}, matchSubdomains: false),
       ).validate('user@mail.blocked.com');
 
       expect(result.rightOrNull(), 'user@mail.blocked.com');
     });
 
     test('rejects values longer than the configured maximum', () {
-      final result = EmailValidator(
-        const EmailValidationConfig(maxLength: 10),
-      ).validate('user@example.com');
+      final result = EmailValidator(const EmailValidationConfig(maxLength: 10)).validate('user@example.com');
 
       expect(result.leftOrNull(), isA<EmailTooLongIssue>());
     });
 
     test('exposes default issue messages through the resolver', () {
-      expect(
-        resolveEmailValidationIssue(const EmailEmptyIssue()),
-        'Please enter an email address',
-      );
+      expect(resolveEmailValidationIssue(const EmailEmptyIssue()), 'Please enter an email address');
     });
   });
 }

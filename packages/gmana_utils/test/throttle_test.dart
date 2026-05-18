@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:gmana/utilities.dart';
+import 'package:gmana_utils/gmana_utils.dart';
 import 'package:test/test.dart';
 
 void main() {
