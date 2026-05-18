@@ -3,7 +3,12 @@
     "allow": [
       "Bash(dart pub *)",
       "Bash(dart analyze *)",
-      "Bash(dart test *)"
+      "Bash(dart test *)",
+      "Bash(Remove-Item -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\design_system\\\\spacing.dart\" -Force)",
+      "Bash(Remove-Item -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\math\\\\wave_vertical_offset.dart\" -Force)",
+      "Bash(Remove-Item -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\test\\\\math\\\\vertical_point_test.dart\" -Force)",
+      "Bash(Write-Output \"Deleted successfully\")",
+      "Bash(flutter analyze *)"
     ]
   }
 }

@@ -21,7 +21,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  gmana: ^0.2.0
+  gmana: ^0.3.0
   gmana_flutter_extensions: ^0.0.1
 
 dev_dependencies:

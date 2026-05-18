@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.3.0 - Unreleased
+
+- breaking: remove `GSpacing` from `utilities.dart`; import from `package:gmana_flutter/gmana_flutter.dart` instead
+- breaking: remove `waveVerticalOffset` from `utilities.dart`; it lives only in `package:gmana_spinner`
+
 ## 0.2.0 - Unreleased
 
 - breaking: stop exporting raw regex constants from `validation.dart`; use predicate functions such as `isEmail`, `isUuid`, and `isPostalCode`

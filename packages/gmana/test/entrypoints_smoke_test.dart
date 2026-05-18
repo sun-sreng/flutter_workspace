@@ -37,17 +37,6 @@ void main() {
     expect(gmana.StringValidation('user@example.com').isValidEmail, isTrue);
     expect(emailResult.getRight(), 'user@example.com');
     expect(emailFormValidator(''), 'Please enter an email address');
-    expect(utilities.GSpacing.md, 12);
-    expect(
-      utilities.waveVerticalOffset(
-        value: 0,
-        verticalShift: 10,
-        amplitude: 5,
-        phaseShift: 0,
-        waveLength: 20,
-      ),
-      closeTo(10, 0.000001),
-    );
 
     debouncer.dispose();
     throttler.dispose();

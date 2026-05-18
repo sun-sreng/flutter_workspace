@@ -2,6 +2,7 @@ library;
 
 export 'design_system/colors.dart';
 export 'design_system/font_weight.dart';
+export 'design_system/spacing.dart';
 export 'package:gmana_flutter_extensions/gmana_flutter_extensions.dart';
 export 'utils/locale.dart';
 export 'utils/register_error_handler.dart';
