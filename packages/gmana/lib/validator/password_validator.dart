@@ -46,7 +46,8 @@ final class PasswordMissingLowercaseIssue extends PasswordValidationIssue {
 }
 
 /// Password is missing a special character.
-final class PasswordMissingSpecialCharacterIssue extends PasswordValidationIssue {
+final class PasswordMissingSpecialCharacterIssue
+    extends PasswordValidationIssue {
   /// Password missing special character issue
   const PasswordMissingSpecialCharacterIssue();
 
@@ -99,7 +100,10 @@ final class PasswordTooLongIssue extends PasswordValidationIssue {
   final int maxLength;
 
   /// Creates a too-long issue.
-  const PasswordTooLongIssue({required this.currentLength, required this.maxLength});
+  const PasswordTooLongIssue({
+    required this.currentLength,
+    required this.maxLength,
+  });
 
   @override
   String get code => 'password.tooLong';
@@ -114,7 +118,10 @@ final class PasswordTooShortIssue extends PasswordValidationIssue {
   final int minLength;
 
   /// Creates a too-short issue.
-  const PasswordTooShortIssue({required this.currentLength, required this.minLength});
+  const PasswordTooShortIssue({
+    required this.currentLength,
+    required this.minLength,
+  });
 
   @override
   String get code => 'password.tooShort';
@@ -134,7 +141,12 @@ final class PasswordValidationConfig {
     'qwerty123',
   };
 
-  static const List<String> _defaultCommonPrefixes = ['admin', 'letmein', 'password', 'qwerty'];
+  static const List<String> _defaultCommonPrefixes = [
+    'admin',
+    'letmein',
+    'password',
+    'qwerty',
+  ];
 
   /// Minimum allowed password length.
   final int minLength;
@@ -229,11 +241,21 @@ final class PasswordValidator {
     }
 
     if (input.length < config.minLength) {
-      return Left(PasswordTooShortIssue(currentLength: input.length, minLength: config.minLength));
+      return Left(
+        PasswordTooShortIssue(
+          currentLength: input.length,
+          minLength: config.minLength,
+        ),
+      );
     }
 
     if (input.length > config.maxLength) {
-      return Left(PasswordTooLongIssue(currentLength: input.length, maxLength: config.maxLength));
+      return Left(
+        PasswordTooLongIssue(
+          currentLength: input.length,
+          maxLength: config.maxLength,
+        ),
+      );
     }
 
     if (config.requireUppercase && !hasUppercase(input)) {
@@ -260,7 +282,8 @@ final class PasswordValidator {
       }
 
       final hasCommonPrefix = config.commonPrefixes.any(
-        (prefix) => lowered.startsWith(prefix) && lowered.length <= prefix.length + 4,
+        (prefix) =>
+            lowered.startsWith(prefix) && lowered.length <= prefix.length + 4,
       );
       if (hasCommonPrefix) {
         return const Left(PasswordTooCommonIssue());
@@ -271,8 +294,10 @@ final class PasswordValidator {
       return const Left(PasswordRepeatedCharacterIssue());
     }
 
-    final sequentialThreshold = config.minSequentialRun < 3 ? 3 : config.minSequentialRun;
-    if (config.rejectSequentialPatterns && hasSequentialRun(input, minRun: sequentialThreshold)) {
+    final sequentialThreshold =
+        config.minSequentialRun < 3 ? 3 : config.minSequentialRun;
+    if (config.rejectSequentialPatterns &&
+        hasSequentialRun(input, minRun: sequentialThreshold)) {
       return const Left(PasswordSequentialPatternIssue());
     }
 

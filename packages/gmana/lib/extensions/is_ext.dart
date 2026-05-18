@@ -34,10 +34,18 @@ class PasswordStrength {
   });
 
   /// Returns true if all password strength criterion are satisfied.
-  bool get isStrong => hasMinLength && hasUppercase && hasLowercase && hasDigit && hasSpecial;
+  bool get isStrong =>
+      hasMinLength && hasUppercase && hasLowercase && hasDigit && hasSpecial;
 
   /// 0–5 score, useful for a strength indicator bar.
-  int get score => [hasMinLength, hasUppercase, hasLowercase, hasDigit, hasSpecial].where((v) => v).length;
+  int get score =>
+      [
+        hasMinLength,
+        hasUppercase,
+        hasLowercase,
+        hasDigit,
+        hasSpecial,
+      ].where((v) => v).length;
 
   /// Returns a list of strings detailing which requirements have not yet been met.
   List<String> get unmetRequirements => [
@@ -49,17 +57,13 @@ class PasswordStrength {
   ];
 }
 
-
 /// A vast collection of validation utilities mapped as getters on [String].
 extension StringValidation on String {
-
   /// Checks if the string contains only alphabetic characters.
   bool get isAlpha => v_alpha.isAlpha(this);
 
-
   /// Checks if the string contains only alphanumeric characters.
   bool get isAlphanumeric => v_alphanumeric.isAlphaNumeric(this);
-
 
   /// Checks if the string is empty or contains only whitespace.
   bool get isBlank => trim().isEmpty;
@@ -67,13 +71,11 @@ extension StringValidation on String {
   /// Checks if the string contains at least one non-whitespace character.
   bool get isNotBlank => trim().isNotEmpty;
 
-
   /// Checks if the string contains only numeric digits.
   bool get isNumeric => v_numeric.isNumeric(this);
 
   /// Checks if the string is a valid credit card number using the Luhn algorithm.
   bool get isValidCreditCard => v_credit_card.isCreditCard(this);
-
 
   /// Validates against E.164 format: `+` followed by 7–15 digits, no spaces.
   bool get isValidE164Phone {
@@ -100,7 +102,14 @@ extension StringValidation on String {
   /// ISO 8601 date only: `2024-01-31`
   bool get isValidIsoDate {
     if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(this)) return false;
-    return DateTime.tryParse(this) != null;
+    final year = int.parse(substring(0, 4));
+    final month = int.parse(substring(5, 7));
+    final day = int.parse(substring(8, 10));
+    final parsed = DateTime.tryParse(this);
+    return parsed != null &&
+        parsed.year == year &&
+        parsed.month == month &&
+        parsed.day == day;
   }
 
   /// Accepts Unicode letters, spaces, hyphens, apostrophes, periods.
@@ -110,7 +119,8 @@ extension StringValidation on String {
     if (s.isEmpty || s.length > 100) return false;
     // Unicode letter categories + common name punctuation
     final re = RegExp(r"^[\p{L}\p{M}' .\-]+$", unicode: true);
-    return re.hasMatch(s);
+    final hasLetter = RegExp(r'\p{L}', unicode: true).hasMatch(s);
+    return hasLetter && re.hasMatch(s);
   }
 
   /// At least 8 chars, one uppercase, one lowercase, one digit,
@@ -131,10 +141,10 @@ extension StringValidation on String {
   /// Valid URL (http/https). Intentionally simple - use `Uri.tryParse`
   /// for structural checks; this validates the common displayed format.
   bool get isValidUrl {
-    return RegExp(
-      r'^https?://[a-zA-Z0-9\-._~:/?#\[\]@!$&'
-      "'()*+,;=%]+\$",
-    ).hasMatch(trim());
+    final uri = Uri.tryParse(trim());
+    return uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
   }
 
   /// Checks if the string is a valid UUID (v4).
@@ -153,5 +163,6 @@ extension StringValidation on String {
   }
 
   /// Length bounded - prevents silent acceptance of huge inputs.
-  bool isWithinLength({required int min, required int max}) => length >= min && length <= max;
+  bool isWithinLength({required int min, required int max}) =>
+      length >= min && length <= max;
 }

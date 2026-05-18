@@ -1,7 +1,8 @@
 import 'validation_issue.dart';
 
 /// Converts a canonical validator into a Flutter-style form validator.
-String? Function(String?) asFormValidator<TIssue extends ValidationIssue, TValue>({
+String? Function(String?)
+asFormValidator<TIssue extends ValidationIssue, TValue>({
   required ValidationResult<TIssue, TValue> Function(String input) validate,
   required ValidationMessageResolver<TIssue> resolve,
   String? Function(String?)? validatorOverride,

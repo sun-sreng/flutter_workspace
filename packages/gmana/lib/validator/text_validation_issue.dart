@@ -26,7 +26,8 @@ final class TextContainsBlacklistedIssue extends TextValidationIssue {
   String get code => 'text.blacklistedWords';
 
   @override
-  String get defaultMessage => 'Contains blocked words: ${foundWords.join(', ')}';
+  String get defaultMessage =>
+      'Contains blocked words: ${foundWords.join(', ')}';
 }
 
 /// Text input is empty.
@@ -53,7 +54,8 @@ final class TextInvalidCharactersIssue extends TextValidationIssue {
   String get code => 'text.invalidCharacters';
 
   @override
-  String get defaultMessage => 'Contains invalid characters: $invalidCharacters';
+  String get defaultMessage =>
+      'Contains invalid characters: $invalidCharacters';
 }
 
 /// Text does not match the configured pattern.
@@ -98,7 +100,8 @@ final class TextTooLongIssue extends TextValidationIssue {
   String get code => 'text.tooLong';
 
   @override
-  String get defaultMessage => 'Please enter no more than $maxLength characters';
+  String get defaultMessage =>
+      'Please enter no more than $maxLength characters';
 }
 
 /// Text is shorter than allowed.

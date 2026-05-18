@@ -12,7 +12,6 @@ T _oneFor<T extends num>() {
 
 /// Comprehensive extensions on [Iterable] for numeric types.
 extension IterableNumX<T extends num> on Iterable<T> {
-
   /// Whether all elements are negative (< 0).
   bool get allNegative => every((e) => e < 0);
 
@@ -24,7 +23,6 @@ extension IterableNumX<T extends num> on Iterable<T> {
 
   /// Arithmetic mean. Returns `null` if empty.
   double? get average => isEmpty ? null : sum() / length;
-
 
   /// Arithmetic mean. Throws [StateError] if empty.
   double get averageOrThrow {
@@ -44,12 +42,13 @@ extension IterableNumX<T extends num> on Iterable<T> {
     if (isEmpty) return null;
     final sorted = toList()..sort();
     final mid = sorted.length ~/ 2;
-    return sorted.length.isOdd ? sorted[mid].toDouble() : (sorted[mid - 1] + sorted[mid]) / 2;
+    return sorted.length.isOdd
+        ? sorted[mid].toDouble()
+        : (sorted[mid - 1] + sorted[mid]) / 2;
   }
 
   /// Smallest element, or `null` if empty.
   T? get minOrNull => isEmpty ? null : reduce((a, b) => a < b ? a : b);
-
 
   /// Smallest element. Throws [StateError] if empty.
   T get minOrThrow => minOrNull ?? (throw StateError('Empty iterable.'));
@@ -74,7 +73,6 @@ extension IterableNumX<T extends num> on Iterable<T> {
     return map((e) => (e - avg) * (e - avg)).sum() / length;
   }
 
-
   /// Returns the [n] smallest elements in ascending order.
   List<T> bottom(int n) {
     _checkNonNegativeCount(n);
@@ -92,7 +90,6 @@ extension IterableNumX<T extends num> on Iterable<T> {
     if (mn == null || mx == null || mx == mn) return [];
     return map((e) => (e - mn) / (mx - mn)).toList();
   }
-
 
   /// Product of all elements. Returns [identity] (default 1) if empty.
   T product({T? identity}) {

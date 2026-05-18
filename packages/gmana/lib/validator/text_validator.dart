@@ -15,7 +15,9 @@ final class TextValidator {
   /// Creates a text validator.
   TextValidator([this.config = const TextValidationConfig()])
     : _disallowedPattern =
-          config.allowedCharacters != null ? RegExp('[^${RegExp.escape(config.allowedCharacters!)}]') : null;
+          config.allowedCharacters != null
+              ? RegExp('[^${RegExp.escape(config.allowedCharacters!)}]')
+              : null;
 
   /// Validates and normalizes [input].
   ValidationResult<TextValidationIssue, String> validate(String input) {
@@ -45,7 +47,8 @@ final class TextValidator {
     }
 
     if (_disallowedPattern case final re?) {
-      final invalid = re.allMatches(value).map((m) => m.group(0)!).toSet().join();
+      final invalid =
+          re.allMatches(value).map((m) => m.group(0)!).toSet().join();
       if (invalid.isNotEmpty) {
         return Left(TextInvalidCharactersIssue(invalid));
       }
@@ -61,7 +64,9 @@ final class TextValidator {
             final idx = lowered.indexOf(w);
             if (idx == -1) return false;
             final before = idx == 0 || !_isWordChar(lowered[idx - 1]);
-            final after = idx + w.length == lowered.length || !_isWordChar(lowered[idx + w.length]);
+            final after =
+                idx + w.length == lowered.length ||
+                !_isWordChar(lowered[idx + w.length]);
             return before && after;
           }).toList();
 

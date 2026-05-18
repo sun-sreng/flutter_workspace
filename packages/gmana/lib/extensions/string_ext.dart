@@ -32,10 +32,8 @@ extension StringNullableX on String? {
   }
 }
 
-
 /// Main extension on String providing comprehensive conversion and formatting tools.
 extension StringX on String {
-
   /// Returns `null` if blank, otherwise `this`. Useful for form validation chains.
   /// ```dart
   /// nameController.text.blankToNull ?? 'Anonymous'
@@ -60,7 +58,6 @@ extension StringX on String {
   /// Returns true if the string represents a valid number.
   bool get isNumeric => double.tryParse(this) != null;
 
-
   /// Returns true if the string is a valid URL.
   bool get isUrl {
     final uri = Uri.tryParse(trim());
@@ -77,7 +74,6 @@ extension StringX on String {
       return null;
     }
   }
-
 
   /// Estimates the reading time in minutes (225 words per minute).
   int get readingTimeMinutes {
@@ -99,7 +95,8 @@ extension StringX on String {
   String get toCamelCase {
     final words = _words;
     if (words.isEmpty) return this;
-    return words.first.toLowerCase() + words.skip(1).map((w) => w.toSentenceCase).join();
+    return words.first.toLowerCase() +
+        words.skip(1).map((w) => w.toSentenceCase).join();
   }
 
   /// Parses to [double], returns `null` on failure.
@@ -107,7 +104,6 @@ extension StringX on String {
 
   /// Parses to [double], returns `0.0` on failure.
   double get toDoubleOrZero => double.tryParse(this) ?? 0.0;
-
 
   /// Parses `"SS"`, `"MM:SS"`, or `"HH:MM:SS"` into a [Duration], returns null on failure.
   Duration? get toDurationOrNull {
@@ -118,13 +114,11 @@ extension StringX on String {
     }
   }
 
-
   /// Parses to [int], returns `null` on failure.
   int? get toIntOrNull => int.tryParse(this);
 
   /// Parses to [int], returns `0` on failure.
   int get toIntOrZero => int.tryParse(this) ?? 0;
-
 
   /// `'Hello World'` / `'helloWorld'` -> `'hello-world'`
   String get toKebabCase => _words.map((w) => w.toLowerCase()).join('-');
@@ -151,13 +145,11 @@ extension StringX on String {
   String get toSnakeCase => _words.map((w) => w.toLowerCase()).join('_');
 
   /// Capitalizes the first letter of each whitespace-delimited word.
-  String get toTitleCase =>
-      trim()
-          .split(_whitespaceRegExp)
-          .where((w) => w.isNotEmpty)
-          .map((w) => w.toSentenceCase)
-          .join(' ');
-
+  String get toTitleCase => trim()
+      .split(_whitespaceRegExp)
+      .where((w) => w.isNotEmpty)
+      .map((w) => w.toSentenceCase)
+      .join(' ');
 
   /// Parses string to [Uri], returns `null` on failure.
   Uri? get toUriOrNull => Uri.tryParse(this);
@@ -184,7 +176,6 @@ extension StringX on String {
     return count;
   }
 
-
   /// Passes if length falls within [[min], [max]] after trimming.
   bool hasLengthBetween(int min, int max) {
     if (min < 0) {
@@ -201,7 +192,6 @@ extension StringX on String {
     final l = trim().length;
     return l >= min && l <= max;
   }
-
 
   /// Repeats this string [count] times.
   /// ```dart
@@ -230,7 +220,10 @@ extension StringX on String {
 
     return switch (parts.length) {
       1 => Duration(seconds: parse(parts[0], 'seconds')),
-      2 => Duration(minutes: parse(parts[0], 'minutes'), seconds: parse(parts[1], 'seconds')),
+      2 => Duration(
+        minutes: parse(parts[0], 'minutes'),
+        seconds: parse(parts[1], 'seconds'),
+      ),
       3 => Duration(
         hours: parse(parts[0], 'hours', max: 23),
         minutes: parse(parts[1], 'minutes'),

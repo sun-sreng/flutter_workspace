@@ -128,6 +128,63 @@ void main() {
       expect(results, equals([3, 4]));
     });
 
+    test('debounce emits pending value when source closes', () async {
+      final controller = StreamController<int>();
+      final stream = controller.stream.debounce(
+        const Duration(milliseconds: 50),
+      );
+
+      final events = stream.toList();
+      controller.add(1);
+      await controller.close();
+
+      expect(await events, equals([1]));
+    });
+
+    test(
+      'debounce preserves broadcast streams for multiple listeners',
+      () async {
+        final controller = StreamController<int>.broadcast();
+        final stream = controller.stream.debounce(
+          const Duration(milliseconds: 10),
+        );
+
+        expect(stream.isBroadcast, isTrue);
+
+        final first = <int>[];
+        final second = <int>[];
+        final firstDone = Completer<void>();
+        final secondDone = Completer<void>();
+        stream.listen(first.add, onDone: firstDone.complete);
+        stream.listen(second.add, onDone: secondDone.complete);
+
+        controller.add(1);
+        controller.add(2);
+        await Future.delayed(const Duration(milliseconds: 30));
+        await controller.close();
+        await Future.wait([firstDone.future, secondDone.future]);
+
+        expect(first, equals([2]));
+        expect(second, equals([2]));
+      },
+    );
+
+    test('debounce cancels timers and source subscription on cancel', () async {
+      final controller = StreamController<int>();
+      final stream = controller.stream.debounce(
+        const Duration(milliseconds: 50),
+      );
+
+      final results = <int>[];
+      final subscription = stream.listen(results.add);
+      controller.add(1);
+      await subscription.cancel();
+      await Future.delayed(const Duration(milliseconds: 80));
+      await controller.close();
+
+      expect(results, isEmpty);
+    });
+
     test('throttle', () async {
       final controller = StreamController<int>();
       final stream = controller.stream.throttle(
@@ -151,6 +208,26 @@ void main() {
 
       await controller.close();
       expect(results, equals([1, 4]));
+    });
+
+    test('throttle keeps leading-edge behavior after cooldown', () async {
+      final controller = StreamController<int>();
+      final stream = controller.stream.throttle(
+        const Duration(milliseconds: 20),
+      );
+
+      final results = <int>[];
+      stream.listen(results.add);
+
+      controller.add(1);
+      controller.add(2);
+      await Future.delayed(const Duration(milliseconds: 30));
+      controller.add(3);
+      controller.add(4);
+      await Future.delayed(const Duration(milliseconds: 30));
+      await controller.close();
+
+      expect(results, equals([1, 3]));
     });
 
     test('onErrorReturn', () async {

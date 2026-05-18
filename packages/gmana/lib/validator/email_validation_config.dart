@@ -35,7 +35,10 @@ final class EmailValidationConfig {
     this.rejectDisposable = false,
     this.matchSubdomains = true,
   }) : assert(maxLength > 0, 'maxLength must be greater than zero'),
-       assert(maxLocalPartLength > 0, 'maxLocalPartLength must be greater than zero'),
+       assert(
+         maxLocalPartLength > 0,
+         'maxLocalPartLength must be greater than zero',
+       ),
        assert(maxDomainLength > 0, 'maxDomainLength must be greater than zero');
 
   /// Rejects disposable domains using the default list.
@@ -55,7 +58,8 @@ final class EmailValidationConfig {
 
   /// Returns true when [domain] is disposable and [rejectDisposable] is enabled.
   bool isDisposableDomain(String domain) {
-    return rejectDisposable && _matchesConfiguredDomain(domain, disposableDomains);
+    return rejectDisposable &&
+        _matchesConfiguredDomain(domain, disposableDomains);
   }
 
   bool _matchesConfiguredDomain(String domain, Set<String> configuredDomains) {
@@ -65,7 +69,8 @@ final class EmailValidationConfig {
       final normalizedConfiguredDomain = normalizeDomain(configuredDomain);
       if (normalizedConfiguredDomain.isEmpty) continue;
       if (normalizedDomain == normalizedConfiguredDomain) return true;
-      if (matchSubdomains && normalizedDomain.endsWith('.$normalizedConfiguredDomain')) {
+      if (matchSubdomains &&
+          normalizedDomain.endsWith('.$normalizedConfiguredDomain')) {
         return true;
       }
     }

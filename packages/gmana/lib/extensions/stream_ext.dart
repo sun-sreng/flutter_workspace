@@ -1,6 +1,5 @@
 import 'dart:async';
 
-
 /// Extension providing collection-oriented functional operations for Streams emitting Lists.
 extension StreamListX<T> on Stream<List<T>> {
   /// Emits the length of each list rather than the list itself.
@@ -10,7 +9,8 @@ extension StreamListX<T> on Stream<List<T>> {
   Stream<List<T>> get whereNotEmpty => where((items) => items.isNotEmpty);
 
   /// Filters each emitted list by [predicate].
-  Stream<List<T>> filter(bool Function(T) predicate) => map((items) => items.where(predicate).toList());
+  Stream<List<T>> filter(bool Function(T) predicate) =>
+      map((items) => items.where(predicate).toList());
 
   /// Flat-maps each emitted list.
   Stream<List<R>> flatMapItems<R>(Iterable<R> Function(T) transform) =>
@@ -20,17 +20,17 @@ extension StreamListX<T> on Stream<List<T>> {
   Stream<T> flatten() => expand((items) => items);
 
   /// Maps each element within emitted lists.
-  Stream<List<R>> mapItems<R>(R Function(T) transform) => map((items) => items.map(transform).toList());
+  Stream<List<R>> mapItems<R>(R Function(T) transform) =>
+      map((items) => items.map(transform).toList());
 
   /// Sorts each emitted list by [compare].
-  Stream<List<T>> sortedBy(Comparator<T> compare) => map((items) => [...items]..sort(compare));
+  Stream<List<T>> sortedBy(Comparator<T> compare) =>
+      map((items) => [...items]..sort(compare));
 }
-
 
 /// General-purpose utility extension on [Stream] providing enhanced filtering,
 /// timing controls (like debounce/throttle), error handling, and scanning operators.
 extension StreamX<T> on Stream<T> {
-
   /// Emits `(index, value)` pairs - like `enumerate` in Python.
   Stream<(int, T)> get indexed {
     var i = 0;
@@ -50,24 +50,55 @@ extension StreamX<T> on Stream<T> {
   /// Suppresses events that arrive within [duration] of each other,
   /// emitting only the last one in each quiet window (debounce).
   Stream<T> debounce(Duration duration) {
-    StreamController<T>? controller;
+    late StreamController<T> controller;
+    StreamSubscription<T>? subscription;
     Timer? timer;
+    T? latest;
+    var hasLatest = false;
+    var sourceDone = false;
 
-    controller = StreamController<T>(
-      onListen: () {
-        listen(
-          (value) {
-            timer?.cancel();
-            timer = Timer(duration, () => controller!.add(value));
-          },
-          onError: controller!.addError,
-          onDone: () {
-            timer?.cancel();
-            controller!.close();
-          },
-        );
-      },
-    );
+    void emitLatest() {
+      if (hasLatest) {
+        controller.add(latest as T);
+        latest = null;
+        hasLatest = false;
+      }
+      if (sourceDone) {
+        controller.close();
+      }
+    }
+
+    void listenToSource() {
+      subscription = listen(
+        (value) {
+          latest = value;
+          hasLatest = true;
+          timer?.cancel();
+          timer = Timer(duration, emitLatest);
+        },
+        onError: controller.addError,
+        onDone: () {
+          sourceDone = true;
+          timer?.cancel();
+          emitLatest();
+        },
+      );
+    }
+
+    Future<void> cancel() async {
+      timer?.cancel();
+      latest = null;
+      hasLatest = false;
+      await subscription?.cancel();
+    }
+
+    controller =
+        isBroadcast
+            ? StreamController<T>.broadcast(
+              onListen: listenToSource,
+              onCancel: cancel,
+            )
+            : StreamController<T>(onListen: listenToSource, onCancel: cancel);
     return controller.stream;
   }
 
@@ -89,7 +120,6 @@ extension StreamX<T> on Stream<T> {
     }
   }
 
-
   /// Emits the stream's last value as a [Future], or [orElse] if the stream
   /// closes empty.
   Future<T?> lastOrNull() async {
@@ -101,13 +131,18 @@ extension StreamX<T> on Stream<T> {
   }
 
   /// Recovers from errors by emitting [fallback].
-  Stream<T> onErrorReturn(T fallback) =>
-      transform(StreamTransformer.fromHandlers(handleError: (_, _, sink) => sink.add(fallback)));
-
+  Stream<T> onErrorReturn(T fallback) => transform(
+    StreamTransformer.fromHandlers(
+      handleError: (_, _, sink) => sink.add(fallback),
+    ),
+  );
 
   /// Recovers from errors by emitting the result of [recover].
-  Stream<T> onErrorReturnWith(T Function(Object error) recover) =>
-      transform(StreamTransformer.fromHandlers(handleError: (error, _, sink) => sink.add(recover(error))));
+  Stream<T> onErrorReturnWith(T Function(Object error) recover) => transform(
+    StreamTransformer.fromHandlers(
+      handleError: (error, _, sink) => sink.add(recover(error)),
+    ),
+  );
 
   /// Accumulates state across events using [seed] and [accumulate].
   ///
@@ -121,7 +156,6 @@ extension StreamX<T> on Stream<T> {
       yield state;
     }
   }
-
 
   /// Discards events until [predicate] returns `true`, then emits all subsequent ones.
   Stream<T> skipUntil(bool Function(T) predicate) async* {
@@ -152,5 +186,6 @@ extension StreamX<T> on Stream<T> {
   }
 
   /// Emits only non-null values, narrowing the type to [R].
-  Stream<R> whereNotNull<R extends Object>() => where((e) => e != null).cast<R>();
+  Stream<R> whereNotNull<R extends Object>() =>
+      where((e) => e != null).cast<R>();
 }

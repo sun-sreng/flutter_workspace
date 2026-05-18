@@ -36,6 +36,8 @@ void main() {
             isFalse,
           ); // Special characters not allowed
           expect(('a' * 101).isValidName, isFalse); // Over 100 characters
+          expect('...'.isValidName, isFalse);
+          expect(' - '.isValidName, isFalse);
         },
       );
     });
@@ -64,6 +66,19 @@ void main() {
         expect(strength.score, 4);
         expect(strength.unmetRequirements, contains('At least 8 characters'));
       });
+
+      test('passwordStrength reports a strong password', () {
+        final strength = 'Str0ngPass!'.passwordStrength;
+
+        expect(strength.hasMinLength, isTrue);
+        expect(strength.hasUppercase, isTrue);
+        expect(strength.hasLowercase, isTrue);
+        expect(strength.hasDigit, isTrue);
+        expect(strength.hasSpecial, isTrue);
+        expect(strength.isStrong, isTrue);
+        expect(strength.score, 5);
+        expect(strength.unmetRequirements, isEmpty);
+      });
     });
 
     group('Phone Validation', () {
@@ -77,6 +92,7 @@ void main() {
         expect('123'.isValidPhone, isFalse); // Too short
         expect('1234567890123456'.isValidPhone, isFalse); // Too long
         expect('phone1234567'.isValidPhone, isFalse); // Letters
+        expect('123/4567'.isValidPhone, isFalse);
       });
 
       test('isValidE164Phone returns true for valid E.164 formats', () {
@@ -122,17 +138,22 @@ void main() {
         expect('http://example.com'.isValidUrl, isTrue);
         expect('https://example.com/path?query=1'.isValidUrl, isTrue);
         expect('ftp://example.com'.isValidUrl, isFalse);
+        expect('https://'.isValidUrl, isFalse);
+        expect('example.com'.isValidUrl, isFalse);
       });
 
       test('isValidUuid returns true for valid v4 UUIDs', () {
         expect('f47ac10b-58cc-4372-a567-0e02b2c3d479'.isValidUuid, isTrue);
         expect('invalid-uuid'.isValidUuid, isFalse);
+        expect('550e8400-e29b-11d4-a716-446655440000'.isValidUuid, isFalse);
       });
 
       test('isValidIsoDate returns true for valid YYYY-MM-DD dates', () {
         expect('2024-01-31'.isValidIsoDate, isTrue);
-        // DateTime.tryParse in Dart handles overflow (e.g. 2024-13-01 -> 2025-01-01), so it returns true
-        expect('2024-13-01'.isValidIsoDate, isTrue);
+        expect('2024-02-29'.isValidIsoDate, isTrue);
+        expect('2024-13-01'.isValidIsoDate, isFalse);
+        expect('2024-02-31'.isValidIsoDate, isFalse);
+        expect('2023-02-29'.isValidIsoDate, isFalse);
         expect('2024/01/31'.isValidIsoDate, isFalse); // Invalid format
       });
 
@@ -141,6 +162,8 @@ void main() {
         expect('255.255.255.255'.isValidIpv4, isTrue);
         expect('256.1.1.1'.isValidIpv4, isFalse); // Out of range
         expect('192.168.1'.isValidIpv4, isFalse); // Missing part
+        expect('192.168.001.1'.isValidIpv4, isFalse); // Leading zero
+        expect('192..1.1'.isValidIpv4, isFalse); // Empty part
       });
 
       test('isValidHexColor returns true for valid hex colors', () {
@@ -154,7 +177,10 @@ void main() {
       });
 
       test('isValidCreditCard returns true for valid cards', () {
-        // Just testing it calls v_credit_card correctly.
+        expect('4111 1111 1111 1111'.isValidCreditCard, isTrue);
+        expect('5555-5555-5555-4444'.isValidCreditCard, isTrue);
+        expect('4111 1111 1111 1112'.isValidCreditCard, isFalse);
+        expect('not-a-card'.isValidCreditCard, isFalse);
       });
 
       test('isWithinLength works correctly', () {

@@ -11,7 +11,8 @@ String resolveNumberValidationIssue(NumberValidationIssue issue) {
     NumberNotIntegerIssue() => 'Please enter a whole number',
     NumberTooSmallIssue(:final minValue) => 'Number must be at least $minValue',
     NumberTooLargeIssue(:final maxValue) => 'Number must be at most $maxValue',
-    NumberDecimalPlacesExceededIssue(:final maxPlaces) => 'Number must have at most $maxPlaces decimal places',
+    NumberDecimalPlacesExceededIssue(:final maxPlaces) =>
+      'Number must have at most $maxPlaces decimal places',
   };
 }
 
@@ -24,7 +25,10 @@ final class NumberDecimalPlacesExceededIssue extends NumberValidationIssue {
   final int maxPlaces;
 
   /// Creates a decimal-places-exceeded issue.
-  const NumberDecimalPlacesExceededIssue({required this.currentPlaces, required this.maxPlaces});
+  const NumberDecimalPlacesExceededIssue({
+    required this.currentPlaces,
+    required this.maxPlaces,
+  });
 
   @override
   String get code => 'number.decimalPlacesExceeded';
@@ -81,7 +85,10 @@ final class NumberTooLargeIssue extends NumberValidationIssue {
   final num maxValue;
 
   /// Creates a too-large issue.
-  const NumberTooLargeIssue({required this.currentValue, required this.maxValue});
+  const NumberTooLargeIssue({
+    required this.currentValue,
+    required this.maxValue,
+  });
 
   @override
   String get code => 'number.tooLarge';
@@ -96,7 +103,10 @@ final class NumberTooSmallIssue extends NumberValidationIssue {
   final num minValue;
 
   /// Creates a too-small issue.
-  const NumberTooSmallIssue({required this.currentValue, required this.minValue});
+  const NumberTooSmallIssue({
+    required this.currentValue,
+    required this.minValue,
+  });
 
   @override
   String get code => 'number.tooSmall';
@@ -130,7 +140,12 @@ final class NumberValidationConfig {
 
   /// Preset for positive integers.
   factory NumberValidationConfig.positiveInteger({num? min, num? max}) {
-    return NumberValidationConfig(min: min, max: max, allowNegative: false, integerOnly: true);
+    return NumberValidationConfig(
+      min: min,
+      max: max,
+      allowNegative: false,
+      integerOnly: true,
+    );
   }
 }
 
@@ -170,18 +185,25 @@ final class NumberValidator {
     }
 
     if (config.min != null && parsed < config.min!) {
-      return Left(NumberTooSmallIssue(currentValue: parsed, minValue: config.min!));
+      return Left(
+        NumberTooSmallIssue(currentValue: parsed, minValue: config.min!),
+      );
     }
 
     if (config.max != null && parsed > config.max!) {
-      return Left(NumberTooLargeIssue(currentValue: parsed, maxValue: config.max!));
+      return Left(
+        NumberTooLargeIssue(currentValue: parsed, maxValue: config.max!),
+      );
     }
 
     if (config.maxDecimalPlaces != null) {
       final decimalPlaces = _countDecimalPlaces(trimmed);
       if (decimalPlaces > config.maxDecimalPlaces!) {
         return Left(
-          NumberDecimalPlacesExceededIssue(currentPlaces: decimalPlaces, maxPlaces: config.maxDecimalPlaces!),
+          NumberDecimalPlacesExceededIssue(
+            currentPlaces: decimalPlaces,
+            maxPlaces: config.maxDecimalPlaces!,
+          ),
         );
       }
     }

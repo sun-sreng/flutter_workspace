@@ -6,7 +6,8 @@ bool isBefore(String str, [String? reference]) {
   final date = tryParseDate(str);
   if (date == null) return false;
 
-  final ref = reference == null ? DateTime.now().toUtc() : tryParseDate(reference);
+  final ref =
+      reference == null ? DateTime.now().toUtc() : tryParseDate(reference);
   if (ref == null) return false;
 
   return date.isBefore(ref);

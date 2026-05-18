@@ -12,6 +12,13 @@ void main() {
       expect(decoded, ['user', 123]);
     });
 
+    test('encodeToBase64 surfaces unsupported JSON values', () {
+      expect(
+        () => IdGenerator.encodeToBase64([Object()]),
+        throwsA(isA<JsonUnsupportedObjectError>()),
+      );
+    });
+
     test('nanoid validates size', () {
       expect(IdGenerator.nanoid(size: 10), hasLength(10));
       expect(() => IdGenerator.nanoid(size: 0), throwsArgumentError);
@@ -34,7 +41,11 @@ void main() {
       expect(IdGenerator.timestampId(), startsWith('G'));
       expect(
         IdGenerator.uuidV1(),
-        matches(RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')),
+        matches(
+          RegExp(
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+          ),
+        ),
       );
     });
   });

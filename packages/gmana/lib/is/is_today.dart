@@ -5,5 +5,7 @@ bool isToday(String str) {
   final date = tryParseDate(str);
   if (date == null) return false;
   final now = DateTime.now().toUtc();
-  return date.year == now.year && date.month == now.month && date.day == now.day;
+  return date.year == now.year &&
+      date.month == now.month &&
+      date.day == now.day;
 }

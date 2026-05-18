@@ -65,7 +65,8 @@ final class _IdGeneratorService {
       throw ArgumentError.value(size, 'size', 'must be positive');
     }
 
-    const alphabet = 'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW';
+    const alphabet =
+        'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW';
     return _IdGeneratorUtils.generateRandomString(
       length: size,
       characters: alphabet,
