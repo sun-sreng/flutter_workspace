@@ -1,3 +1,5 @@
+library;
+
 export 'buttons/elevated_button.dart';
 export 'fields/base_field.dart';
 export 'fields/confirm_password_field.dart';

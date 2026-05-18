@@ -35,7 +35,10 @@ class GElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
-      child: isLoading ? GWaveDotSpinner(size: loadingSize, color: loadingColor) : Text(text, style: textStyle),
+      child:
+          isLoading
+              ? GWaveDotSpinner(size: loadingSize, color: loadingColor)
+              : Text(text, style: textStyle),
     );
   }
 }

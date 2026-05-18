@@ -1,8 +1,8 @@
 # gmana_flutter
 
-Flutter UI utilities for production apps: form fields, loading indicator
-compatibility exports, theme helpers, color tools, responsive extensions, and
-small design-system tokens.
+Flutter UI utilities for production apps: form-field compatibility exports,
+loading indicator compatibility exports, theme helpers, color tools,
+responsive extensions, and small design-system tokens.
 
 For a full API guide covering every exported helper, widget, and function, see
 [doc/api.md](doc/api.md).
@@ -32,6 +32,13 @@ re-exported from `gmana_flutter` for compatibility:
 flutter pub add gmana_spinner
 ```
 
+Form widgets now live in the focused `gmana_form` package and are re-exported
+from `gmana_flutter` for compatibility:
+
+```bash
+flutter pub add gmana_form
+```
+
 If you use validator configuration classes such as
 `PasswordValidationConfig`, add the core package too:
 
@@ -44,6 +51,7 @@ Manual `pubspec.yaml` setup:
 ```yaml
 dependencies:
   gmana: ^0.2.0
+  gmana_form: ^0.0.1
   gmana_flutter: ^0.0.8
   gmana_spinner: ^0.0.1
 ```
@@ -150,6 +158,9 @@ final labels = service.getThemeKeys().map(service.getLabelFromKey).toList();
 
 The field widgets wrap `TextFormField` with consistent defaults and validators
 from the core `gmana` package.
+
+New code can import `package:gmana_form/gmana_form.dart` directly. The same
+APIs remain available through `gmana_flutter` for compatibility.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -403,6 +414,9 @@ the package's UI components.
 
 - Use [`gmana`](https://pub.dev/packages/gmana) for pure Dart extensions,
   functional helpers, and validators.
+- Use `gmana_form` for focused Flutter form fields, submit controls, and
+  confirm-password validation.
+- Use `gmana_spinner` for focused Flutter loading indicators.
 - Use `gmana_flutter` for Flutter UI and app convenience APIs.
 - Use `gmana_value_objects` for typed domain values when that package is part
   of your project.

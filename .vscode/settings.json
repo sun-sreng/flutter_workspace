@@ -1,7 +1,8 @@
 {
   "dart.lineLength": 120,
   "markdownlint.config": {
-    "MD024": false
+    "MD024": false,
+    "MD041": false
   },
   "cSpell.ignorePaths": [
     "package-lock.json",

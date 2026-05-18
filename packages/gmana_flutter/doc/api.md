@@ -6,6 +6,13 @@ Import the full public API:
 import 'package:gmana_flutter/gmana_flutter.dart';
 ```
 
+Form APIs are re-exported for compatibility. New code can import the focused
+package directly:
+
+```dart
+import 'package:gmana_form/gmana_form.dart';
+```
+
 This package builds on `gmana`, so validator config classes such as
 `PasswordValidationConfig` come from:
 

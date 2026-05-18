@@ -26,6 +26,7 @@ test-dart:
 
 # Run Flutter tests for Flutter packages.
 test-flutter:
+    flutter test packages/gmana_form
     flutter test packages/gmana_spinner
     flutter test packages/gmana_flutter
 

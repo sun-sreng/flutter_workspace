@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gmana/validation.dart';
-import 'package:gmana_flutter/form/models/field_config.dart';
 
+import '../models/field_config.dart';
 import '../widgets/configured_text_form_field.dart';
 import 'base_field.dart';
 

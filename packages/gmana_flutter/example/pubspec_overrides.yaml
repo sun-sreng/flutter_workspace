@@ -1,6 +1,8 @@
 dependency_overrides:
   gmana:
     path: ../../gmana
+  gmana_form:
+    path: ../../gmana_form
   gmana_flutter:
     path: ../
   gmana_spinner:

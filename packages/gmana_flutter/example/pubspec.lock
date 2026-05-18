@@ -81,6 +81,13 @@ packages:
       relative: true
     source: path
     version: "0.0.8"
+  gmana_form:
+    dependency: "direct overridden"
+    description:
+      path: "../../gmana_form"
+      relative: true
+    source: path
+    version: "0.0.1"
   gmana_spinner:
     dependency: "direct overridden"
     description:

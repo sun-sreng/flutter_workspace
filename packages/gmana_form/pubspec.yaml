@@ -1,0 +1,29 @@
+name: gmana_form
+description: Flutter form fields, validators, and submit controls for the Gmana ecosystem.
+version: 0.0.1
+repository: https://github.com/sun-sreng/flutters/tree/main/packages/gmana_form
+homepage: https://github.com/sun-sreng/flutters/tree/main/packages/gmana_form
+issue_tracker: https://github.com/sun-sreng/flutters/issues
+
+topics:
+  - flutter
+  - form
+  - validation
+  - widgets
+
+environment:
+  sdk: ^3.7.2
+  flutter: ">=3.29.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  gmana: ^0.2.0
+  gmana_spinner: ^0.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
