@@ -1,8 +1,8 @@
 # gmana_flutter
 
-Flutter UI utilities for production apps: form fields, loading indicators,
-theme helpers, color tools, responsive extensions, and small design-system
-tokens.
+Flutter UI utilities for production apps: form fields, loading indicator
+compatibility exports, theme helpers, color tools, responsive extensions, and
+small design-system tokens.
 
 For a full API guide covering every exported helper, widget, and function, see
 [doc/api.md](doc/api.md).
@@ -25,6 +25,13 @@ import 'package:gmana_flutter/gmana_flutter.dart';
 flutter pub add gmana_flutter
 ```
 
+Loading indicators now live in the focused `gmana_spinner` package and are
+re-exported from `gmana_flutter` for compatibility:
+
+```bash
+flutter pub add gmana_spinner
+```
+
 If you use validator configuration classes such as
 `PasswordValidationConfig`, add the core package too:
 
@@ -38,6 +45,7 @@ Manual `pubspec.yaml` setup:
 dependencies:
   gmana: ^0.2.0
   gmana_flutter: ^0.0.8
+  gmana_spinner: ^0.0.1
 ```
 
 ## Quick Start
@@ -74,7 +82,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const GSpinnerWaveDot(size: 28, color: GColors.primary),
+            const GWaveDotSpinner(size: 28, color: GColors.primary),
             const SizedBoxHeight(),
             Text(
               'Ready',
@@ -94,7 +102,7 @@ class HomePage extends StatelessWidget {
 | --------- | --------------------------------------------------------------------------------------------------------- |
 | Widgets   | `GAppBar`, `GListTile`, `SizedBoxHeight`, `GStarRatingBar`                                                |
 | Forms     | `GEmailField`, `GPasswordField`, `GNumberField`, `GTextField`, `GConfirmPasswordField`, `GElevatedButton` |
-| Loading   | `GCircularSpinner`, `GLinearSpinner`, `GSpinnerDot`, `GWaveSpinner`, `GSpinnerWaveDot`                    |
+| Loading   | `GCircularSpinner`, `GLinearSpinner`, `GDotSpinner`, `GWaveSpinner`, `GWaveDotSpinner`                    |
 | Theme     | `GColors`, `GFontWeight`, `ThemeModeExt`, `ThemeModeService`                                              |
 | Color     | `ColorExt`, `StringColorExtension`, `ColorService`                                                        |
 | Layout    | `Breakpoint`, `Breakpoints`, `BreakpointUtils`, `ResponsiveContext`, `ContextExt`                         |
@@ -227,8 +235,8 @@ Use the lightweight indicators anywhere a normal widget is accepted:
 ```dart
 const GCircularSpinner();
 const GLinearSpinner();
-const GSpinnerDot(color: Colors.blue);
-const GSpinnerWaveDot(size: 24, color: Colors.blue);
+const GDotSpinner(color: Colors.blue);
+const GWaveDotSpinner(size: 24, color: Colors.blue);
 ```
 
 Use `GWaveSpinner` with explicit bounds:

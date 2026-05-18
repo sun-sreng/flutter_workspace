@@ -81,6 +81,13 @@ packages:
       relative: true
     source: path
     version: "0.0.8"
+  gmana_spinner:
+    dependency: "direct overridden"
+    description:
+      path: "../../gmana_spinner"
+      relative: true
+    source: path
+    version: "0.0.1"
   leak_tracker:
     dependency: transitive
     description:

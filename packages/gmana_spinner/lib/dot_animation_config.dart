@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 
-/// Configuration for animating a single dot in the GSpinnerWaveDot widget.
+/// Configuration for animating a single dot in the GWaveDotSpinner widget.
 class DotAnimationConfig {
+  /// Interval used to animate the dot height upward.
   final Interval heightInterval;
+
+  /// Interval used to animate the dot offset upward.
   final Interval offsetInterval;
+
+  /// Interval used to animate the dot height back down.
   final Interval reverseHeightInterval;
+
+  /// Interval used to animate the dot offset back down.
   final Interval reverseOffsetInterval;
+
+  /// Maximum dot height.
   final double maxHeight;
+
+  /// Maximum vertical dot offset.
   final double maxOffset;
 
   const DotAnimationConfig({
@@ -25,8 +36,14 @@ class DotAnimationConfig {
     required double baseSize,
     required bool isEven,
   }) {
-    final step = 0.09; // Interval step for staggering animations
+    assert(index >= 0, 'index must be zero or greater.');
+    assert(dotCount > 0, 'dotCount must be greater than zero.');
+    assert(index < dotCount, 'index must be less than dotCount.');
+    assert(baseSize > 0, 'baseSize must be greater than zero.');
+
+    const step = 0.09;
     final start = index * step;
+
     return DotAnimationConfig(
       heightInterval: Interval(start, start + step),
       offsetInterval: Interval(start + step, start + 2 * step),

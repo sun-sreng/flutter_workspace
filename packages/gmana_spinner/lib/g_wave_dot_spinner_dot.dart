@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
-import 'models/dot_animation_config.dart';
+import 'dot_animation_config.dart';
 
-/// A single animated dot for the GSpinnerWaveDot widget.
-class DotContainer extends StatelessWidget {
+/// A single animated dot for the GWaveDotSpinner widget.
+class GWaveDotSpinnerDot extends StatelessWidget {
+  /// Animation intervals and size limits for this dot.
   final DotAnimationConfig config;
+
+  /// Base spinner size used to derive the dot size.
   final double size;
+
+  /// Dot color.
   final Color color;
+
+  /// Shared spinner animation controller.
   final AnimationController controller;
 
-  const DotContainer({
+  const GWaveDotSpinnerDot({
     super.key,
     required this.config,
     required this.size,
@@ -40,10 +47,7 @@ class DotContainer extends StatelessWidget {
                   .animate(
                     CurvedAnimation(
                       parent: controller,
-                      curve:
-                          isForward
-                              ? config.offsetInterval
-                              : config.reverseOffsetInterval,
+                      curve: isForward ? config.offsetInterval : config.reverseOffsetInterval,
                     ),
                   )
                   .value,
@@ -54,17 +58,11 @@ class DotContainer extends StatelessWidget {
                     .animate(
                       CurvedAnimation(
                         parent: controller,
-                        curve:
-                            isForward
-                                ? config.heightInterval
-                                : config.reverseHeightInterval,
+                        curve: isForward ? config.heightInterval : config.reverseHeightInterval,
                       ),
                     )
                     .value,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(dotSize / 2),
-            ),
+            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(dotSize / 2)),
           ),
         );
       },

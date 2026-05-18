@@ -6,4 +6,5 @@ environment:
 workspace:
   - packages/gmana
   - packages/gmana_flutter
+  - packages/gmana_spinner
   - packages/gmana_value_objects

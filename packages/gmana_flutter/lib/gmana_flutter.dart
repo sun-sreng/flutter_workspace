@@ -12,7 +12,6 @@ export 'extensions/time_of_day_ext.dart';
 export 'form/form.dart';
 export 'services/color_service.dart';
 export 'services/theme_mode_service.dart';
-export 'spinner/spinner.dart';
 export 'utils/locale.dart';
 export 'utils/register_error_handler.dart';
 export 'widget/app_bar.dart';

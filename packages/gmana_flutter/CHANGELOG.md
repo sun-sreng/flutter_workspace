@@ -1,12 +1,20 @@
 # Changelog
 
+## Unreleased
+
+- compatibility: re-export spinner widgets from the new `gmana_spinner` package.
+- internal: update `GElevatedButton` to use `GWaveDotSpinner` from `gmana_spinner`.
+- breaking: remove old direct spinner forwarding files; use the canonical
+  `g_dot_spinner.dart`, `g_wave_dot_spinner.dart`, and `g_bar_wave_spinner.dart`
+  paths from `gmana_spinner`.
+
 ## 0.0.8 - 2026-04-23
 
 - breaking: make `registerErrorHandlers` opt into custom error UI instead of replacing `ErrorWidget.builder` by default
 - feat: add `GStarRatingBar` as the canonical prefixed rating widget and deprecate `StarRatingBar`
 - feat: expand `GFieldConfig` with common `TextFormField` options for focus, decoration, validation mode, save/submit callbacks, text style, and line constraints
 - polish: remove corrupted source comment separators from Flutter extension and color helper files
-- breaking: rename canonical spinner widgets to `GCircularSpinner`, `GLinearSpinner`, `GWaveSpinner`, and `GSpinnerWaveDot`
+- breaking: rename canonical spinner widgets to `GCircularSpinner`, `GLinearSpinner`, and `GWaveSpinner`
 - breaking: remove deprecated spinner aliases and add widget tests for the public form/spinner surface
 - breaking: require Flutter 3.29 or newer to match the package's Dart SDK and modern Flutter API usage
 - breaking: remove the duplicate `ResponsiveContext.screenSize` extension member; use `ContextExt.screenSize` instead

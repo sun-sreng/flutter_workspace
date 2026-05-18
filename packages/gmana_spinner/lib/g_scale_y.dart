@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
-class ScaleYWidget extends AnimatedWidget {
+/// Scales a child vertically using an animation.
+class GScaleY extends AnimatedWidget {
+  /// The widget to scale.
   final Widget child;
+
+  /// Transform alignment.
   final Alignment alignment;
 
-  const ScaleYWidget({
+  const GScaleY({
     super.key,
     required Animation<double> scaleY,
     required this.child,

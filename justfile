@@ -24,8 +24,9 @@ test-dart:
     dart test packages/gmana
     dart test packages/gmana_value_objects
 
-# Run Flutter tests for gmana_flutter.
+# Run Flutter tests for Flutter packages.
 test-flutter:
+    flutter test packages/gmana_spinner
     flutter test packages/gmana_flutter
 
 test: test-dart test-flutter

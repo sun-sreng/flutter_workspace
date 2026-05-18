@@ -1,12 +1,18 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:gmana/math/wave_vertical_offset.dart';
 
+import 'wave_vertical_offset.dart';
+
+/// Paints the animated arc and optional wave fill for [GWaveSpinner].
 class WaveSpinnerPainter extends CustomPainter {
+  /// Active arc color.
   final Color color;
 
+  /// Background arc color.
   final Color trackColor;
+
+  /// Fill wave color.
   final Color waveColor;
   late final double _waveMaxRadius;
 
@@ -23,21 +29,13 @@ class WaveSpinnerPainter extends CustomPainter {
     required Size size,
   }) : super(repaint: controller) {
     _waveMaxRadius = _lineRadius(size.width, 10);
-    _spinnerAnimation = Tween<double>(
-      begin: 0,
-      end: pi * 2,
-    ).animate(CurvedAnimation(curve: curve, parent: controller));
+    _spinnerAnimation = Tween<double>(begin: 0, end: pi * 2).animate(CurvedAnimation(curve: curve, parent: controller));
     _waveVerticalShiftAnimation = Tween<double>(
       begin: _waveMaxRadius,
       end: -_waveMaxRadius,
     ).animate(CurvedAnimation(curve: curve, parent: controller));
     _waveAmplitudeAnimation =
-        !hasChild
-            ? Tween<double>(
-              begin: 0,
-              end: -4,
-            ).animate(CurvedAnimation(curve: curve, parent: controller))
-            : null;
+        !hasChild ? Tween<double>(begin: 0, end: -4).animate(CurvedAnimation(curve: curve, parent: controller)) : null;
   }
 
   @override
@@ -83,11 +81,7 @@ class WaveSpinnerPainter extends CustomPainter {
     final lineRadius = _lineRadius(size.width, lineRadiusMultiplier) * 2;
     final centerOffset = Offset(size.width / 2, size.width / 2);
     canvas.drawArc(
-      Rect.fromCenter(
-        center: centerOffset,
-        width: lineRadius,
-        height: lineRadius,
-      ),
+      Rect.fromCenter(center: centerOffset, width: lineRadius, height: lineRadius),
       startAngle,
       sweepAngle,
       false,
@@ -105,9 +99,7 @@ class WaveSpinnerPainter extends CustomPainter {
       height: Size.fromRadius(_waveMaxRadius).width,
     );
     canvas.save();
-    canvas.clipRRect(
-      RRect.fromRectAndRadius(bounds, Radius.circular(_waveMaxRadius)),
-    );
+    canvas.clipRRect(RRect.fromRectAndRadius(bounds, Radius.circular(_waveMaxRadius)));
     canvas.translate(size.width / 2, size.height / 2);
 
     final path = Path()..moveTo(-_waveMaxRadius, _waveMaxRadius);

@@ -1,27 +1,40 @@
 import 'package:flutter/material.dart';
 
-import 'models/delayed_animation_tween.dart';
+import 'delayed_animation_tween.dart';
 
 /// A customizable loading spinner with animated scaling dots.
 ///
 /// Example:
 /// ```dart
-/// GSpinnerDot(
+/// GDotSpinner(
 ///   size: 50.0,
 ///   color: Colors.blue,
 ///   dotCount: 3,
 ///   duration: Duration(milliseconds: 1200),
 /// )
 /// ```
-class GSpinnerDot extends StatefulWidget {
+class GDotSpinner extends StatefulWidget {
+  /// Dot color. Defaults to the active theme primary color.
   final Color? color;
+
+  /// Height of the spinner. Individual dots use half this size.
   final double size;
+
+  /// Number of animated dots.
   final int dotCount;
+
+  /// Optional builder for custom dot widgets.
   final IndexedWidgetBuilder? itemBuilder;
+
+  /// Duration for one full animation cycle.
   final Duration duration;
+
+  /// Optional external controller.
+  ///
+  /// When provided, the caller owns disposal.
   final AnimationController? controller;
 
-  const GSpinnerDot({
+  const GDotSpinner({
     super.key,
     this.color,
     this.size = 50.0,
@@ -29,18 +42,15 @@ class GSpinnerDot extends StatefulWidget {
     this.itemBuilder,
     this.duration = const Duration(milliseconds: 1200),
     this.controller,
-  }) : assert(
-         !(itemBuilder != null && color != null) &&
-             (itemBuilder != null || color != null),
-         'Provide either itemBuilder or color, but not both.',
-       );
+  }) : assert(itemBuilder == null || color == null, 'Provide either itemBuilder or color, but not both.'),
+       assert(size > 0, 'size must be greater than zero.'),
+       assert(dotCount > 0, 'dotCount must be greater than zero.');
 
   @override
-  State<GSpinnerDot> createState() => _GSpinnerDotState();
+  State<GDotSpinner> createState() => _GDotSpinnerState();
 }
 
-class _GSpinnerDotState extends State<GSpinnerDot>
-    with SingleTickerProviderStateMixin {
+class _GDotSpinnerState extends State<GDotSpinner> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -53,14 +63,8 @@ class _GSpinnerDotState extends State<GSpinnerDot>
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: List.generate(widget.dotCount, (index) {
             return ScaleTransition(
-              scale: DelayedAnimationTween(
-                delay: index / widget.dotCount,
-              ).animate(_controller),
-              child: SizedBox(
-                width: widget.size * 0.5,
-                height: widget.size * 0.5,
-                child: _buildDot(index),
-              ),
+              scale: DelayedAnimationTween(delay: index / widget.dotCount).animate(_controller),
+              child: SizedBox(width: widget.size * 0.5, height: widget.size * 0.5, child: _buildDot(index)),
             );
           }),
         ),
@@ -71,8 +75,7 @@ class _GSpinnerDotState extends State<GSpinnerDot>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Pause animation if widget is not visible
-    if (!mounted || !context.mounted) {
+    if (!TickerMode.valuesOf(context).enabled) {
       _controller.stop();
     } else {
       _controller.repeat();
@@ -90,10 +93,7 @@ class _GSpinnerDotState extends State<GSpinnerDot>
   @override
   void initState() {
     super.initState();
-    _controller =
-        (widget.controller ??
-              AnimationController(vsync: this, duration: widget.duration))
-          ..repeat();
+    _controller = (widget.controller ?? AnimationController(vsync: this, duration: widget.duration))..repeat();
   }
 
   Widget _buildDot(int index) {

@@ -165,7 +165,7 @@ Form(
 | `GConfirmPasswordField`                        | Confirmation input that compares against a password controller.             |
 | `GNumberField`                                 | Numeric input with keyboard/input-formatters from `NumberValidationConfig`. |
 | `GTextField`                                   | Text input with `TextValidator`.                                            |
-| `GElevatedButton`                              | Elevated button that swaps text for `GSpinnerWaveDot` while loading.        |
+| `GElevatedButton`                              | Elevated button that swaps text for `GWaveDotSpinner` while loading.        |
 | `ConfirmPasswordValidationConfig`              | Configure required confirmation and whitespace trimming.                    |
 | `ConfirmPasswordValidator.validate(...)`       | Validate password/confirmation pairs.                                       |
 | `resolveConfirmPasswordValidationIssue(issue)` | Convert confirm-password issues to English messages.                        |
@@ -197,8 +197,8 @@ Scaffold(
 ```dart
 const GCircularSpinner();
 const GLinearSpinner();
-GSpinnerDot(color: Colors.blue);
-GSpinnerWaveDot(size: 32, color: Colors.orange);
+GDotSpinner(color: Colors.blue);
+GWaveDotSpinner(size: 32, color: Colors.orange);
 GWaveSpinner(color: Colors.orange, child: const Icon(Icons.sync));
 ```
 
@@ -206,8 +206,8 @@ GWaveSpinner(color: Colors.orange, child: const Icon(Icons.sync));
 | ---------------------------------- | ------------------------------------------------------------ |
 | `GCircularSpinner`                 | Centered circular Material progress indicator.               |
 | `GLinearSpinner`                   | Linear Material progress indicator.                          |
-| `GSpinnerDot`                      | Animated pulsing dot loader.                                 |
-| `GSpinnerWaveDot`                  | Wave-like animated dot loader.                               |
+| `GDotSpinner`                      | Animated pulsing dot loader.                                 |
+| `GWaveDotSpinner`                  | Wave-like animated dot loader.                               |
 | `GWaveSpinner`                     | Circular spinner with animated wave fill and optional child. |
 | `DotAnimationConfig.forIndex(...)` | Build staggered dot animation intervals.                     |
 | `DelayedAnimationTween`            | Tween with delayed sine-wave easing.                         |

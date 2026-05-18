@@ -1,37 +1,51 @@
 import 'package:flutter/material.dart';
 
-import 'dot_container.dart';
-import 'models/dot_animation_config.dart';
+import 'dot_animation_config.dart';
+import 'g_wave_dot_spinner_dot.dart';
 
 /// A customizable loading spinner with a wave-like animation of scaling dots.
 ///
 /// Example:
 /// ```dart
-/// GSpinnerWaveDot(
+/// GWaveDotSpinner(
 ///   size: 50.0,
 ///   color: Colors.blue,
 ///   dotCount: 5,
 /// )
 /// ```
-class GSpinnerWaveDot extends StatefulWidget {
+class GWaveDotSpinner extends StatefulWidget {
+  /// Width and height of the spinner.
   final double size;
-  final Color color;
+
+  /// Dot color. Defaults to the active theme primary color.
+  final Color? color;
+
+  /// Number of dots in the wave.
   final int dotCount;
+
+  /// Duration for one full animation cycle.
   final Duration duration;
 
-  const GSpinnerWaveDot({
+  /// Optional external controller.
+  ///
+  /// When provided, the caller owns disposal.
+  final AnimationController? controller;
+
+  const GWaveDotSpinner({
     super.key,
     required this.size,
-    required this.color,
+    this.color,
     this.dotCount = 5,
     this.duration = const Duration(milliseconds: 1600),
-  });
+    this.controller,
+  }) : assert(size > 0, 'size must be greater than zero.'),
+       assert(dotCount > 0, 'dotCount must be greater than zero.');
 
   @override
-  State<GSpinnerWaveDot> createState() => _GSpinnerWaveDotState();
+  State<GWaveDotSpinner> createState() => _GWaveDotSpinnerState();
 }
 
-class _GSpinnerWaveDotState extends State<GSpinnerWaveDot>
+class _GWaveDotSpinnerState extends State<GWaveDotSpinner>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
@@ -43,7 +57,7 @@ class _GSpinnerWaveDotState extends State<GSpinnerWaveDot>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: List.generate(widget.dotCount, (index) {
-          return DotContainer(
+          return GWaveDotSpinnerDot(
             config: DotAnimationConfig.forIndex(
               index: index,
               dotCount: widget.dotCount,
@@ -51,7 +65,7 @@ class _GSpinnerWaveDotState extends State<GSpinnerWaveDot>
               isEven: index % 2 == 1,
             ),
             size: widget.size,
-            color: widget.color,
+            color: widget.color ?? Theme.of(context).colorScheme.primary,
             controller: _controller,
           );
         }),
@@ -62,8 +76,7 @@ class _GSpinnerWaveDotState extends State<GSpinnerWaveDot>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Pause animation if widget is not visible
-    if (!mounted || !context.mounted) {
+    if (!TickerMode.valuesOf(context).enabled) {
       _controller.stop();
     } else {
       _controller.repeat();
@@ -72,14 +85,18 @@ class _GSpinnerWaveDotState extends State<GSpinnerWaveDot>
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: widget.duration)
-      ..repeat();
+    _controller =
+        (widget.controller ??
+              AnimationController(vsync: this, duration: widget.duration))
+          ..repeat();
   }
 }

@@ -2,9 +2,12 @@ import 'dart:math' show sin, pi;
 
 import 'package:flutter/material.dart';
 
-/// A tween that applies a delay to an animation curve, suitable for staggered effects.
+/// A tween that applies a delay to a repeating staggered animation.
 class DelayedAnimationTween extends Tween<double> {
+  /// Phase delay applied before transforming the animation value.
   final double delay;
+
+  /// Curve applied after the delayed sine wave transform.
   final Curve curve;
 
   DelayedAnimationTween({
@@ -16,7 +19,6 @@ class DelayedAnimationTween extends Tween<double> {
 
   @override
   double lerp(double t) {
-    // Apply the delay and transform the input using a sine wave for smooth pulsing
     final adjustedT = (sin((t - delay) * 2 * pi) + 1) / 2;
     return super.lerp(curve.transform(adjustedT));
   }
