@@ -2,25 +2,35 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-void registerErrorHandlers() {
-  // * Show some error UI if any uncaught exception happens
+void registerErrorHandlers({
+  void Function(FlutterErrorDetails details)? onFlutterError,
+  ErrorWidgetBuilder? errorWidgetBuilder,
+  bool presentFlutterErrors = true,
+  bool handlePlatformErrors = true,
+  bool Function(Object error, StackTrace stack)? onPlatformError,
+}) {
   FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-    debugPrint(details.toString());
+    if (presentFlutterErrors) {
+      FlutterError.presentError(details);
+    }
+    if (onFlutterError != null) {
+      onFlutterError(details);
+    } else {
+      debugPrint(details.toString());
+    }
   };
-  // * Handle errors from the underlying platform/OS
-  PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-    debugPrint(error.toString());
-    return true;
-  };
-  // * Show some error UI when any widget in the app fails to build
-  ErrorWidget.builder = (FlutterErrorDetails details) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.red,
-        title: const Text('An error occurred'),
-      ),
-      body: Center(child: Text(details.toString())),
-    );
-  };
+
+  if (handlePlatformErrors) {
+    PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+      if (onPlatformError != null) {
+        return onPlatformError(error, stack);
+      }
+      debugPrint(error.toString());
+      return true;
+    };
+  }
+
+  if (errorWidgetBuilder != null) {
+    ErrorWidget.builder = errorWidgetBuilder;
+  }
 }

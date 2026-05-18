@@ -1,5 +1,11 @@
+# Changelog
+
 ## 0.0.8 - 2026-04-23
 
+- breaking: make `registerErrorHandlers` opt into custom error UI instead of replacing `ErrorWidget.builder` by default
+- feat: add `GStarRatingBar` as the canonical prefixed rating widget and deprecate `StarRatingBar`
+- feat: expand `GFieldConfig` with common `TextFormField` options for focus, decoration, validation mode, save/submit callbacks, text style, and line constraints
+- polish: remove corrupted source comment separators from Flutter extension and color helper files
 - breaking: rename canonical spinner widgets to `GCircularSpinner`, `GLinearSpinner`, `GWaveSpinner`, and `GSpinnerWaveDot`
 - breaking: remove deprecated spinner aliases and add widget tests for the public form/spinner surface
 - breaking: require Flutter 3.29 or newer to match the package's Dart SDK and modern Flutter API usage

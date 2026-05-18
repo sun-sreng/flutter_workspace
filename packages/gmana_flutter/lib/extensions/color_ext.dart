@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 import '../services/color_service.dart';
 
 extension ColorExt on Color {
-  // ── Harmony ──────────────────────────────────────────────────────────────
   Color get complementary => ColorService.complementary(this);
 
   Color get contrastText => ColorService.bestContrast(this);
 
   Color get greyscale => ColorService.greyscale(this);
 
-  // ── Contrast / Accessibility ─────────────────────────────────────────────
   bool get isDark => ColorService.isDark(this);
 
   bool get isLight => ColorService.isLight(this);
@@ -24,7 +22,6 @@ extension ColorExt on Color {
 
   double contrastRatio(Color other) => ColorService.contrastRatio(this, other);
 
-  // ── Lightness ────────────────────────────────────────────────────────────
   Color darken([double amount = ColorService.defaultAmount]) =>
       ColorService.adjustLightness(this, amount: amount, darken: true);
   Color desaturate([double amount = ColorService.defaultAmount]) =>
@@ -36,9 +33,7 @@ extension ColorExt on Color {
 
   bool meetsWcagAAA(Color background) =>
       ColorService.meetsWcagAAA(this, background);
-  // ── Mixing ───────────────────────────────────────────────────────────────
   Color mix(Color other, [double t = 0.5]) => ColorService.mix(this, other, t);
-  // ── Saturation ───────────────────────────────────────────────────────────
   Color saturate([double amount = ColorService.defaultAmount]) =>
       ColorService.adjustSaturation(this, amount: amount, desaturate: false);
   Color shade([double amount = 0.5]) => ColorService.shade(this, amount);
@@ -48,14 +43,12 @@ extension ColorExt on Color {
   String toHexARGB({bool withHashSign = true}) =>
       ColorService.toHexARGB(this, withHashSign: withHashSign);
 
-  // ── Serialization ────────────────────────────────────────────────────────
   /// 6-char RGB: `#FF5500`
   String toHexRGB({bool withHashSign = true}) =>
       ColorService.toHexRGB(this, withHashSign: withHashSign);
 
   MaterialColor toMaterialColor() => ColorService.createMaterialColor(this);
 
-  // ── Opacity ──────────────────────────────────────────────────────────────
   Color withAlphaOpacity(double opacity) {
     if (opacity.isNaN || opacity < 0 || opacity > 1) {
       throw ArgumentError.value(opacity, 'opacity', 'must be between 0 and 1');

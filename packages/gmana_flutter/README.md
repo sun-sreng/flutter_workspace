@@ -92,7 +92,7 @@ class HomePage extends StatelessWidget {
 
 | Area      | APIs                                                                                                      |
 | --------- | --------------------------------------------------------------------------------------------------------- |
-| Widgets   | `GAppBar`, `GListTile`, `SizedBoxHeight`, `StarRatingBar`                                                 |
+| Widgets   | `GAppBar`, `GListTile`, `SizedBoxHeight`, `GStarRatingBar`                                                |
 | Forms     | `GEmailField`, `GPasswordField`, `GNumberField`, `GTextField`, `GConfirmPasswordField`, `GElevatedButton` |
 | Loading   | `GCircularSpinner`, `GLinearSpinner`, `GSpinnerDot`, `GWaveSpinner`, `GSpinnerWaveDot`                    |
 | Theme     | `GColors`, `GFontWeight`, `ThemeModeExt`, `ThemeModeService`                                              |

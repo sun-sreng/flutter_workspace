@@ -297,7 +297,7 @@ print(validator.validate('user@mail.blocked.example').rightOrNull());
 | `ValidationResult<TIssue, TValue>`          | Alias for `Either<TIssue, TValue>`.                                                        |
 | `ValidationMessageResolver<TIssue>`         | Alias for an issue-to-message function.                                                    |
 
-## Predicate Functions And Regex Constants
+## Predicate Functions
 
 Import `package:gmana/validation.dart` for standalone checks.
 
@@ -317,14 +317,13 @@ isUuid('550e8400-e29b-41d4-a716-446655440000'); // true
 | `isByteLength`, `isLength`                                                        | Length checks.                                                 |
 | `isDivisibleBy`                                                                   | Numeric divisibility check.                                    |
 | `isLowerCase`, `isUpperCase`, `isMultiByte`, `isSurrogatePair`, `isVariableWidth` | Text property checks.                                          |
-| `*_reg` constants                                                                 | Reusable regular expressions for the same validation families. |
 
 ## Utilities
 
 ```dart
 import 'package:gmana/utilities.dart';
 
-final id = IdGenerator.uuidV1();
+final id = IdGenerator.uuidV4Like();
 
 final debouncer = Debouncer(milliseconds: 300);
 debouncer.run(() => print('Search'));
@@ -340,7 +339,6 @@ Do not use it for secrets or security-sensitive tokens.
 | `Debouncer.dispose()`     | Cancel pending debounced work.                                                        |
 | `Throttler.run(action)`   | Run an action at most once per cooldown window.                                       |
 | `Throttler.dispose()`     | Cancel pending throttler state.                                                       |
-| `callback.debounce(...)`  | Run a zero-arg function through a one-off debouncer.                                  |
 | `callback.throttle(...)`  | Run a zero-arg function through a one-off throttler.                                  |
 | `GSpacing`                | Shared spacing constants.                                                             |
 | `waveVerticalOffset(...)` | Calculate a sine-wave vertical offset for painters/animations.                        |

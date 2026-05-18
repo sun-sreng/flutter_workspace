@@ -1,5 +1,8 @@
 {
   "dart.lineLength": 120,
+  "markdownlint.config": {
+    "MD024": false
+  },
   "cSpell.ignorePaths": [
     "package-lock.json",
     "node_modules",
@@ -21,6 +24,7 @@
     "dartdoc",
     "debouncer",
     "desaturate",
+    "ecommerce",
     "fpdart",
     "greyscale",
     "iloveyou",
@@ -38,6 +42,7 @@
     "Obscurable",
     "olleh",
     "Passwo",
+    "pasteable",
     "pubspec",
     "Riverpod",
     "Sreng",

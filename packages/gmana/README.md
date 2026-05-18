@@ -380,7 +380,7 @@ Generate IDs and encoded values:
 ```dart
 import 'package:gmana/utilities.dart';
 
-final uuid = IdGenerator.uuidV1();
+final uuid = IdGenerator.uuidV4Like();
 final nanoid = IdGenerator.nanoid(size: 10);
 final timestampId = IdGenerator.timestampId();
 final random = IdGenerator.randomString(length: 12);

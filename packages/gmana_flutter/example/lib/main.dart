@@ -447,7 +447,7 @@ class _HeroPanel extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: const [
-                    StarRatingBar(ratingValue: 4.8, starSize: 18),
+                    GStarRatingBar(ratingValue: 4.8, starSize: 18),
                     SizedBox(width: 8),
                     Text('Demo polish'),
                   ],

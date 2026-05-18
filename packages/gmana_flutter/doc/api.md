@@ -179,7 +179,7 @@ Scaffold(
   body: Column(
     children: const [
       SizedBoxHeight(),
-      StarRatingBar(ratingValue: 4.5),
+      GStarRatingBar(ratingValue: 4.5),
     ],
   ),
 );
@@ -190,7 +190,7 @@ Scaffold(
 | `GAppBar`        | App bar with title, optional leading widget, actions, and colors. |
 | `GListTile`      | List tile with leading icon, title, trailing label, and arrow.    |
 | `SizedBoxHeight` | Vertical spacing using `GSpacing.md` by default.                  |
-| `StarRatingBar`  | Read-only star rating display with optional half stars.           |
+| `GStarRatingBar` | Read-only star rating display with optional half stars.           |
 
 ## Loading Indicators
 

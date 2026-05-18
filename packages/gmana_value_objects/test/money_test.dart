@@ -13,9 +13,9 @@ void main() {
 
   group('Money', () {
     test('constructs from exact minor units', () {
-      const price = Money(minorUnits: 1999, currency: Currency.usd);
-      const yen = Money(minorUnits: 500, currency: Currency.jpy);
-      const kwd = Money(minorUnits: 3500, currency: Currency.kwd);
+      final price = Money(minorUnits: 1999, currency: Currency.usd);
+      final yen = Money(minorUnits: 500, currency: Currency.jpy);
+      final kwd = Money(minorUnits: 3500, currency: Currency.kwd);
 
       expect(price.decimalString, '19.99');
       expect(yen.decimalString, '500');
@@ -23,6 +23,10 @@ void main() {
       expect(price.valueOrNull?.minorUnits, 1999);
       expect(price.errorOrNull, null);
       expect(price.isValid, true);
+      expect(
+        () => Money(minorUnits: -1, currency: Currency.usd),
+        throwsRangeError,
+      );
     });
 
     test('constructs zero money', () {
@@ -83,17 +87,21 @@ void main() {
     });
 
     test('constructs from MoneyAmount', () {
-      const amount = MoneyAmount(minorUnits: 1234, currency: Currency.usd);
+      final amount = MoneyAmount(minorUnits: 1234, currency: Currency.usd);
       final money = Money.fromAmount(amount);
 
       expect(money.minorUnits, amount.minorUnits);
       expect(money.currency, amount.currency);
       expect(money.amountValue, amount);
+      expect(
+        () => MoneyAmount(minorUnits: -1, currency: Currency.usd),
+        throwsRangeError,
+      );
     });
 
     test('adds and subtracts same-currency amounts', () {
-      const price = Money(minorUnits: 1999, currency: Currency.usd);
-      const tax = Money(minorUnits: 160, currency: Currency.usd);
+      final price = Money(minorUnits: 1999, currency: Currency.usd);
+      final tax = Money(minorUnits: 160, currency: Currency.usd);
 
       expect((price + tax).minorUnits, 2159);
       expect((price - tax).minorUnits, 1839);
@@ -103,15 +111,15 @@ void main() {
     });
 
     test('rejects arithmetic across currencies', () {
-      const usd = Money(minorUnits: 1000, currency: Currency.usd);
-      const eur = Money(minorUnits: 1000, currency: Currency.eur);
+      final usd = Money(minorUnits: 1000, currency: Currency.usd);
+      final eur = Money(minorUnits: 1000, currency: Currency.eur);
 
       expect(() => usd + eur, throwsArgumentError);
       expect(() => usd.compareTo(eur), throwsArgumentError);
     });
 
     test('multiplies with half-up rounding', () {
-      const unitPrice = Money(minorUnits: 999, currency: Currency.usd);
+      final unitPrice = Money(minorUnits: 999, currency: Currency.usd);
 
       expect((unitPrice * 3).minorUnits, 2997);
       expect((unitPrice * 1.08).minorUnits, 1079);
@@ -119,7 +127,7 @@ void main() {
     });
 
     test('applies percentage amounts and discounts', () {
-      const price = Money(minorUnits: 10000, currency: Currency.usd);
+      final price = Money(minorUnits: 10000, currency: Currency.usd);
       final tax = price.applyPercent(7);
       final discount = price.applyPercent(10);
       final total = price + tax - discount;
@@ -133,7 +141,7 @@ void main() {
     });
 
     test('allocates by ratios without losing minor units', () {
-      const amount = Money(minorUnits: 1000, currency: Currency.usd);
+      final amount = Money(minorUnits: 1000, currency: Currency.usd);
 
       final parts = amount.allocate([1, 1, 1]);
       final taxAndNet = amount.allocate([15, 85]);
@@ -147,9 +155,9 @@ void main() {
     });
 
     test('compares, min, max, and sorts same-currency amounts', () {
-      const threshold = Money(minorUnits: 5000, currency: Currency.usd);
-      const subtotal = Money(minorUnits: 7500, currency: Currency.usd);
-      const discount = Money(minorUnits: 1000, currency: Currency.usd);
+      final threshold = Money(minorUnits: 5000, currency: Currency.usd);
+      final subtotal = Money(minorUnits: 7500, currency: Currency.usd);
+      final discount = Money(minorUnits: 1000, currency: Currency.usd);
 
       expect(subtotal >= threshold, true);
       expect(discount < threshold, true);
@@ -161,9 +169,9 @@ void main() {
     });
 
     test('formats for UI, admin, API, and debugging', () {
-      const price = Money(minorUnits: 1999, currency: Currency.usd);
-      const yen = Money(minorUnits: 500, currency: Currency.jpy);
-      const kwd = Money(minorUnits: 3500, currency: Currency.kwd);
+      final price = Money(minorUnits: 1999, currency: Currency.usd);
+      final yen = Money(minorUnits: 500, currency: Currency.jpy);
+      final kwd = Money(minorUnits: 3500, currency: Currency.kwd);
 
       expect(price.formatted, r'$19.99');
       expect(price.formattedWithCode, 'USD 19.99');
@@ -178,8 +186,8 @@ void main() {
 
     test('sums iterable money values', () {
       final subtotal = [
-        const Money(minorUnits: 999, currency: Currency.usd) * 2,
-        const Money(minorUnits: 500, currency: Currency.usd),
+        Money(minorUnits: 999, currency: Currency.usd) * 2,
+        Money(minorUnits: 500, currency: Currency.usd),
       ].sum(emptyCurrency: Currency.usd);
 
       expect(subtotal.minorUnits, 2498);
@@ -189,8 +197,8 @@ void main() {
       );
       expect(
         () => [
-          const Money(minorUnits: 100, currency: Currency.usd),
-          const Money(minorUnits: 100, currency: Currency.eur),
+          Money(minorUnits: 100, currency: Currency.usd),
+          Money(minorUnits: 100, currency: Currency.eur),
         ].sum(emptyCurrency: Currency.usd),
         throwsArgumentError,
       );

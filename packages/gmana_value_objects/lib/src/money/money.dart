@@ -20,8 +20,15 @@ final class Money extends ValueObject<MoneyAmount>
   final Currency currency;
 
   /// Creates a [Money] from exact minor units.
-  const Money({required this.minorUnits, required this.currency})
-    : assert(minorUnits >= 0, 'minorUnits must be zero or greater');
+  factory Money({required int minorUnits, required Currency currency}) {
+    if (minorUnits < 0) {
+      throw RangeError.range(minorUnits, 0, null, 'minorUnits');
+    }
+
+    return Money._(minorUnits: minorUnits, currency: currency);
+  }
+
+  const Money._({required this.minorUnits, required this.currency});
 
   /// Creates a zero amount for [currency].
   const Money.zero(this.currency) : minorUnits = 0;

@@ -222,7 +222,7 @@ Use it for split payments, line-item tax distribution, refunds, and installment
 plans.
 
 ```dart
-final parts = const Money(minorUnits: 1000, currency: Currency.usd)
+final parts = Money(minorUnits: 1000, currency: Currency.usd)
     .allocate([1, 1, 1]);
 
 print(parts.map((part) => part.formatted).toList());

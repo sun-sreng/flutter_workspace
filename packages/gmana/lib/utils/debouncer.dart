@@ -26,12 +26,3 @@ class Debouncer {
     _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }
-
-/// Extension that debounces a callback inline.
-extension DebouncedCallbackX on void Function() {
-  /// Runs this callback through a newly created debouncer.
-  void debounce({int milliseconds = kDefaultDebounceTime}) {
-    final debouncer = Debouncer(milliseconds: milliseconds);
-    debouncer.run(call);
-  }
-}

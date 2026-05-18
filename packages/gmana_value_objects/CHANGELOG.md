@@ -12,8 +12,10 @@
 
 ### Changed
 
+- Money and `MoneyAmount` now enforce non-negative minor-unit invariants in release mode instead of relying on asserts.
 - Money decimal parsing now rejects excess fractional digits instead of silently truncating them.
 - Money precision now consistently comes from `Currency` metadata.
+- Currency symbols are stored with correct UTF-8 characters.
 - Email domain deny/disposable lists are normalized before comparison.
 - Number validation rejects non-finite values and counts decimal places from decimal input text.
 

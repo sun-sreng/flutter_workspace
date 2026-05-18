@@ -21,6 +21,7 @@ void main() {
 
       final json = Icons.home.toJsonString();
       expect(IconDataExt.tryParse(json)?.codePoint, Icons.home.codePoint);
+      expect(const GStarRatingBar(ratingValue: 4.5), isA<GStarRatingBar>());
     });
 
     test('color helpers validate arguments in release-safe code paths', () {

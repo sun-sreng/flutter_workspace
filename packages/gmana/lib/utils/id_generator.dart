@@ -40,12 +40,22 @@ class IdGenerator {
     return _service.generateTimestampId();
   }
 
-  /// Generates a UUID-shaped random ID.
+  /// Generates a UUID v4-shaped random ID.
   ///
-  /// This is not a standards-compliant UUID v1 generator despite the legacy
-  /// method name.
+  /// This uses [Random], so it is not suitable for security-sensitive IDs.
+  static String uuidV4Like() {
+    return _service.generateUuidV4Like();
+  }
+
+  /// Generates a UUID v4-shaped random ID.
+  ///
+  /// Deprecated because the method name was misleading: this never generated a
+  /// standards-compliant UUID v1 value.
+  @Deprecated(
+    'Use uuidV4Like() instead. This method will be removed before 1.0.',
+  )
   static String uuidV1() {
-    return _service.generateUuidV1();
+    return uuidV4Like();
   }
 }
 
@@ -107,7 +117,7 @@ final class _IdGeneratorService {
         '${_IdGeneratorUtils.generateBits(_random, 12, 4)}';
   }
 
-  String generateUuidV1() {
+  String generateUuidV4Like() {
     final special = 8 + _random.nextInt(4);
     return '${_IdGeneratorUtils.generateBits(_random, 16, 4)}'
         '${_IdGeneratorUtils.generateBits(_random, 16, 4)}-'

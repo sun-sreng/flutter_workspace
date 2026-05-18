@@ -40,13 +40,18 @@ void main() {
     test('timestamp and UUID-shaped IDs use expected shapes', () {
       expect(IdGenerator.timestampId(), startsWith('G'));
       expect(
-        IdGenerator.uuidV1(),
+        IdGenerator.uuidV4Like(),
         matches(
           RegExp(
             r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
           ),
         ),
       );
+    });
+
+    test('legacy uuidV1 name delegates to the v4-shaped generator', () {
+      // ignore: deprecated_member_use_from_same_package
+      expect(IdGenerator.uuidV1(), contains('-4'));
     });
   });
 }

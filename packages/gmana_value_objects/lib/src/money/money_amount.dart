@@ -13,8 +13,15 @@ final class MoneyAmount implements Comparable<MoneyAmount> {
   final Currency currency;
 
   /// Creates a validated [MoneyAmount].
-  const MoneyAmount({required this.minorUnits, required this.currency})
-    : assert(minorUnits >= 0, 'minorUnits must be zero or greater');
+  factory MoneyAmount({required int minorUnits, required Currency currency}) {
+    if (minorUnits < 0) {
+      throw RangeError.range(minorUnits, 0, null, 'minorUnits');
+    }
+
+    return MoneyAmount._(minorUnits: minorUnits, currency: currency);
+  }
+
+  const MoneyAmount._({required this.minorUnits, required this.currency});
 
   /// The decimal amount for display and simple non-authoritative reads.
   num get amount => minorUnits / currency.subunitFactor;

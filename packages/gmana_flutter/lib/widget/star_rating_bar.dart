@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class StarRatingBar extends StatelessWidget {
+class GStarRatingBar extends StatelessWidget {
   /// The current rating value.
   final double ratingValue;
 
@@ -31,7 +31,10 @@ class StarRatingBar extends StatelessWidget {
   /// The icon to use for empty stars.
   final IconData inactiveStarIcon;
 
-  const StarRatingBar({
+  /// Optional semantics label for assistive technologies.
+  final String? semanticsLabel;
+
+  const GStarRatingBar({
     super.key,
     required this.ratingValue,
     this.starSize = 14.0,
@@ -43,6 +46,7 @@ class StarRatingBar extends StatelessWidget {
     this.activeStarIcon = Icons.star,
     this.halfStarIcon = Icons.star_half,
     this.inactiveStarIcon = Icons.star_border,
+    this.semanticsLabel,
   }) : assert(
          ratingValue >= 0 && ratingValue <= maxStars,
          'Rating value must be between 0 and $maxStars',
@@ -50,14 +54,19 @@ class StarRatingBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(
-        maxStars,
-        (starIndex) => Padding(
-          padding: EdgeInsets.only(
-            right: starIndex < maxStars - 1 ? starSpacing : 0,
+    return Semantics(
+      label: semanticsLabel ?? 'Rating $ratingValue out of $maxStars',
+      readOnly: true,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(
+          maxStars,
+          (starIndex) => Padding(
+            padding: EdgeInsets.only(
+              right: starIndex < maxStars - 1 ? starSpacing : 0,
+            ),
+            child: ExcludeSemantics(child: _buildStarIcon(starIndex + 1)),
           ),
-          child: _buildStarIcon(starIndex + 1),
         ),
       ),
     );
@@ -80,4 +89,24 @@ class StarRatingBar extends StatelessWidget {
 
     return Icon(starIcon, color: starColor, size: starSize);
   }
+}
+
+@Deprecated(
+  'Use GStarRatingBar instead. This alias will be removed before 1.0.',
+)
+class StarRatingBar extends GStarRatingBar {
+  const StarRatingBar({
+    super.key,
+    required super.ratingValue,
+    super.starSize,
+    super.activeStarColor,
+    super.inactiveStarColor,
+    super.maxStars,
+    super.starSpacing,
+    super.enableHalfStar,
+    super.activeStarIcon,
+    super.halfStarIcon,
+    super.inactiveStarIcon,
+    super.semanticsLabel,
+  });
 }

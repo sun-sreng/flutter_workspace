@@ -9,16 +9,13 @@ extension ContextExt on BuildContext {
   bool get hasFocus => FocusScope.of(this).hasFocus;
   bool get isLandscape => mediaQuery.orientation == Orientation.landscape;
   bool get isPortrait => !isLandscape;
-  // ── MediaQuery ─────────────────────────────────────────────────────────
 
   MediaQueryData get mediaQuery => MediaQuery.of(this);
-  // ── Navigation ─────────────────────────────────────────────────────────
 
   NavigatorState get navigator => Navigator.of(this);
 
   /// Safe area padding (notch, home indicator, etc.).
   EdgeInsets get safeAreaPadding => mediaQuery.padding;
-  // ── Scaffold / Snackbar / Dialog ───────────────────────────────────────
 
   ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
   double get screenHeight => screenSize.height;
@@ -27,8 +24,6 @@ extension ContextExt on BuildContext {
   double get screenWidth => screenSize.width;
   double get textScaleFactor => mediaQuery.textScaler.scale(1.0);
   TextTheme get textTheme => theme.textTheme;
-
-  // ── Theme ──────────────────────────────────────────────────────────────
 
   ThemeData get theme => Theme.of(this);
 
@@ -87,8 +82,6 @@ extension ContextExt on BuildContext {
         ),
     builder: (_) => child,
   );
-
-  // ── Dialog shortcuts ───────────────────────────────────────────────────
 
   Future<T?> showAppDialog<T>({required Widget dialog}) =>
       showDialog<T>(context: this, builder: (_) => dialog);
@@ -179,7 +172,6 @@ extension ContextExt on BuildContext {
     duration: duration,
     action: action,
   );
-  // ── Focus ──────────────────────────────────────────────────────────────
 
   void unfocus() => FocusScope.of(this).unfocus();
 }
