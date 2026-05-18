@@ -15,10 +15,6 @@ void main() {
     final emailResult = const validation.EmailValidator().validate(
       ' User@Example.com ',
     );
-    final emailFormValidator = validation.asFormValidator(
-      validate: const validation.EmailValidator().validate,
-      resolve: validation.resolveEmailValidationIssue,
-    );
     final debouncer = utilities.Debouncer(milliseconds: 1);
     final throttler = utilities.Throttler(milliseconds: 1);
 
@@ -31,12 +27,11 @@ void main() {
     );
     expect(extensions.StringX('hello world').toTitleCase, 'Hello World');
     expect(
-      validation.StringValidation('user@example.com').isValidEmail,
+      extensions.StringValidation('user@example.com').isValidEmail,
       isTrue,
     );
     expect(gmana.StringValidation('user@example.com').isValidEmail, isTrue);
     expect(emailResult.getRight(), 'user@example.com');
-    expect(emailFormValidator(''), 'Please enter an email address');
 
     debouncer.dispose();
     throttler.dispose();

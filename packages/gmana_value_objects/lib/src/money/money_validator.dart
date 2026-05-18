@@ -1,4 +1,4 @@
-import 'package:gmana/gmana.dart' show Either, Left, Right;
+import 'package:gmana_functional/gmana_functional.dart';
 import 'currency.dart';
 import 'money_amount.dart';
 import 'money_errors.dart';

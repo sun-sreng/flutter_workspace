@@ -50,7 +50,7 @@ void main() {
     });
 
     test('legacy uuidV1 name delegates to the v4-shaped generator', () {
-      // ignore: deprecated_member_use_from_same_package
+      // ignore: deprecated_member_use
       expect(IdGenerator.uuidV1(), contains('-4'));
     });
   });

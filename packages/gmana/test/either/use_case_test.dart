@@ -1,4 +1,4 @@
-import 'package:gmana/gmana.dart';
+import 'package:gmana/gmana.dart' hide equals, contains, matches;
 import 'package:test/test.dart';
 
 void main() {

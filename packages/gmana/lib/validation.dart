@@ -1,46 +1,10 @@
+/// Re-exports predicates and typed validators.
+///
+/// NOTE: `asFormValidator` has moved to `package:gmana_form/gmana_form.dart`.
 library;
 
-export 'extensions/is_ext.dart';
-export 'is/contains.dart';
-export 'is/is_after.dart';
-export 'is/is_alpha.dart';
-export 'is/is_alpha_numeric.dart';
-export 'is/is_ascii.dart';
-export 'is/is_base64.dart';
-export 'is/is_before.dart';
-export 'is/is_byte_length.dart';
-export 'is/is_credit_card.dart';
-export 'is/is_date.dart';
-export 'is/is_divisible_by.dart';
-export 'is/is_email.dart';
-export 'is/is_f_q_d_n.dart';
-export 'is/is_float.dart';
-export 'is/is_full_width.dart';
-export 'is/is_half_width.dart';
-export 'is/is_hex_color.dart';
-export 'is/is_hexadecimal.dart';
-export 'is/is_i_s_b_n.dart';
-export 'is/is_int.dart';
-export 'is/is_json.dart';
-export 'is/is_length.dart';
-export 'is/is_lower_case.dart';
-export 'is/is_mongo_id.dart';
-export 'is/is_multi_byte.dart';
-export 'is/is_null.dart';
-export 'is/is_numeric.dart';
-export 'is/is_postal_code.dart';
-export 'is/is_surrogate_pair.dart';
-export 'is/is_upper_case.dart';
-export 'is/is_uuid.dart';
-export 'is/is_variable_width.dart';
-export 'is/matches.dart';
-export 'validator/email_validation_config.dart';
-export 'validator/email_validation_issue.dart';
-export 'validator/email_validator.dart';
-export 'validator/form_validator_adapter.dart';
-export 'validator/number_validator.dart';
-export 'validator/password_validator.dart';
-export 'validator/text_validation_config.dart';
-export 'validator/text_validation_issue.dart';
-export 'validator/text_validator.dart';
-export 'validator/validation_issue.dart';
+// Boolean string/date/identifier predicates
+export 'package:gmana_predicates/gmana_predicates.dart';
+
+// Typed validators with Either-based results
+export 'package:gmana_validation/gmana_validation.dart';

@@ -1,4 +1,4 @@
-import 'package:gmana/gmana.dart' show Either;
+import 'package:gmana_functional/gmana_functional.dart';
 import '../core/value_object.dart';
 import 'password_errors.dart';
 import 'password_validation_config.dart';

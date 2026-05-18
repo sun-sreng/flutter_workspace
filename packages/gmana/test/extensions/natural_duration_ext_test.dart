@@ -1,4 +1,3 @@
-import 'package:gmana_extensions/duration_natural_language_ext.dart';
 import 'package:gmana_extensions/gmana_extensions.dart';
 import 'package:test/test.dart';
 

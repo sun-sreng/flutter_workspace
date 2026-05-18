@@ -1,4 +1,4 @@
-import 'package:gmana/gmana.dart' show Either;
+import 'package:gmana_functional/gmana_functional.dart';
 import 'validation_error.dart';
 
 /// Base class for value objects.

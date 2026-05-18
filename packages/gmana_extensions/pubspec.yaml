@@ -1,5 +1,5 @@
 name: gmana_extensions
-description: Pure Dart extension methods for Duration, String, num, Stream, and Iterable types.
+description: Dart extension methods for Duration, String, num, Stream, Iterable, and validation utilities.
 version: 0.0.1
 
 topics:
@@ -11,6 +11,10 @@ environment:
   sdk: ^3.7.2
 
 resolution: workspace
+
+dependencies:
+  gmana_predicates: ^0.1.0
+  gmana_validation: ^0.1.0
 
 dev_dependencies:
   test: ^1.30.0

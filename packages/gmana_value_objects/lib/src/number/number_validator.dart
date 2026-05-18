@@ -1,4 +1,4 @@
-import 'package:gmana/gmana.dart' show Either, Left, Right;
+import 'package:gmana_functional/gmana_functional.dart';
 import 'number_errors.dart';
 import 'number_validation_config.dart';
 

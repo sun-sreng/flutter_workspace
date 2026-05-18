@@ -1,6 +1,6 @@
 name: gmana_value_objects
 description: Production-ready value objects with configurable validation for Email, Password, Text, Number, and Money
-version: 0.0.5
+version: 0.1.0
 repository: https://github.com/sun-sreng/flutters/tree/main/packages/gmana_value_objects
 homepage: https://github.com/sun-sreng/flutters/tree/main/packages/gmana_value_objects
 issue_tracker: https://github.com/sun-sreng/flutters/issues
@@ -17,7 +17,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  gmana: ^0.3.0
+  gmana_functional: ^0.1.0
   meta: ^1.17.0
 
 dev_dependencies:

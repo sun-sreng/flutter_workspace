@@ -1,13 +1,1 @@
-dependency_overrides:
-  gmana:
-    path: ../../gmana
-  gmana_extensions:
-    path: ../../gmana_extensions
-  gmana_flutter_extensions:
-    path: ../../gmana_flutter_extensions
-  gmana_form:
-    path: ../../gmana_form
-  gmana_flutter:
-    path: ../
-  gmana_spinner:
-    path: ../../gmana_spinner
+# Workspace member — path overrides handled by root pubspec.yaml workspace field.

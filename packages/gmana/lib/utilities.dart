@@ -1,5 +1,4 @@
+/// Re-exports runtime utilities from `gmana_utils`.
 library;
 
-export 'utils/debouncer.dart';
-export 'utils/id_generator.dart';
-export 'utils/throttler.dart';
+export 'package:gmana_utils/gmana_utils.dart';

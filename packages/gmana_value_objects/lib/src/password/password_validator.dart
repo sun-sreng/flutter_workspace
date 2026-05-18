@@ -1,4 +1,4 @@
-import 'package:gmana/gmana.dart' show Either, Left, Right;
+import 'package:gmana_functional/gmana_functional.dart';
 import 'password_errors.dart';
 import 'password_validation_config.dart';
 

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:gmana/utils/debouncer.dart';
+import 'package:gmana/utilities.dart';
 import 'package:test/test.dart';
 
 void main() {

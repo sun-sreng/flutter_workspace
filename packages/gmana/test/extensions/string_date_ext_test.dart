@@ -1,4 +1,4 @@
-import 'package:gmana/extensions/string_date_ext.dart';
+import 'package:gmana_extensions/string_date_ext.dart';
 import 'package:test/test.dart';
 
 void main() {

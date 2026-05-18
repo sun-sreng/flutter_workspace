@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gmana/validation.dart';
+import 'package:gmana_validation/gmana_validation.dart';
+
+import '../validators/form_validator_adapter.dart';
 
 import '../models/field_config.dart';
 import '../widgets/configured_text_form_field.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gmana/validation.dart';
+import 'package:gmana_validation/gmana_validation.dart';
 
 import '../models/field_config.dart';
 import '../validators/confirm_password_validator.dart';

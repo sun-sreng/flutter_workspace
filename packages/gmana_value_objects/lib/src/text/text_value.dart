@@ -1,4 +1,4 @@
-import 'package:gmana/gmana.dart' show Either;
+import 'package:gmana_functional/gmana_functional.dart';
 import '../core/value_object.dart';
 import 'text_errors.dart';
 import 'text_validation_config.dart';

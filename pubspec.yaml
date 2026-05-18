@@ -9,5 +9,10 @@ workspace:
   - packages/gmana_flutter_extensions
   - packages/gmana_form
   - packages/gmana_flutter
+  - packages/gmana_functional
+  - packages/gmana_predicates
   - packages/gmana_spinner
+  - packages/gmana_utils
+  - packages/gmana_validation
   - packages/gmana_value_objects
+  - packages/gmana_flutter/example

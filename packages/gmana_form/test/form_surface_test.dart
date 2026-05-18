@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gmana_form/gmana_form.dart';
+import 'package:gmana_validation/gmana_validation.dart';
 
 void main() {
   group('form widgets', () {
@@ -49,6 +50,16 @@ void main() {
       expect(find.byType(GPasswordField), findsOneWidget);
       expect(find.byType(GConfirmPasswordField), findsOneWidget);
       expect(find.byType(GElevatedButton), findsOneWidget);
+    });
+
+    test('asFormValidator maps validation issues into form messages', () {
+      final validator = asFormValidator(
+        validate: const EmailValidator().validate,
+        resolve: resolveEmailValidationIssue,
+      );
+
+      expect(validator(''), 'Please enter an email address');
+      expect(validator('user@example.com'), isNull);
     });
 
     test('confirm password validator reports mismatches', () {

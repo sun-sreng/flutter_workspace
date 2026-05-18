@@ -8,7 +8,18 @@
       "Bash(Remove-Item -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\math\\\\wave_vertical_offset.dart\" -Force)",
       "Bash(Remove-Item -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\test\\\\math\\\\vertical_point_test.dart\" -Force)",
       "Bash(Write-Output \"Deleted successfully\")",
-      "Bash(flutter analyze *)"
+      "Bash(flutter analyze *)",
+      "Bash(Remove-Item -Recurse -Force \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\either\")",
+      "Bash(Remove-Item -Recurse -Force \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\utils\")",
+      "Bash(Remove-Item -Recurse -Force \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\is\")",
+      "Bash(Remove-Item -Recurse -Force \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\regex\")",
+      "Bash(Remove-Item -Recurse -Force \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\validator\")",
+      "Bash(Get-ChildItem -Recurse -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana_form\\\\lib\" -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana_value_objects\" -Recurse -File)",
+      "Bash(Sort-Object FullName)",
+      "Bash(Remove-Item -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\extensions\\\\is_ext.dart\", \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\extensions\\\\string_date_ext.dart\" -Force)",
+      "Bash(Remove-Item -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana\\\\lib\\\\extensions\" -Force)"
     ]
   }
 }

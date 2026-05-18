@@ -1,6 +1,6 @@
 name: gmana
-description: A core Dart utility package providing extensions, validation utilities, and functional programming constructs for consistent development.
-version: 0.3.0
+description: Convenience facade re-exporting gmana_functional, gmana_predicates, gmana_validation, gmana_utils, and gmana_extensions.
+version: 0.4.0
 repository: https://github.com/sun-sreng/flutters/tree/main/packages/gmana
 homepage: https://github.com/sun-sreng/flutters/tree/main/packages/gmana
 issue_tracker: https://github.com/sun-sreng/flutters/issues
@@ -18,6 +18,10 @@ resolution: workspace
 
 dependencies:
   gmana_extensions: ^0.0.1
+  gmana_functional: ^0.1.0
+  gmana_predicates: ^0.1.0
+  gmana_utils: ^0.1.0
+  gmana_validation: ^0.1.0
 
 dev_dependencies:
   test: ^1.30.0

@@ -1,5 +1,5 @@
-import 'package:gmana/functional.dart';
-import 'package:gmana/validation.dart';
+import 'package:gmana_functional/gmana_functional.dart';
+import 'package:gmana_validation/gmana_validation.dart';
 
 /// Configuration for confirm-password validation.
 final class ConfirmPasswordValidationConfig {

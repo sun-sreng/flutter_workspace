@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:gmana/utils/throttler.dart';
+import 'package:gmana/utilities.dart';
 import 'package:test/test.dart';
 
 void main() {

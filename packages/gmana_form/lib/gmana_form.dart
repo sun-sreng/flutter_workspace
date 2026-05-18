@@ -10,6 +10,7 @@ export 'fields/text_field.dart';
 export 'models/field_config.dart';
 export 'models/input_formatter_provider.dart';
 export 'validators/confirm_password_validator.dart';
+export 'validators/form_validator_adapter.dart';
 export 'widgets/configured_text_form_field.dart';
 export 'widgets/obscurable_text_form_field.dart';
 export 'widgets/visibility_toggle.dart';

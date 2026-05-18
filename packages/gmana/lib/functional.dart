@@ -1,6 +1,4 @@
+/// Re-exports functional programming primitives from `gmana_functional`.
 library;
 
-export 'either/either.dart';
-export 'either/left.dart';
-export 'either/right.dart';
-export 'either/use_case.dart';
+export 'package:gmana_functional/gmana_functional.dart';
