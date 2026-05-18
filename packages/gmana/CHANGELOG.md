@@ -3,11 +3,12 @@
 ## 0.2.0 - Unreleased
 
 - breaking: stop exporting raw regex constants from `validation.dart`; use predicate functions such as `isEmail`, `isUuid`, and `isPostalCode`
-- breaking: remove the misleading callback `.debounce()` extension; use a retained `Debouncer` instance or stream debounce instead
+- breaking: remove the misleading callback `.debounce()` and `.throttle()` extensions; use retained `Debouncer`/`Throttler` instances or stream timing helpers instead
 - breaking: replace `EitherFailure`, `FutureEither`, and `StreamEither` aliases with `Result`, `FutureResult`, and `StreamResult`
 - breaking: remove public `IdGeneratorService` and `IdGeneratorUtils`; use `IdGenerator`
 - breaking: consolidate exported duration helpers so `duration_ext.dart` is the only exported `Duration` extension API
 - feat: add `IdGenerator.uuidV4Like()` and deprecate the misleading `uuidV1()` name
+- fix: validate debounce/throttle durations and cancel stream throttle cooldown timers with the stream lifecycle
 - refactor: clean self-package imports, validator docs, and text validator allowed-character configuration
 
 ## 0.1.6 - 2026-05-06

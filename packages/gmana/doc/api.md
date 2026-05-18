@@ -339,6 +339,5 @@ Do not use it for secrets or security-sensitive tokens.
 | `Debouncer.dispose()`     | Cancel pending debounced work.                                                        |
 | `Throttler.run(action)`   | Run an action at most once per cooldown window.                                       |
 | `Throttler.dispose()`     | Cancel pending throttler state.                                                       |
-| `callback.throttle(...)`  | Run a zero-arg function through a one-off throttler.                                  |
 | `GSpacing`                | Shared spacing constants.                                                             |
 | `waveVerticalOffset(...)` | Calculate a sine-wave vertical offset for painters/animations.                        |

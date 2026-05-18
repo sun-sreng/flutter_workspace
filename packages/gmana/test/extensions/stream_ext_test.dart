@@ -230,6 +230,42 @@ void main() {
       expect(results, equals([1, 3]));
     });
 
+    test(
+      'throttle preserves broadcast streams and cancels cooldown timers',
+      () async {
+        final controller = StreamController<int>.broadcast();
+        final stream = controller.stream.throttle(
+          const Duration(milliseconds: 50),
+        );
+
+        expect(stream.isBroadcast, isTrue);
+
+        final results = <int>[];
+        final subscription = stream.listen(results.add);
+        await Future<void>.delayed(Duration.zero);
+
+        controller.add(1);
+        controller.add(2);
+        await Future<void>.delayed(Duration.zero);
+        await subscription.cancel();
+        await Future.delayed(const Duration(milliseconds: 80));
+        await controller.close();
+
+        expect(results, equals([1]));
+      },
+    );
+
+    test('throttle validates duration', () {
+      expect(
+        () => Stream<int>.empty().throttle(Duration.zero),
+        throwsArgumentError,
+      );
+      expect(
+        () => Stream<int>.empty().throttle(const Duration(milliseconds: -1)),
+        throwsArgumentError,
+      );
+    });
+
     test('onErrorReturn', () async {
       final stream = Stream<int>.error(Exception('error')).onErrorReturn(42);
       expect(await stream.first, equals(42));

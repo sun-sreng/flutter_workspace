@@ -11,7 +11,15 @@ class Throttler {
   Timer? _timer;
 
   /// Creates a throttler with the provided [milliseconds] window.
-  Throttler({this.milliseconds = kDefaultThrottleDuration});
+  Throttler({this.milliseconds = kDefaultThrottleDuration}) {
+    if (milliseconds <= 0) {
+      throw ArgumentError.value(
+        milliseconds,
+        'milliseconds',
+        'must be greater than zero',
+      );
+    }
+  }
 
   /// Cancels the active throttle window.
   void dispose() {
@@ -26,14 +34,5 @@ class Throttler {
 
     action();
     _timer = Timer(Duration(milliseconds: milliseconds), () {});
-  }
-}
-
-/// Extension that throttles a callback inline.
-extension ThrottledCallbackX on void Function() {
-  /// Runs this callback through a newly created throttler.
-  void throttle({int milliseconds = kDefaultThrottleDuration}) {
-    final throttler = Throttler(milliseconds: milliseconds);
-    throttler.run(call);
   }
 }

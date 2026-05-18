@@ -17,4 +17,9 @@ void main() {
     expect(count, 101);
     throttle.dispose();
   });
+
+  test('Throttler validates delay', () {
+    expect(() => Throttler(milliseconds: 0), throwsArgumentError);
+    expect(() => Throttler(milliseconds: -1), throwsArgumentError);
+  });
 }

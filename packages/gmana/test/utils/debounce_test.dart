@@ -16,4 +16,9 @@ void main() {
     expect(count, 10);
     debounce.dispose();
   });
+
+  test('Debouncer validates delay', () {
+    expect(() => Debouncer(milliseconds: 0), throwsArgumentError);
+    expect(() => Debouncer(milliseconds: -1), throwsArgumentError);
+  });
 }

@@ -176,13 +176,49 @@ extension StreamX<T> on Stream<T> {
 
   /// Emits the first event of each [duration] window and suppresses the rest (throttle).
   Stream<T> throttle(Duration duration) {
+    if (duration <= Duration.zero) {
+      throw ArgumentError.value(
+        duration,
+        'duration',
+        'must be greater than zero',
+      );
+    }
+
+    late StreamController<T> controller;
+    StreamSubscription<T>? subscription;
+    Timer? timer;
     var suppressed = false;
-    return where((_) {
-      if (suppressed) return false;
-      suppressed = true;
-      Timer(duration, () => suppressed = false);
-      return true;
-    });
+
+    void listenToSource() {
+      subscription = listen(
+        (value) {
+          if (suppressed) return;
+          controller.add(value);
+          suppressed = true;
+          timer?.cancel();
+          timer = Timer(duration, () => suppressed = false);
+        },
+        onError: controller.addError,
+        onDone: () {
+          timer?.cancel();
+          controller.close();
+        },
+      );
+    }
+
+    Future<void> cancel() async {
+      timer?.cancel();
+      await subscription?.cancel();
+    }
+
+    controller =
+        isBroadcast
+            ? StreamController<T>.broadcast(
+              onListen: listenToSource,
+              onCancel: cancel,
+            )
+            : StreamController<T>(onListen: listenToSource, onCancel: cancel);
+    return controller.stream;
   }
 
   /// Emits only non-null values, narrowing the type to [R].

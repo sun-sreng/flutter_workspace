@@ -11,7 +11,15 @@ class Debouncer {
   Timer? _timer;
 
   /// Creates a debouncer with the provided [milliseconds] delay.
-  Debouncer({this.milliseconds = kDefaultDebounceTime});
+  Debouncer({this.milliseconds = kDefaultDebounceTime}) {
+    if (milliseconds <= 0) {
+      throw ArgumentError.value(
+        milliseconds,
+        'milliseconds',
+        'must be greater than zero',
+      );
+    }
+  }
 
   /// Cancels any pending action.
   void dispose() {
