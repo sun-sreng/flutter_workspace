@@ -3,42 +3,25 @@ import 'package:flutter/material.dart';
 abstract final class ColorService {
   static const double defaultAmount = 0.1;
 
-  static Color adjustLightness(
-    Color color, {
-    required double amount,
-    required bool darken,
-  }) {
+  static Color adjustLightness(Color color, {required double amount, required bool darken}) {
     _checkUnitInterval(amount, 'amount');
     final hsl = HSLColor.fromColor(color);
-    final lightness =
-        darken
-            ? (hsl.lightness - amount).clamp(0.0, 1.0)
-            : (hsl.lightness + amount).clamp(0.0, 1.0);
+    final lightness = darken ? (hsl.lightness - amount).clamp(0.0, 1.0) : (hsl.lightness + amount).clamp(0.0, 1.0);
 
     return hsl.withLightness(lightness).toColor();
   }
 
-  static Color adjustSaturation(
-    Color color, {
-    required double amount,
-    required bool desaturate,
-  }) {
+  static Color adjustSaturation(Color color, {required double amount, required bool desaturate}) {
     _checkUnitInterval(amount, 'amount');
     final hsl = HSLColor.fromColor(color);
     final saturation =
-        desaturate
-            ? (hsl.saturation - amount).clamp(0.0, 1.0)
-            : (hsl.saturation + amount).clamp(0.0, 1.0);
+        desaturate ? (hsl.saturation - amount).clamp(0.0, 1.0) : (hsl.saturation + amount).clamp(0.0, 1.0);
 
     return hsl.withSaturation(saturation).toColor();
   }
 
   /// Returns [count] analogous colors evenly spaced around [color].
-  static List<Color> analogous(
-    Color color, {
-    int count = 2,
-    double spreadDegrees = 30,
-  }) {
+  static List<Color> analogous(Color color, {int count = 2, double spreadDegrees = 30}) {
     if (count < 1) {
       throw ArgumentError.value(count, 'count', 'must be at least 1');
     }
@@ -55,19 +38,13 @@ abstract final class ColorService {
   }
 
   /// Picks whichever candidate has the highest contrast against [background].
-  static Color bestContrast(
-    Color background, [
-    List<Color> candidates = const [Colors.white, Colors.black],
-  ]) {
+  static Color bestContrast(Color background, [List<Color> candidates = const [Colors.white, Colors.black]]) {
     if (candidates.isEmpty) {
       throw ArgumentError.value(candidates, 'candidates', 'must not be empty');
     }
 
     return candidates.reduce(
-      (best, color) =>
-          contrastRatio(color, background) > contrastRatio(best, background)
-              ? color
-              : best,
+      (best, color) => contrastRatio(color, background) > contrastRatio(best, background) ? color : best,
     );
   }
 
@@ -81,9 +58,7 @@ abstract final class ColorService {
     final luminanceA = a.computeLuminance() + 0.05;
     final luminanceB = b.computeLuminance() + 0.05;
 
-    return luminanceA > luminanceB
-        ? luminanceA / luminanceB
-        : luminanceB / luminanceA;
+    return luminanceA > luminanceB ? luminanceA / luminanceB : luminanceB / luminanceA;
   }
 
   /// Generates a [MaterialColor] swatch using HSL lightness steps.
@@ -103,27 +78,21 @@ abstract final class ColorService {
       900: 0.10,
     };
 
-    final swatch = {
-      for (final entry in shadeMap.entries)
-        entry.key: hsl.withLightness(entry.value).toColor(),
-    };
+    final swatch = {for (final entry in shadeMap.entries) entry.key: hsl.withLightness(entry.value).toColor()};
 
     return MaterialColor(color.toARGB32(), swatch);
   }
 
-  static Color greyscale(Color color) =>
-      adjustSaturation(color, amount: 1.0, desaturate: true);
+  static Color greyscale(Color color) => adjustSaturation(color, amount: 1.0, desaturate: true);
 
   /// WCAG 2.1 relative luminance. Threshold 0.179 gives 4.5:1 contrast.
   static bool isDark(Color color) => color.computeLuminance() < 0.179;
 
   static bool isLight(Color color) => !isDark(color);
 
-  static bool meetsWcagAA(Color foreground, Color background) =>
-      contrastRatio(foreground, background) >= 4.5;
+  static bool meetsWcagAA(Color foreground, Color background) => contrastRatio(foreground, background) >= 4.5;
 
-  static bool meetsWcagAAA(Color foreground, Color background) =>
-      contrastRatio(foreground, background) >= 7.0;
+  static bool meetsWcagAAA(Color foreground, Color background) => contrastRatio(foreground, background) >= 7.0;
 
   static Color mix(Color a, Color b, [double t = 0.5]) {
     _checkUnitInterval(t, 't');
@@ -132,26 +101,20 @@ abstract final class ColorService {
   }
 
   /// Mixes [color] with black.
-  static Color shade(Color color, [double amount = 0.5]) =>
-      mix(color, const Color(0xFF000000), amount);
+  static Color shade(Color color, [double amount = 0.5]) => mix(color, const Color(0xFF000000), amount);
 
   static (Color, Color) splitComplementary(Color color) {
     final hsl = HSLColor.fromColor(color);
 
-    return (
-      hsl.withHue((hsl.hue + 150) % 360).toColor(),
-      hsl.withHue((hsl.hue + 210) % 360).toColor(),
-    );
+    return (hsl.withHue((hsl.hue + 150) % 360).toColor(), hsl.withHue((hsl.hue + 210) % 360).toColor());
   }
 
   /// Mixes [color] with white.
-  static Color tint(Color color, [double amount = 0.5]) =>
-      mix(color, const Color(0xFFFFFFFF), amount);
+  static Color tint(Color color, [double amount = 0.5]) => mix(color, const Color(0xFFFFFFFF), amount);
 
   /// Outputs 8-char ARGB hex including alpha, for example `#CCFF5500`.
   static String toHexARGB(Color color, {bool withHashSign = true}) {
-    final hex =
-        color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase();
+    final hex = color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase();
 
     return withHashSign ? '#$hex' : hex;
   }
@@ -169,10 +132,7 @@ abstract final class ColorService {
   static (Color, Color) triadic(Color color) {
     final hsl = HSLColor.fromColor(color);
 
-    return (
-      hsl.withHue((hsl.hue + 120) % 360).toColor(),
-      hsl.withHue((hsl.hue + 240) % 360).toColor(),
-    );
+    return (hsl.withHue((hsl.hue + 120) % 360).toColor(), hsl.withHue((hsl.hue + 240) % 360).toColor());
   }
 
   /// Parses `#RGB`, `#RRGGBB`, or `#AARRGGBB`, with optional hash prefix.

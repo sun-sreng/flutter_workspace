@@ -7,10 +7,7 @@ extension StringColorExtension on String {
   Color toColor() {
     final color = ColorService.tryParseHex(this);
     if (color == null) {
-      throw FormatException(
-        'Expected #RGB, #RRGGBB, or #AARRGGBB color text.',
-        this,
-      );
+      throw FormatException('Expected #RGB, #RRGGBB, or #AARRGGBB color text.', this);
     }
 
     return color;

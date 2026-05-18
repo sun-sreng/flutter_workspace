@@ -1,0 +1,22 @@
+name: gmana_flutter_extensions_example
+description: Demonstrates gmana_flutter_extensions colors, layout, context, icons, and theme helpers.
+publish_to: "none"
+version: 0.0.1
+
+resolution: workspace
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  gmana_flutter_extensions: ^0.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

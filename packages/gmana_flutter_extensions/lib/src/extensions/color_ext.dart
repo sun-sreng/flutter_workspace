@@ -13,8 +13,7 @@ extension ColorExt on Color {
 
   bool get isLight => ColorService.isLight(this);
 
-  (Color, Color) get splitComplementary =>
-      ColorService.splitComplementary(this);
+  (Color, Color) get splitComplementary => ColorService.splitComplementary(this);
 
   (Color, Color) get triadic => ColorService.triadic(this);
 
@@ -32,11 +31,9 @@ extension ColorExt on Color {
   Color lighten([double amount = ColorService.defaultAmount]) =>
       ColorService.adjustLightness(this, amount: amount, darken: false);
 
-  bool meetsWcagAA(Color background) =>
-      ColorService.meetsWcagAA(this, background);
+  bool meetsWcagAA(Color background) => ColorService.meetsWcagAA(this, background);
 
-  bool meetsWcagAAA(Color background) =>
-      ColorService.meetsWcagAAA(this, background);
+  bool meetsWcagAAA(Color background) => ColorService.meetsWcagAAA(this, background);
 
   Color mix(Color other, [double t = 0.5]) => ColorService.mix(this, other, t);
 
@@ -48,12 +45,10 @@ extension ColorExt on Color {
   Color tint([double amount = 0.5]) => ColorService.tint(this, amount);
 
   /// 8-char ARGB: `#CCFF5500`.
-  String toHexARGB({bool withHashSign = true}) =>
-      ColorService.toHexARGB(this, withHashSign: withHashSign);
+  String toHexARGB({bool withHashSign = true}) => ColorService.toHexARGB(this, withHashSign: withHashSign);
 
   /// 6-char RGB: `#FF5500`.
-  String toHexRGB({bool withHashSign = true}) =>
-      ColorService.toHexRGB(this, withHashSign: withHashSign);
+  String toHexRGB({bool withHashSign = true}) => ColorService.toHexRGB(this, withHashSign: withHashSign);
 
   MaterialColor toMaterialColor() => ColorService.createMaterialColor(this);
 

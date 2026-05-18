@@ -52,10 +52,7 @@ void main() {
       );
 
       expect(capturedContext.breakpoint, Breakpoint.tablet);
-      expect(
-        capturedContext.responsive(mobile: 'm', tablet: 't', desktop: 'd'),
-        't',
-      );
+      expect(capturedContext.responsive(mobile: 'm', tablet: 't', desktop: 'd'), 't');
     });
   });
 
