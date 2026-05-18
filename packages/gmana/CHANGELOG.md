@@ -1,12 +1,9 @@
 # Change Log
 
-## 0.3.0 - Unreleased
+## 0.2.0 - 2026-05-18
 
 - breaking: remove `GSpacing` from `utilities.dart`; import from `package:gmana_flutter/gmana_flutter.dart` instead
 - breaking: remove `waveVerticalOffset` from `utilities.dart`; it lives only in `package:gmana_spinner`
-
-## 0.2.0 - Unreleased
-
 - breaking: stop exporting raw regex constants from `validation.dart`; use predicate functions such as `isEmail`, `isUuid`, and `isPostalCode`
 - breaking: remove the misleading callback `.debounce()` and `.throttle()` extensions; use retained `Debouncer`/`Throttler` instances or stream timing helpers instead
 - breaking: replace `EitherFailure`, `FutureEither`, and `StreamEither` aliases with `Result`, `FutureResult`, and `StreamResult`
