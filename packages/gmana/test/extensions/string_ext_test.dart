@@ -1,4 +1,4 @@
-import 'package:gmana/extensions/string_ext.dart';
+import 'package:gmana_extensions/gmana_extensions.dart';
 import 'package:test/test.dart';
 
 void main() {

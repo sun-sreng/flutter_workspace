@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:gmana/extensions/iterable_ext.dart';
+import 'package:gmana_extensions/gmana_extensions.dart';
 
 void main() {
   group('IterableNumX Extension', () {

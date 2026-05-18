@@ -1,5 +1,4 @@
-import 'package:gmana/extensions/num_duration_extension.dart';
-import 'package:gmana/extensions/duration_ext.dart';
+import 'package:gmana_extensions/gmana_extensions.dart';
 import 'package:test/test.dart';
 
 void main() {

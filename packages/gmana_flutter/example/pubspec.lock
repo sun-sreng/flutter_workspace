@@ -74,6 +74,13 @@ packages:
       relative: true
     source: path
     version: "0.2.0"
+  gmana_extensions:
+    dependency: "direct overridden"
+    description:
+      path: "../../gmana_extensions"
+      relative: true
+    source: path
+    version: "0.0.1"
   gmana_flutter:
     dependency: "direct main"
     description:

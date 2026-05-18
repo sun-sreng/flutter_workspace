@@ -16,7 +16,8 @@ environment:
 
 resolution: workspace
 
-# dependencies:
+dependencies:
+  gmana_extensions: ^0.0.1
 
 dev_dependencies:
   test: ^1.30.0
