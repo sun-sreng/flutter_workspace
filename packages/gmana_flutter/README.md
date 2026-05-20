@@ -4,12 +4,6 @@ Flutter UI utilities for production apps: form-field compatibility exports,
 loading indicator compatibility exports, theme helpers, extension compatibility
 exports, and small design-system tokens.
 
-For a full API guide covering every exported helper, widget, and function, see
-[doc/api.md](doc/api.md).
-
-`gmana_flutter` is the Flutter-facing package in the Gmana ecosystem. Use it
-when you want a practical set of app UI helpers that work from one import:
-
 ```dart
 import 'package:gmana_flutter/gmana_flutter.dart';
 ```
@@ -152,13 +146,15 @@ MaterialApp(
 Useful theme helpers:
 
 ```dart
-final service = ThemeModeService();
-final key = service.getKey(ThemeMode.dark); // 'dark'
-final label = ThemeMode.dark.toLabel(); // 'Dark Mode'
-final icon = ThemeMode.dark.toIcon(); // Icons.dark_mode
+// ThemeMode extensions
+ThemeMode.dark.toKey();    // 'dark'
+ThemeMode.dark.toLabel();  // 'Dark Mode'
+ThemeMode.dark.toIcon();   // Icons.dark_mode
 
-final mode = service.fromKey('light');
-final labels = service.getThemeKeys().map(service.getLabelFromKey).toList();
+// ThemeModeService — all methods are static
+ThemeModeService.fromKey('light');                                        // ThemeMode.light
+ThemeModeService.getThemeKeys();                                          // ['system', 'light', 'dark']
+ThemeModeService.getThemeKeys().map(ThemeModeService.getLabelFromKey).toList(); // ['System Mode', 'Light Mode', 'Dark Mode']
 ```
 
 ## Forms
@@ -416,16 +412,3 @@ flutter run
 
 The example demonstrates theme switching, color utilities, layout polish, and
 the package's UI components.
-
-## Package Relationship
-
-- Use [`gmana`](https://pub.dev/packages/gmana) for pure Dart extensions,
-  functional helpers, and validators.
-- Use `gmana_flutter_extensions` for focused Flutter extension methods and
-  helper services.
-- Use `gmana_form` for focused Flutter form fields, submit controls, and
-  confirm-password validation.
-- Use `gmana_spinner` for focused Flutter loading indicators.
-- Use `gmana_flutter` for Flutter UI and app convenience APIs.
-- Use `gmana_value_objects` for typed domain values when that package is part
-  of your project.

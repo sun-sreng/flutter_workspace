@@ -1,69 +1,114 @@
 # Gmana Workspace
 
-<p align="center">
-  A powerful ecosystem of Dart and Flutter packages engineered to accelerate development, enforce clean architecture, and standardize your codebase.
-</p>
-
----
+A layered ecosystem of Dart and Flutter packages engineered to accelerate development, enforce clean architecture, and standardize your codebase.
 
 ## 📦 Packages
 
-This repository is structured as a monorepo containing the following packages:
+The monorepo is organized into three layers. The `gmana` facade gives you everything in the Pure Dart layer from one import; the Flutter packages are opt-in.
 
-| Package | Version | Description | Environment |
-| --- | --- | --- | --- |
-| [**gmana**](./packages/gmana) | `^0.1.5` | The foundation layer. Provides functional helpers, extensions, low-level validation primitives, and utility classes. | Pure Dart |
-| [**gmana_flutter**](./packages/gmana_flutter) | `^0.0.8` | The presentation layer. A curated library of branded `G*` widgets, theme management services, color contrast utilities, and form helpers. | Flutter |
-| [**gmana_spinner**](./packages/gmana_spinner) | `^0.0.1` | Focused Flutter loading indicators extracted from `gmana_flutter` and re-exported there for compatibility. | Flutter |
-| [**gmana_value_objects**](./packages/gmana_value_objects) | `^0.0.4` | The domain layer. Provides typed value objects and rich validation errors for domain-safe input handling. | Pure Dart |
+### Pure Dart — foundation
+
+| Package                                             | Version | Description                                                                                 |
+| --------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------- |
+| [**gmana**](./packages/gmana)                       | `0.2.0` | Convenience facade — re-exports all Pure Dart packages below from a single import.          |
+| [**gmana_extensions**](./packages/gmana_extensions) | `0.0.1` | Extension methods on `Duration`, `String`, `num`, `Iterable`, and `Stream`.                 |
+| [**gmana_functional**](./packages/gmana_functional) | `0.0.1` | Functional primitives — `Either<L,R>`, `Result`, `UseCase`, `Failure`, `Unit`.              |
+| [**gmana_predicates**](./packages/gmana_predicates) | `0.0.1` | Boolean predicate functions — email, alpha, date, UUID, credit card, and more.              |
+| [**gmana_utils**](./packages/gmana_utils)           | `0.0.1` | Runtime utilities — `Debouncer`, `Throttler`, `IdGenerator`.                                |
+| [**gmana_validation**](./packages/gmana_validation) | `0.0.1` | Typed validators for email, password, text, and number inputs using `Either`-based results. |
+
+### Pure Dart — domain
+
+| Package                                                   | Version | Description                                                                                                   |
+| --------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| [**gmana_value_objects**](./packages/gmana_value_objects) | `0.0.6` | Production-ready value objects with configurable validation — `Email`, `Password`, `Text`, `Number`, `Money`. |
+
+### Flutter — presentation
+
+| Package                                                             | Version | Description                                                                                                       |
+| ------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
+| [**gmana_flutter**](./packages/gmana_flutter)                       | `0.0.8` | UI library — branded `G*` widgets, theme management, and a compatibility re-export of all Flutter packages below. |
+| [**gmana_flutter_extensions**](./packages/gmana_flutter_extensions) | `0.0.1` | Flutter extension methods — color, layout, `BuildContext`, icons, time, and theme mode.                           |
+| [**gmana_form**](./packages/gmana_form)                             | `0.0.1` | Form fields, validators, and submit controls — `GEmailField`, `GPasswordField`, `GElevatedButton`, and more.      |
+| [**gmana_spinner**](./packages/gmana_spinner)                       | `0.0.1` | Loading indicators — `GCircularSpinner`, `GWaveDotSpinner`, `GDotSpinner`, and more.                              |
 
 ---
 
 ## 🚀 Getting Started
 
-The packages in this workspace are designed to be used collectively or independently based on your project's needs.
-
-### 1. Pure Dart Server / API Layer
-If you are strictly building out a backend using Dart (Shelf, Dart Frog, etc) or establishing your application's Domain layer without relying on Flutter UI imports:
+### 1. Pure Dart — server / API / domain layer
 
 ```bash
 dart pub add gmana gmana_value_objects
 ```
-- Utilize `gmana` for `IdGenerator` logic, extensions, and pure functional tools.
-- Utilize `gmana_value_objects` to enforce strongly-typed domain models before parsing logic into your database.
 
-### 2. Full Flutter Frontend
-For standard Flutter app development, importing all three brings maximum efficiency:
+- `gmana` gives you extensions, functional primitives, validation, and utilities in one import.
+- `gmana_value_objects` enforces strongly-typed domain models before data reaches your database or state.
+
+### 2. Full Flutter app
 
 ```bash
 flutter pub add gmana gmana_flutter gmana_value_objects
 ```
-- Map data elegantly through `gmana` extensions (`myString.toTitleCase`, `timeout.toDuration()`).
-- Build UIs instantly with `gmana_flutter` (`GAppBar`, `SizedBoxHeight`, `GEmailField`) and focused loaders from `gmana_spinner` (`GWaveDotSpinner`).
-- Connect them safely to your state management (Riverpod/Bloc) via `gmana_value_objects` error validation.
+
+- `gmana_flutter` re-exports all Flutter packages, so one import covers widgets, forms, spinners, and extensions.
+- Use focused packages directly when you only need part of the stack:
+
+```bash
+flutter pub add gmana_flutter_extensions   # just context/color/layout helpers
+flutter pub add gmana_form                 # just form fields
+flutter pub add gmana_spinner              # just loading indicators
+```
+
+### 3. Manual `pubspec.yaml` setup
+
+```yaml
+dependencies:
+  # Pure Dart
+  gmana: ^0.2.0
+  gmana_value_objects: ^0.0.6
+
+  # Flutter (use gmana_flutter as the umbrella, or pick individually)
+  gmana_flutter: ^0.0.8
+  gmana_flutter_extensions: ^0.0.1
+  gmana_form: ^0.0.1
+  gmana_spinner: ^0.0.1
+```
 
 ---
 
-## 🧑‍💻 Contributing & Development
+## 🧑‍💻 Development
 
-This repository relies on Dart/Flutter's native workspace capabilities.
+This repository uses Dart/Flutter's native workspace.
 
-### Setup
-To get started modifying the packages locally:
-1. Clone the repository
-2. Run standard workspace checks to fetch all dependencies recursively:
 ```bash
+# Install all dependencies across every package
 flutter pub get
+
+# Run all tests
+dart test
 ```
 
-### Exploring Documentation
-Every package within `packages/` is fully documented. Please review each package's individual `README.md` to see its full capabilities, configurations, and API examples:
-- [gmana README](./packages/gmana/README.md)
-- [gmana_flutter README](./packages/gmana_flutter/README.md)
-- [gmana_spinner README](./packages/gmana_spinner/README.md)
-- [gmana_value_objects README](./packages/gmana_value_objects/README.md)
+---
+
+## 📖 Package READMEs
+
+Each package has its own full API guide with examples:
+
+- [gmana](./packages/gmana/README.md)
+- [gmana_extensions](./packages/gmana_extensions/README.md)
+- [gmana_functional](./packages/gmana_functional/README.md)
+- [gmana_predicates](./packages/gmana_predicates/README.md)
+- [gmana_utils](./packages/gmana_utils/README.md)
+- [gmana_validation](./packages/gmana_validation/README.md)
+- [gmana_value_objects](./packages/gmana_value_objects/README.md)
+- [gmana_flutter](./packages/gmana_flutter/README.md)
+- [gmana_flutter_extensions](./packages/gmana_flutter_extensions/README.md)
+- [gmana_form](./packages/gmana_form/README.md)
+- [gmana_spinner](./packages/gmana_spinner/README.md)
 
 ---
 
 ## 📄 License
+
 MIT

@@ -23,7 +23,8 @@
       "Bash(Get-ChildItem -Path \"D:\\\\SSH\\\\flutters\" -Directory)",
       "Bash(Select-Object Name)",
       "Bash(Get-Content \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana_flutter\\\\example\\\\pubspec.yaml\")",
-      "Bash(Select-String \"name:\")"
+      "Bash(Select-String \"name:\")",
+      "Bash(Get-ChildItem -Path \"D:\\\\SSH\\\\flutters\\\\packages\\\\gmana_form\\\\lib\\\\\" -Recurse -Filter \"*.dart\" | Select-Object -ExpandProperty FullName)"
     ]
   }
 }
