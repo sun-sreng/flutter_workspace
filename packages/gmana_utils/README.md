@@ -13,6 +13,7 @@ import 'package:gmana_utils/gmana_utils.dart';
 - [Debouncer](#debouncer)
 - [Throttler](#throttler)
 - [IdGenerator](#idgenerator)
+- [SecureIdGenerator](#secureidgenerator)
 
 ---
 
@@ -150,7 +151,7 @@ import 'package:gmana_utils/gmana_utils.dart';
 final id = IdGenerator.nanoid();
 ```
 
-> **Security notice**: `IdGenerator` uses Dart's non-cryptographic `Random`. Do **not** use these IDs for security-sensitive purposes (tokens, secrets, session keys). Use `dart:math`'s `Random.secure()` or a dedicated crypto library instead.
+> **Security notice**: `IdGenerator` uses Dart's non-cryptographic `Random`. It is safe for database primary keys, slugs, and display codes, but **not** for tokens, session keys, API keys, or password-reset links. Use [`SecureIdGenerator`](#secureidgenerator) for those cases.
 
 ---
 
@@ -165,17 +166,17 @@ IdGenerator.nanoid(size: 36)                  // longer ID
 IdGenerator.nanoid(size: 12, alphabet: '01')  // binary-style custom alphabet
 ```
 
-```
+```text
 // Example outputs
 // 'V1StGXR8_Z5jdHi6B-myT'
 // 'K9vF2xQm3p'
 // '010110011010'
 ```
 
-| Parameter  | Type     | Default                      |
-| ---------- | -------- | ---------------------------- |
-| `size`     | `int`    | `21`                         |
-| `alphabet` | `String?`| `null` (uses NanoID alphabet)|
+| Parameter  | Type      | Default                       |
+| ---------- | --------- | ----------------------------- |
+| `size`     | `int`     | `21`                          |
+| `alphabet` | `String?` | `null` (uses NanoID alphabet) |
 
 ---
 
@@ -215,7 +216,7 @@ IdGenerator.shortId()           // 8 characters (default)
 IdGenerator.shortId(length: 12) // custom length
 ```
 
-```
+```text
 // Example outputs
 // 'aB3xK9mZ'
 // 'Xk3mQ9vF2xQm'
@@ -257,7 +258,7 @@ final id = IdGenerator.ulid();
 
 **Structure** (Crockford Base32, `0–9 A–Z` excluding `I L O U`):
 
-```
+```text
 01HGZQ3K4M  XNPF0CVWRY2STJF0C7
 ──────────  ────────────────────
 10 chars    16 chars
@@ -269,7 +270,7 @@ timestamp   random (80 bits)
 - ULIDs generated within the same millisecond differ only in the random suffix.
 - 26 characters, no hyphens — fits neatly in a `VARCHAR(26)` or URL path segment.
 
-> Uses `Random` (not `Random.secure()`). Do not use for security tokens.
+> Uses `Random` (not `Random.secure()`). For security-sensitive ULIDs use `SecureIdGenerator.ulid()`.
 
 ---
 
@@ -295,6 +296,8 @@ final id = IdGenerator.uuidV4Like();
 // 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
 ```
 
+For a cryptographically random UUID-shaped token use `SecureIdGenerator.uuidV4Like()`.
+
 > **Deprecated**: `uuidV1()` has been removed — use `uuidV4Like()` instead.
 
 ---
@@ -317,13 +320,174 @@ final data = IdGenerator.decodeFromBase64(token);
 
 ### ID format comparison
 
-| Method           | Example output                           | Sortable | Length   | Use case                          |
-| ---------------- | ---------------------------------------- | -------- | -------- | --------------------------------- |
-| `ulid()`         | `01HGZQ3K4MXNP8VWRY2STJF0C7`            | **yes**  | 26       | Primary keys, time-ordered events |
-| `timestampId()`  | `G1716220800000-k9vF-2xQm3p4r`           | **yes**  | variable | Logs, audit trails                |
-| `nanoid()`       | `V1StGXR8_Z5jdHi6B-myT`                  | no       | 21       | Short unique keys, URLs           |
-| `shortId()`      | `aB3xK9mZ`                               | no       | 8        | Invite codes, slugs               |
-| `prefixed()`     | `cus_Xk3mQ9vF2xQm1234`                   | no       | variable | Domain-typed IDs (Stripe-style)   |
-| `randomString()` | `aB3xK9mZ`                               | no       | 8        | PINs, OTPs, passwords             |
-| `uuidV4Like()`   | `f47ac10b-58cc-4372-a567-0e02b2c3d479`   | no       | 36       | UUID-expecting APIs               |
-| `encodeToBase64` | `WyJ1c2VyLTEyMyIsImFkbWluIl0=`           | no       | variable | Structured data in URLs           |
+| Method           | Example output                         | Sortable | Length   | Use case                          |
+| ---------------- | -------------------------------------- | -------- | -------- | --------------------------------- |
+| `ulid()`         | `01HGZQ3K4MXNP8VWRY2STJF0C7`           | **yes**  | 26       | Primary keys, time-ordered events |
+| `timestampId()`  | `G1716220800000-k9vF-2xQm3p4r`         | **yes**  | variable | Logs, audit trails                |
+| `nanoid()`       | `V1StGXR8_Z5jdHi6B-myT`                | no       | 21       | Short unique keys, URLs           |
+| `shortId()`      | `aB3xK9mZ`                             | no       | 8        | Invite codes, slugs               |
+| `prefixed()`     | `cus_Xk3mQ9vF2xQm1234`                 | no       | variable | Domain-typed IDs (Stripe-style)   |
+| `randomString()` | `aB3xK9mZ`                             | no       | 8        | PINs, OTPs, display codes         |
+| `uuidV4Like()`   | `f47ac10b-58cc-4372-a567-0e02b2c3d479` | no       | 36       | UUID-expecting APIs               |
+| `encodeToBase64` | `WyJ1c2VyLTEyMyIsImFkbWluIl0=`         | no       | variable | Structured data in URLs           |
+
+---
+
+## SecureIdGenerator
+
+Cryptographically-secure variant of `IdGenerator`. Every method uses `Random.secure()` — backed by the operating-system CSPRNG — making output suitable for tokens, session keys, API keys, and password-reset links.
+
+```dart
+import 'package:gmana_utils/gmana_utils.dart';
+
+// Generate a secure API key
+final apiKey = SecureIdGenerator.prefixed('sk', length: 32);
+
+// Verify it in constant time — never use ==
+if (!SecureIdGenerator.safeEqual(received, stored)) {
+  throw UnauthorizedException();
+}
+```
+
+### IdGenerator vs SecureIdGenerator
+
+| Question                                                            | Use                 |
+| ------------------------------------------------------------------- | ------------------- |
+| Is this ID ever transmitted to a client and verified server-side?   | `SecureIdGenerator` |
+| Could an attacker gain anything by guessing this value?             | `SecureIdGenerator` |
+| Is this just a database primary key or a display slug?              | `IdGenerator`       |
+| Do I need the fastest possible generation with no security concern? | `IdGenerator`       |
+
+> **Prefer `IdGenerator` for non-security IDs.** `Random.secure()` draws entropy from the OS; overusing it for display slugs or primary keys wastes that entropy unnecessarily.
+
+---
+
+### `SecureIdGenerator.nanoid`
+
+Same signature as `IdGenerator.nanoid`. Output is suitable for one-time tokens and invite codes.
+
+```dart
+SecureIdGenerator.nanoid()                         // 21-char secure token
+SecureIdGenerator.nanoid(size: 32)                 // longer token
+SecureIdGenerator.nanoid(size: 16, alphabet: '01') // custom alphabet
+```
+
+| Parameter  | Type      | Default                       |
+| ---------- | --------- | ----------------------------- |
+| `size`     | `int`     | `21`                          |
+| `alphabet` | `String?` | `null` (uses NanoID alphabet) |
+
+---
+
+### `SecureIdGenerator.randomString`
+
+Same signature as `IdGenerator.randomString`. Suitable for generated passwords and OTPs.
+
+```dart
+// 12-character password with all character types
+SecureIdGenerator.randomString(length: 12)
+
+// 6-digit PIN
+SecureIdGenerator.randomString(length: 6, useLetters: false, useNumbers: true, useSymbols: false)
+```
+
+| Parameter    | Type   | Default |
+| ------------ | ------ | ------- |
+| `length`     | `int`  | `8`     |
+| `useLetters` | `bool` | `true`  |
+| `useNumbers` | `bool` | `true`  |
+| `useSymbols` | `bool` | `true`  |
+
+---
+
+### `SecureIdGenerator.shortId`
+
+Same signature as `IdGenerator.shortId`. Suitable for one-time activation tokens and invite links.
+
+```dart
+SecureIdGenerator.shortId()           // 8-char secure alphanumeric token
+SecureIdGenerator.shortId(length: 32) // longer token
+```
+
+| Parameter | Type  | Default |
+| --------- | ----- | ------- |
+| `length`  | `int` | `8`     |
+
+---
+
+### `SecureIdGenerator.prefixed`
+
+Same signature as `IdGenerator.prefixed`. The secure choice for API keys.
+
+```dart
+SecureIdGenerator.prefixed('sk', length: 32)  // secret key:  'sk_Xk3mQ9...'
+SecureIdGenerator.prefixed('pk', length: 32)  // public key:  'pk_aB3xK9...'
+SecureIdGenerator.prefixed('tok', length: 24) // reset token: 'tok_mQ9vF2...'
+```
+
+| Parameter | Type     | Default |
+| --------- | -------- | ------- |
+| `prefix`  | `String` | —       |
+| `length`  | `int`    | `16`    |
+
+---
+
+### `SecureIdGenerator.ulid`
+
+Generates a ULID whose 80-bit random suffix uses `Random.secure()`. The 48-bit timestamp part is always deterministic (current millisecond).
+
+```dart
+final id = SecureIdGenerator.ulid();
+// '01HGZQ3K4MXNP8VWRY2STJF0C7'
+```
+
+---
+
+### `SecureIdGenerator.uuidV4Like`
+
+Generates a UUID v4-shaped token whose bits are from `Random.secure()`. Use this when an external system requires UUID format but the value must be unpredictable.
+
+```dart
+final id = SecureIdGenerator.uuidV4Like();
+// 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+```
+
+---
+
+### `SecureIdGenerator.safeEqual`
+
+Compares two strings in **constant time** to prevent timing-based side-channel attacks.
+
+```dart
+final stored  = SecureIdGenerator.prefixed('tok', length: 24);
+final received = getTokenFromRequest();
+
+if (!SecureIdGenerator.safeEqual(received, stored)) {
+  throw UnauthorizedException('Invalid token');
+}
+```
+
+The loop always runs `max(a.length, b.length)` iterations regardless of where the strings first differ. This means an attacker cannot measure response time to learn the correct value character-by-character.
+
+**Always use `safeEqual` — never `==` — when validating caller-supplied tokens.**
+
+| Parameter | Type     |
+| --------- | -------- |
+| `a`       | `String` |
+| `b`       | `String` |
+
+Returns `true` only if `a` and `b` are identical. Case-sensitive.
+
+---
+
+### Secure ID format comparison
+
+| Method                           | Suitable for                                      |
+| -------------------------------- | ------------------------------------------------- |
+| `SecureIdGenerator.prefixed`     | API keys, scoped tokens (`sk_…`, `pk_…`, `tok_…`) |
+| `SecureIdGenerator.nanoid`       | Opaque one-time tokens, invite codes              |
+| `SecureIdGenerator.shortId`      | Short activation codes, magic links               |
+| `SecureIdGenerator.randomString` | Generated passwords, numeric OTPs                 |
+| `SecureIdGenerator.uuidV4Like`   | UUID-format tokens for UUID-expecting systems     |
+| `SecureIdGenerator.ulid`         | Time-ordered tokens with secure random suffix     |
+| `SecureIdGenerator.safeEqual`    | Validating any of the above at verification time  |
