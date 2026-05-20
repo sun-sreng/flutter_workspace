@@ -1,0 +1,399 @@
+# gmana_validation
+
+Pure Dart typed validators for email, password, text, and number inputs. Returns `Either`-based results — no exceptions thrown, no stringly-typed errors.
+
+```dart
+import 'package:gmana_validation/gmana_validation.dart';
+```
+
+---
+
+## Table of contents
+
+- [Core types](#core-types)
+- [Email](#email)
+- [Password](#password)
+- [Text](#text)
+- [Number](#number)
+- [Custom message resolvers](#custom-message-resolvers)
+- [Using with Flutter forms](#using-with-flutter-forms)
+
+---
+
+## Core types
+
+Every validator returns a `ValidationResult`, which is an alias for `Either<TIssue, TValue>` from `gmana_functional`.
+
+```dart
+// Aliases
+typedef ValidationResult<TIssue, TValue> = Either<TIssue, TValue>;
+typedef ValidationMessageResolver<TIssue> = String Function(TIssue issue);
+```
+
+- **`Right(value)`** — validation passed; contains the normalized/parsed value.
+- **`Left(issue)`** — validation failed; contains a typed, sealed issue object.
+
+All issue types are `sealed`, so `switch` expressions are exhaustively checked by the compiler.
+
+```dart
+final result = EmailValidator().validate('user@example.com');
+
+// fold — handles both sides
+result.fold(
+  (issue) => print('Error: ${resolveEmailValidationIssue(issue)}'),
+  (email) => print('Normalized: $email'),  // 'user@example.com'
+);
+
+// switch on the sealed issue for granular handling
+result.fold(
+  (issue) => switch (issue) {
+    EmailEmptyIssue()          => 'Please enter your email',
+    EmailInvalidFormatIssue()  => 'That doesn\'t look like an email',
+    EmailTooLongIssue(:final maxLength) => 'Max $maxLength characters',
+    EmailBlockedDomainIssue()  => 'That domain isn\'t allowed',
+    EmailDisposableDomainIssue() => 'Disposable emails aren\'t accepted',
+    _                          => resolveEmailValidationIssue(issue),
+  },
+  (email) => saveEmail(email),
+);
+```
+
+---
+
+## Email
+
+`EmailValidator` trims whitespace, checks format, enforces length limits, and optionally rejects blocked or disposable domains. On success it returns the **normalized** email (`local@domain` lowercased).
+
+### Quick start
+
+```dart
+const validator = EmailValidator();
+
+validator.validate('User@Example.COM').fold(
+  (issue) => print(resolveEmailValidationIssue(issue)),
+  (email) => print(email), // 'user@example.com'
+);
+
+validator.validate('').fold(
+  (issue) => print(issue.code), // 'email.empty'
+  (_) => {},
+);
+```
+
+### `EmailValidationConfig`
+
+```dart
+// Default — permissive, no domain policies
+const EmailValidationConfig()
+
+// Strict preset — rejects disposable domains using the built-in list
+EmailValidationConfig.strict()
+
+// Custom — block competitor domains and tighten length limits
+EmailValidationConfig(
+  maxLength: 100,
+  blockedDomains: {'competitor.com', 'spam.org'},
+  rejectDisposable: true,
+  matchSubdomains: true,    // 'mail.competitor.com' also blocked
+)
+```
+
+| Parameter            | Type          | Default       |
+| -------------------- | ------------- | ------------- |
+| `maxLength`          | `int`         | `254`         |
+| `maxLocalPartLength` | `int`         | `64`          |
+| `maxDomainLength`    | `int`         | `253`         |
+| `blockedDomains`     | `Set<String>` | `{}`          |
+| `rejectDisposable`   | `bool`        | `false`       |
+| `disposableDomains`  | `Set<String>` | built-in list |
+| `matchSubdomains`    | `bool`        | `true`        |
+
+### Issue types
+
+| Type                         | Code                     | Carries                      |
+| ---------------------------- | ------------------------ | ---------------------------- |
+| `EmailEmptyIssue`            | `email.empty`            | —                            |
+| `EmailInvalidFormatIssue`    | `email.invalidFormat`    | —                            |
+| `EmailTooLongIssue`          | `email.tooLong`          | `currentLength`, `maxLength` |
+| `EmailLocalPartTooLongIssue` | `email.localPartTooLong` | `currentLength`, `maxLength` |
+| `EmailDomainTooLongIssue`    | `email.domainTooLong`    | `currentLength`, `maxLength` |
+| `EmailBlockedDomainIssue`    | `email.blockedDomain`    | `domain`                     |
+| `EmailDisposableDomainIssue` | `email.disposableDomain` | `domain`                     |
+
+---
+
+## Password
+
+`PasswordValidator` enforces length, character requirements, and pattern-based rejection (common passwords, repeated characters, sequential runs). Returns the original password string on success.
+
+### Quick start
+
+```dart
+// Default — strong policy (8+ chars, upper, lower, digit, special)
+const validator = PasswordValidator();
+
+validator.validate('MySecure1!').fold(
+  (issue) => print(resolvePasswordValidationIssue(issue)),
+  (pass)  => print('Valid'),
+);
+```
+
+### `PasswordValidationConfig`
+
+```dart
+// Strong preset (default)
+PasswordValidationConfig.strong()
+const PasswordValidationConfig()  // equivalent
+
+// Lenient — only minimum length enforced
+PasswordValidationConfig.lenient()  // minLength: 4, all checks off
+
+// Custom
+PasswordValidationConfig(
+  minLength: 12,
+  maxLength: 256,
+  requireUppercase: true,
+  requireLowercase: true,
+  requireDigit: true,
+  requireSpecialCharacter: false,
+  rejectCommonPasswords: true,
+  rejectRepeatedCharacters: true,
+  rejectSequentialPatterns: true,
+  minSequentialRun: 5,                          // e.g. 'abcde' fails
+  commonPasswords: {'hunter2', 'letmein123'},   // extend the block list
+  commonPrefixes: ['password', 'qwerty'],
+)
+```
+
+| Parameter                  | Type   | Default |
+| -------------------------- | ------ | ------- |
+| `minLength`                | `int`  | `8`     |
+| `maxLength`                | `int`  | `128`   |
+| `requireUppercase`         | `bool` | `true`  |
+| `requireLowercase`         | `bool` | `true`  |
+| `requireDigit`             | `bool` | `true`  |
+| `requireSpecialCharacter`  | `bool` | `true`  |
+| `rejectCommonPasswords`    | `bool` | `true`  |
+| `rejectRepeatedCharacters` | `bool` | `true`  |
+| `rejectSequentialPatterns` | `bool` | `true`  |
+| `minSequentialRun`         | `int`  | `4`     |
+
+### Issue types
+
+| Type                                   | Code                                | Carries                      |
+| -------------------------------------- | ----------------------------------- | ---------------------------- |
+| `PasswordEmptyIssue`                   | `password.empty`                    | —                            |
+| `PasswordTooShortIssue`                | `password.tooShort`                 | `currentLength`, `minLength` |
+| `PasswordTooLongIssue`                 | `password.tooLong`                  | `currentLength`, `maxLength` |
+| `PasswordMissingUppercaseIssue`        | `password.missingUppercase`         | —                            |
+| `PasswordMissingLowercaseIssue`        | `password.missingLowercase`         | —                            |
+| `PasswordMissingDigitIssue`            | `password.missingDigit`             | —                            |
+| `PasswordMissingSpecialCharacterIssue` | `password.missingSpecialCharacter`  | —                            |
+| `PasswordTooCommonIssue`               | `password.tooCommon`                | —                            |
+| `PasswordRepeatedCharacterIssue`       | `password.repeatedCharacterPattern` | —                            |
+| `PasswordSequentialPatternIssue`       | `password.sequentialPattern`        | —                            |
+
+### `PasswordStrength` — live UI feedback
+
+Use `PasswordStrength` to drive a strength meter as the user types, independently of the validator.
+
+```dart
+final strength = PasswordStrength.of('MyPass1');
+// or against a custom config:
+final strength = PasswordStrength.fromConfig('MyPass1', config);
+
+strength.score           // 0–5
+strength.isStrong        // true when all five criteria are met
+strength.hasMinLength    // true / false
+strength.hasUppercase
+strength.hasLowercase
+strength.hasDigit
+strength.hasSpecial
+strength.unmetRequirements // ['One special character']
+```
+
+```dart
+// Strength indicator bar
+LinearProgressIndicator(
+  value: strength.score / 5,
+  color: switch (strength.score) {
+    <= 2 => Colors.red,
+    <= 3 => Colors.orange,
+    _    => Colors.green,
+  },
+)
+```
+
+### Static character helpers
+
+```dart
+PasswordValidator.hasUppercase('Hello1!')    // true
+PasswordValidator.hasLowercase('Hello1!')    // true
+PasswordValidator.hasDigit('Hello1!')        // true
+PasswordValidator.hasSpecialCharacter('Hello1!') // true
+PasswordValidator.hasOnlyRepeatedCharacters('aaaa') // true
+PasswordValidator.hasSequentialRun('abcd', minRun: 4) // true
+```
+
+---
+
+## Text
+
+`TextValidator` handles general-purpose text fields: required vs optional, length limits, regex patterns, character allowlists, and word blocklists. Returns the (optionally trimmed) string on success.
+
+### Quick start
+
+```dart
+// Optional text — accepts empty input by default
+TextValidator().validate('hello').fold(
+  (issue) => print(resolveTextValidationIssue(issue)),
+  (text)  => print(text),
+);
+```
+
+### `TextValidationConfig`
+
+```dart
+// Required preset — rejects empty and whitespace-only, trims before returning
+TextValidationConfig.required()
+
+TextValidationConfig.required(
+  minLength: 2,
+  maxLength: 50,
+)
+
+// Full control
+TextValidationConfig(
+  allowEmpty: false,
+  allowOnlyWhitespace: false,
+  trimWhitespace: true,
+  minLength: 10,
+  maxLength: 500,
+  pattern: RegExp(r'^[a-zA-Z\s]+$'),          // letters and spaces only
+  allowedCharacters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ',
+  blacklistedWords: {'spam', 'scam'},
+  wholeWordBlacklist: true,  // 'scammer' passes; 'scam' fails
+)
+```
+
+| Parameter             | Type          | Default              |
+| --------------------- | ------------- | -------------------- |
+| `allowEmpty`          | `bool`        | `true`               |
+| `allowOnlyWhitespace` | `bool`        | `true`               |
+| `trimWhitespace`      | `bool`        | `false`              |
+| `minLength`           | `int?`        | `null`               |
+| `maxLength`           | `int?`        | `null`               |
+| `pattern`             | `RegExp?`     | `null`               |
+| `allowedCharacters`   | `String?`     | `null` (all allowed) |
+| `blacklistedWords`    | `Set<String>` | `{}`                 |
+| `wholeWordBlacklist`  | `bool`        | `true`               |
+
+### Issue types
+
+| Type                           | Code                     | Carries                      |
+| ------------------------------ | ------------------------ | ---------------------------- |
+| `TextEmptyIssue`               | `text.empty`             | —                            |
+| `TextOnlyWhitespaceIssue`      | `text.onlyWhitespace`    | —                            |
+| `TextTooShortIssue`            | `text.tooShort`          | `currentLength`, `minLength` |
+| `TextTooLongIssue`             | `text.tooLong`           | `currentLength`, `maxLength` |
+| `TextInvalidPatternIssue`      | `text.invalidPattern`    | —                            |
+| `TextInvalidCharactersIssue`   | `text.invalidCharacters` | `invalidCharacters`          |
+| `TextContainsBlacklistedIssue` | `text.blacklistedWords`  | `foundWords`                 |
+
+---
+
+## Number
+
+`NumberValidator` parses a string to `num`, then enforces sign, integer, range, and decimal-place constraints. Returns the parsed `num` on success.
+
+### Quick start
+
+```dart
+const validator = NumberValidator();
+
+validator.validate('42').fold(
+  (issue) => print(resolveNumberValidationIssue(issue)),
+  (n)     => print(n),  // 42
+);
+```
+
+### `NumberValidationConfig`
+
+```dart
+// Positive integer preset
+NumberValidationConfig.positiveInteger()
+NumberValidationConfig.positiveInteger(min: 1, max: 100)
+
+// Custom
+NumberValidationConfig(
+  min: 0,
+  max: 9999.99,
+  allowNegative: false,
+  integerOnly: false,
+  maxDecimalPlaces: 2,
+)
+```
+
+| Parameter          | Type   | Default |
+| ------------------ | ------ | ------- |
+| `min`              | `num?` | `null`  |
+| `max`              | `num?` | `null`  |
+| `allowNegative`    | `bool` | `true`  |
+| `integerOnly`      | `bool` | `false` |
+| `maxDecimalPlaces` | `int?` | `null`  |
+
+### Issue types
+
+| Type                               | Code                           | Carries                      |
+| ---------------------------------- | ------------------------------ | ---------------------------- |
+| `NumberEmptyIssue`                 | `number.empty`                 | —                            |
+| `NumberInvalidFormatIssue`         | `number.invalidFormat`         | —                            |
+| `NumberNegativeNotAllowedIssue`    | `number.negativeNotAllowed`    | `currentValue`               |
+| `NumberNotIntegerIssue`            | `number.notInteger`            | `currentValue`               |
+| `NumberTooSmallIssue`              | `number.tooSmall`              | `currentValue`, `minValue`   |
+| `NumberTooLargeIssue`              | `number.tooLarge`              | `currentValue`, `maxValue`   |
+| `NumberDecimalPlacesExceededIssue` | `number.decimalPlacesExceeded` | `currentPlaces`, `maxPlaces` |
+
+---
+
+## Custom message resolvers
+
+Each domain ships a default resolver (`resolveEmailValidationIssue`, etc.) that returns English strings. Override per-issue for localization or custom copy.
+
+```dart
+String myEmailMessages(EmailValidationIssue issue) => switch (issue) {
+  EmailEmptyIssue()           => 'សូមបញ្ចូលអ៊ីម៉ែល',           // Khmer
+  EmailInvalidFormatIssue()   => 'អ៊ីម៉ែលមិនត្រឹមត្រូវ',
+  EmailBlockedDomainIssue()   => 'Domain មិនត្រូវបានអនុញ្ញាត',
+  _                           => resolveEmailValidationIssue(issue), // fallback
+};
+```
+
+---
+
+## Using with Flutter forms
+
+Wire any validator into a `TextFormField` using the `asFormValidator` adapter from `gmana_form`:
+
+```dart
+import 'package:gmana_form/gmana_form.dart';
+
+TextFormField(
+  validator: asFormValidator(
+    validate: (input) => EmailValidator().validate(input),
+    resolve: resolveEmailValidationIssue,
+  ),
+)
+
+// With a custom resolver
+TextFormField(
+  validator: asFormValidator(
+    validate: (input) => PasswordValidator(
+      PasswordValidationConfig.strong(),
+    ).validate(input),
+    resolve: myPasswordMessages,
+  ),
+)
+```
+
+Or use the pre-wired field widgets from `gmana_form` (`GEmailField`, `GPasswordField`, `GTextField`, `GNumberField`) which handle this internally.

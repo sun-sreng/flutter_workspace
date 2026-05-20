@@ -55,13 +55,13 @@ if (email.isValid) {
 
 Every value object exposes:
 
-| API | Meaning |
-| --- | --- |
-| `value` | Full `Either<ValidationError, T>` validation result. |
-| `isValid` / `isInvalid` | Boolean validation state. |
-| `valueOrNull` | Valid typed value, or `null`. |
-| `errorOrNull` | Validation error, or `null`. |
-| `isSensitive` | `true` for sensitive objects such as `Password`. |
+| API                     | Meaning                                              |
+| ----------------------- | ---------------------------------------------------- |
+| `value`                 | Full `Either<ValidationError, T>` validation result. |
+| `isValid` / `isInvalid` | Boolean validation state.                            |
+| `valueOrNull`           | Valid typed value, or `null`.                        |
+| `errorOrNull`           | Validation error, or `null`.                         |
+| `isSensitive`           | `true` for sensitive objects such as `Password`.     |
 
 ## Email
 
