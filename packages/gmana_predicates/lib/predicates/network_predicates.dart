@@ -1,5 +1,5 @@
-import '../src/regex/identifier_patterns.dart';
-import '../src/regex/network_patterns.dart';
+import '../regex/identifier_patterns.dart';
+import '../regex/network_patterns.dart';
 
 /// Returns `true` if [str] is a valid IPv4 address.
 bool isIpv4(String str) {

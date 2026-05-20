@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../src/regex/string_patterns.dart';
+import '../regex/string_patterns.dart';
 
 /// Returns `true` if [str] contains only ASCII alphabetic characters (a–z, A–Z).
 bool isAlpha(String str) => alphaReg.hasMatch(str);
@@ -96,8 +96,7 @@ bool isLength(String str, int min, [int? max]) {
 bool contains(String str, String seed) => str.contains(seed);
 
 /// Returns `true` if [str] contains [seed], ignoring case.
-bool containsIgnoreCase(String str, String seed) =>
-    str.toLowerCase().contains(seed.toLowerCase());
+bool containsIgnoreCase(String str, String seed) => str.toLowerCase().contains(seed.toLowerCase());
 
 /// Returns `true` if [str] equals [comparison].
 bool equals(String? str, String comparison) => str == comparison;

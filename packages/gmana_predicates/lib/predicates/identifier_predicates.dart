@@ -1,4 +1,4 @@
-import '../src/regex/identifier_patterns.dart';
+import '../regex/identifier_patterns.dart';
 import 'string_predicates.dart';
 
 /// Returns `true` if [str] is a valid UUID (any version by default).
@@ -72,11 +72,7 @@ bool isMongoId(String str) => isHexadecimal(str) && str.length == 24;
 
 /// Returns `true` if [str] is a valid fully-qualified domain name.
 @experimental
-bool isFQDN(
-  String str, {
-  bool requireTld = true,
-  bool allowUnderscores = false,
-}) {
+bool isFQDN(String str, {bool requireTld = true, bool allowUnderscores = false}) {
   final parts = str.split('.');
 
   if (requireTld) {
@@ -86,10 +82,7 @@ bool isFQDN(
 
   for (final part in parts) {
     if (allowUnderscores && part.contains('__')) return false;
-    if (!RegExp(
-      r'^[a-z¡-￿0-9-]+$',
-      caseSensitive: false,
-    ).hasMatch(part)) {
+    if (!RegExp(r'^[a-z¡-￿0-9-]+$', caseSensitive: false).hasMatch(part)) {
       return false;
     }
     if (part.startsWith('-') || part.endsWith('-') || part.contains('---')) {
