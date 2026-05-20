@@ -1,37 +1,31 @@
 import 'package:flutter/material.dart';
 
-class ThemeModeService {
-  static const Map<ThemeMode, _ThemeModeConfig> _themeConfigs = {
+abstract final class ThemeModeService {
+  static const Map<ThemeMode, _ThemeModeConfig> _configs = {
     ThemeMode.system: _ThemeModeConfig(key: 'system', label: 'System Mode', icon: Icons.brightness_6),
     ThemeMode.light: _ThemeModeConfig(key: 'light', label: 'Light Mode', icon: Icons.light_mode),
     ThemeMode.dark: _ThemeModeConfig(key: 'dark', label: 'Dark Mode', icon: Icons.dark_mode),
   };
 
-  const ThemeModeService();
+  static const Map<String, ThemeMode> _keyMap = {
+    'system': ThemeMode.system,
+    'light': ThemeMode.light,
+    'dark': ThemeMode.dark,
+  };
 
-  ThemeMode fromKey(String key) =>
-      _themeConfigs.entries
-          .firstWhere(
-            (entry) => entry.value.key == key,
-            orElse:
-                () => const MapEntry(
-                  ThemeMode.system,
-                  _ThemeModeConfig(key: 'system', label: 'System Mode', icon: Icons.brightness_6),
-                ),
-          )
-          .key;
+  static ThemeMode fromKey(String key) => _keyMap[key] ?? ThemeMode.system;
 
-  IconData getIcon(ThemeMode mode) => _themeConfigs[mode]?.icon ?? Icons.brightness_6;
+  static IconData getIcon(ThemeMode mode) => _configs[mode]!.icon;
 
-  IconData getIconFromKey(String key) => _themeConfigs[fromKey(key)]?.icon ?? Icons.brightness_6;
+  static IconData getIconFromKey(String key) => _configs[fromKey(key)]!.icon;
 
-  String getKey(ThemeMode mode) => _themeConfigs[mode]?.key ?? 'system';
+  static String getKey(ThemeMode mode) => _configs[mode]!.key;
 
-  String getLabel(ThemeMode mode) => _themeConfigs[mode]?.label ?? 'System Mode';
+  static String getLabel(ThemeMode mode) => _configs[mode]!.label;
 
-  String getLabelFromKey(String key) => _themeConfigs[fromKey(key)]?.label ?? 'System Mode';
+  static String getLabelFromKey(String key) => _configs[fromKey(key)]!.label;
 
-  List<String> getThemeKeys() => _themeConfigs.values.map((config) => config.key).toList();
+  static List<String> getThemeKeys() => _keyMap.keys.toList();
 }
 
 class _ThemeModeConfig {

@@ -1,5 +1,3 @@
-# Change Log
-
 ## 0.2.0 - 2026-05-18
 
 - breaking: remove `GSpacing` from `utilities.dart`; import from `package:gmana_flutter/gmana_flutter.dart` instead

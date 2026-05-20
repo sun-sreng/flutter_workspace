@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import '../services/color_service.dart';
+import 'color_ext.dart';
 
 extension StringColorExtension on String {
   /// Converts a hex string like `#F50`, `#FF5500`, or `CCFF5500` to a [Color].
@@ -14,11 +15,5 @@ extension StringColorExtension on String {
   }
 
   /// Converts a hex string to a [Color] with the specified opacity.
-  Color toColorWithOpacity(double opacity) {
-    if (opacity.isNaN || opacity < 0 || opacity > 1) {
-      throw ArgumentError.value(opacity, 'opacity', 'must be between 0 and 1');
-    }
-
-    return toColor().withAlpha((opacity * 255).round());
-  }
+  Color toColorWithOpacity(double opacity) => toColor().withAlphaOpacity(opacity);
 }

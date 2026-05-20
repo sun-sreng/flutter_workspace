@@ -7,11 +7,11 @@ extension ContextExt on BuildContext {
 
   ColorScheme get colorScheme => theme.colorScheme;
 
-  double get devicePixelRatio => mediaQuery.devicePixelRatio;
+  double get devicePixelRatio => MediaQuery.devicePixelRatioOf(this);
 
   bool get hasFocus => FocusScope.of(this).hasFocus;
 
-  bool get isLandscape => mediaQuery.orientation == Orientation.landscape;
+  bool get isLandscape => MediaQuery.orientationOf(this) == Orientation.landscape;
 
   bool get isPortrait => !isLandscape;
 
@@ -20,17 +20,17 @@ extension ContextExt on BuildContext {
   NavigatorState get navigator => Navigator.of(this);
 
   /// Safe area padding such as notch and home indicator insets.
-  EdgeInsets get safeAreaPadding => mediaQuery.padding;
+  EdgeInsets get safeAreaPadding => MediaQuery.paddingOf(this);
 
   ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
 
   double get screenHeight => screenSize.height;
 
-  Size get screenSize => mediaQuery.size;
+  Size get screenSize => MediaQuery.sizeOf(this);
 
   double get screenWidth => screenSize.width;
 
-  double get textScaleFactor => mediaQuery.textScaler.scale(1.0);
+  double get textScaleFactor => MediaQuery.textScalerOf(this).scale(1.0);
 
   TextTheme get textTheme => theme.textTheme;
 
@@ -38,9 +38,9 @@ extension ContextExt on BuildContext {
 
   double get topSafeArea => safeAreaPadding.top;
 
-  EdgeInsets get viewInsets => mediaQuery.viewInsets;
+  EdgeInsets get viewInsets => MediaQuery.viewInsetsOf(this);
 
-  EdgeInsets get viewPadding => mediaQuery.viewPadding;
+  EdgeInsets get viewPadding => MediaQuery.viewPaddingOf(this);
 
   void hideSnackBar() => scaffoldMessenger.hideCurrentSnackBar();
 
@@ -71,14 +71,14 @@ extension ContextExt on BuildContext {
     bool isDismissible = true,
     bool enableDrag = true,
     Color? backgroundColor,
-    ShapeBorder? shape,
+    BorderRadiusGeometry borderRadius = const BorderRadius.vertical(top: Radius.circular(16)),
   }) => showModalBottomSheet<T>(
     context: this,
     isScrollControlled: isScrollControlled,
     isDismissible: isDismissible,
     enableDrag: enableDrag,
     backgroundColor: backgroundColor,
-    shape: shape ?? const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+    shape: RoundedRectangleBorder(borderRadius: borderRadius),
     builder: (_) => child,
   );
 
@@ -155,6 +155,8 @@ extension ContextExt on BuildContext {
     action: action,
   );
 
+  // NOTE: tertiary carries no semantic "warning" meaning in Material Design.
+  // Consider a custom warning color pair in your ColorScheme or a dedicated theme extension.
   void showWarningSnackBar({
     required String message,
     Duration duration = const Duration(seconds: 4),

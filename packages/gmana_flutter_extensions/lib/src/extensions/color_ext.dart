@@ -5,7 +5,11 @@ import '../services/color_service.dart';
 extension ColorExt on Color {
   Color get complementary => ColorService.complementary(this);
 
-  Color get contrastText => ColorService.bestContrast(this);
+  /// Picks the highest-contrast color from [candidates] (defaults to white/black).
+  Color bestContrast([List<Color> candidates = const [Colors.white, Colors.black]]) =>
+      ColorService.bestContrast(this, candidates);
+
+  Color get contrastText => bestContrast();
 
   Color get greyscale => ColorService.greyscale(this);
 
@@ -17,6 +21,8 @@ extension ColorExt on Color {
 
   (Color, Color) get triadic => ColorService.triadic(this);
 
+  /// Returns `2 * count` analogous colors: [count] steps to the left and [count] to the right
+  /// of this color on the hue wheel, interleaved as [left1, right1, left2, right2, …].
   List<Color> analogous({int count = 2, double spreadDegrees = 30}) =>
       ColorService.analogous(this, count: count, spreadDegrees: spreadDegrees);
 
@@ -35,6 +41,7 @@ extension ColorExt on Color {
 
   bool meetsWcagAAA(Color background) => ColorService.meetsWcagAAA(this, background);
 
+  /// Linearly interpolates toward [other]. `t = 0` returns this color; `t = 1` returns [other].
   Color mix(Color other, [double t = 0.5]) => ColorService.mix(this, other, t);
 
   Color saturate([double amount = ColorService.defaultAmount]) =>

@@ -84,15 +84,16 @@ extension BreakpointUtils on BoxConstraints {
   bool get isWidescreen => maxWidth >= Breakpoints.widescreen;
 
   /// Returns the largest tight [Size] that fits within these constraints.
+  /// May contain [double.infinity] when an axis is unbounded.
   Size get largestSize => Size(maxWidth, maxHeight);
 
   /// Returns the smallest tight [Size] that satisfies these constraints.
   Size get smallestSize => Size(minWidth, minHeight);
 
-  /// Adds symmetrical padding to the constraints.
+  /// Subtracts [insets] from the max dimensions, clamping to stay within [minWidth]/[minHeight].
   BoxConstraints deflate(EdgeInsets insets) => copyWith(
-    maxWidth: (maxWidth - insets.horizontal).clamp(0.0, double.infinity),
-    maxHeight: (maxHeight - insets.vertical).clamp(0.0, double.infinity),
+    maxWidth: (maxWidth - insets.horizontal).clamp(minWidth, double.infinity),
+    maxHeight: (maxHeight - insets.vertical).clamp(minHeight, double.infinity),
   );
 
   /// Resolves a value per breakpoint, falling back from larger tiers to mobile.
@@ -117,7 +118,7 @@ extension BreakpointUtils on BoxConstraints {
 }
 
 extension ResponsiveContext on BuildContext {
-  Breakpoint get breakpoint => switch (_mq.size.width) {
+  Breakpoint get breakpoint => switch (MediaQuery.sizeOf(this).width) {
     < Breakpoints.tablet => Breakpoint.mobile,
     < Breakpoints.desktop => Breakpoint.tablet,
     < Breakpoints.widescreen => Breakpoint.desktop,
@@ -135,8 +136,6 @@ extension ResponsiveContext on BuildContext {
   bool get isTablet => breakpoint.isTablet;
 
   bool get isWidescreen => breakpoint.isWidescreen;
-
-  MediaQueryData get _mq => MediaQuery.of(this);
 
   /// Shorthand for breakpoint-driven value resolution.
   T responsive<T>({required T mobile, T? tablet, T? desktop, T? widescreen}) => switch (breakpoint) {

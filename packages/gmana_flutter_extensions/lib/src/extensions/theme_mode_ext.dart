@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import '../services/theme_mode_service.dart';
 
 extension ThemeModeExt on ThemeMode {
-  IconData toIcon() => const ThemeModeService().getIcon(this);
+  IconData toIcon() => ThemeModeService.getIcon(this);
 
-  String toLabel() => const ThemeModeService().getLabel(this);
+  String toKey() => ThemeModeService.getKey(this);
+
+  String toLabel() => ThemeModeService.getLabel(this);
 }
 
 extension ThemeModeStringExt on String {
-  IconData toThemeIcon() => const ThemeModeService().getIconFromKey(this);
+  IconData toThemeIcon() => ThemeModeService.getIconFromKey(this);
 
-  String toThemeLabel() => const ThemeModeService().getLabelFromKey(this);
+  String toThemeLabel() => ThemeModeService.getLabelFromKey(this);
 
-  ThemeMode toThemeMode() => const ThemeModeService().fromKey(this);
+  ThemeMode toThemeMode() => ThemeModeService.fromKey(this);
 }

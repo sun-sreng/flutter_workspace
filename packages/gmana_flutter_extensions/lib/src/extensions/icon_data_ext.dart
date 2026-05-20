@@ -33,14 +33,12 @@ abstract final class IconDataExt {
 }
 
 extension IconDataSerialization on IconData {
-  /// True when this icon round-trips correctly through [toJsonString].
-  bool get isSerializable => IconDataExt.tryParse(toJsonString()) != null;
-
-  /// Serializes to a JSON string.
-  String toJsonString() => jsonEncode({
-    'codePoint': codePoint,
-    'fontFamily': fontFamily,
-    'fontPackage': fontPackage,
-    'matchTextDirection': matchTextDirection,
-  });
+  /// Serializes to a compact JSON string; null and default fields are omitted.
+  String toJsonString() {
+    final map = <String, dynamic>{'codePoint': codePoint};
+    if (fontFamily != null) map['fontFamily'] = fontFamily;
+    if (fontPackage != null) map['fontPackage'] = fontPackage;
+    if (matchTextDirection) map['matchTextDirection'] = true;
+    return jsonEncode(map);
+  }
 }

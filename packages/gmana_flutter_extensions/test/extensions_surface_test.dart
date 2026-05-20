@@ -58,10 +58,8 @@ void main() {
 
   group('theme mode extensions', () {
     test('convert between storage keys and theme modes', () {
-      const service = ThemeModeService();
-
-      expect(service.fromKey('dark'), ThemeMode.dark);
-      expect(service.getKey(ThemeMode.light), 'light');
+      expect(ThemeModeService.fromKey('dark'), ThemeMode.dark);
+      expect(ThemeModeService.getKey(ThemeMode.light), 'light');
       expect('system'.toThemeMode(), ThemeMode.system);
       expect(ThemeMode.dark.toLabel(), 'Dark Mode');
     });
@@ -72,7 +70,6 @@ void main() {
       final source = Icons.home;
       final restored = IconDataExt.parse(source.toJsonString());
 
-      expect(source.isSerializable, isTrue);
       expect(restored.codePoint, source.codePoint);
       expect(restored.fontFamily, source.fontFamily);
     });

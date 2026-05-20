@@ -20,7 +20,8 @@ abstract final class ColorService {
     return hsl.withSaturation(saturation).toColor();
   }
 
-  /// Returns [count] analogous colors evenly spaced around [color].
+  /// Returns `2 * count` analogous colors: [count] steps left and right on the hue wheel,
+  /// interleaved as [left1, right1, left2, right2, …].
   static List<Color> analogous(Color color, {int count = 2, double spreadDegrees = 30}) {
     if (count < 1) {
       throw ArgumentError.value(count, 'count', 'must be at least 1');
@@ -43,9 +44,18 @@ abstract final class ColorService {
       throw ArgumentError.value(candidates, 'candidates', 'must not be empty');
     }
 
-    return candidates.reduce(
-      (best, color) => contrastRatio(color, background) > contrastRatio(best, background) ? color : best,
-    );
+    var best = candidates.first;
+    var bestRatio = contrastRatio(best, background);
+
+    for (var i = 1; i < candidates.length; i++) {
+      final ratio = contrastRatio(candidates[i], background);
+      if (ratio > bestRatio) {
+        best = candidates[i];
+        bestRatio = ratio;
+      }
+    }
+
+    return best;
   }
 
   static Color complementary(Color color) {
@@ -61,26 +71,26 @@ abstract final class ColorService {
     return luminanceA > luminanceB ? luminanceA / luminanceB : luminanceB / luminanceA;
   }
 
-  /// Generates a [MaterialColor] swatch using HSL lightness steps.
+  /// Generates a [MaterialColor] swatch relative to the input color's lightness.
+  /// Shade 500 is the input color itself; lighter shades approach white, darker shades approach black.
   static MaterialColor createMaterialColor(Color color) {
     final hsl = HSLColor.fromColor(color);
+    final l = hsl.lightness;
 
-    const shadeMap = {
-      50: 0.95,
-      100: 0.90,
-      200: 0.80,
-      300: 0.70,
-      400: 0.60,
-      500: 0.50,
-      600: 0.40,
-      700: 0.30,
-      800: 0.20,
-      900: 0.10,
-    };
+    Color at(double lightness) => hsl.withLightness(lightness.clamp(0.0, 1.0)).toColor();
 
-    final swatch = {for (final entry in shadeMap.entries) entry.key: hsl.withLightness(entry.value).toColor()};
-
-    return MaterialColor(color.toARGB32(), swatch);
+    return MaterialColor(color.toARGB32(), {
+      50: at(l + (1.0 - l) * 0.9),
+      100: at(l + (1.0 - l) * 0.8),
+      200: at(l + (1.0 - l) * 0.6),
+      300: at(l + (1.0 - l) * 0.4),
+      400: at(l + (1.0 - l) * 0.2),
+      500: color,
+      600: at(l * 0.9),
+      700: at(l * 0.75),
+      800: at(l * 0.6),
+      900: at(l * 0.4),
+    });
   }
 
   static Color greyscale(Color color) => adjustSaturation(color, amount: 1.0, desaturate: true);
@@ -101,7 +111,7 @@ abstract final class ColorService {
   }
 
   /// Mixes [color] with black.
-  static Color shade(Color color, [double amount = 0.5]) => mix(color, const Color(0xFF000000), amount);
+  static Color shade(Color color, [double amount = 0.5]) => mix(color, Colors.black, amount);
 
   static (Color, Color) splitComplementary(Color color) {
     final hsl = HSLColor.fromColor(color);
@@ -110,7 +120,7 @@ abstract final class ColorService {
   }
 
   /// Mixes [color] with white.
-  static Color tint(Color color, [double amount = 0.5]) => mix(color, const Color(0xFFFFFFFF), amount);
+  static Color tint(Color color, [double amount = 0.5]) => mix(color, Colors.white, amount);
 
   /// Outputs 8-char ARGB hex including alpha, for example `#CCFF5500`.
   static String toHexARGB(Color color, {bool withHashSign = true}) {
@@ -139,27 +149,14 @@ abstract final class ColorService {
   static Color? tryParseHex(String hex) {
     final clean = hex.startsWith('#') ? hex.substring(1) : hex;
 
-    return switch (clean.length) {
-      3 => () {
-        final r = clean[0] * 2;
-        final g = clean[1] * 2;
-        final b = clean[2] * 2;
-        final value = int.tryParse('FF$r$g$b', radix: 16);
-
-        return value != null ? Color(value) : null;
-      }(),
-      6 => () {
-        final value = int.tryParse('FF$clean', radix: 16);
-
-        return value != null ? Color(value) : null;
-      }(),
-      8 => () {
-        final value = int.tryParse(clean, radix: 16);
-
-        return value != null ? Color(value) : null;
-      }(),
+    final int? value = switch (clean.length) {
+      3 => int.tryParse('FF${clean[0] * 2}${clean[1] * 2}${clean[2] * 2}', radix: 16),
+      6 => int.tryParse('FF$clean', radix: 16),
+      8 => int.tryParse(clean, radix: 16),
       _ => null,
     };
+
+    return value != null ? Color(value) : null;
   }
 
   static void _checkUnitInterval(double value, String name) {
