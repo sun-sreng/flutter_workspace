@@ -2,26 +2,490 @@
 
 Pure Dart extension methods for core Dart types.
 
-## Extensions
-
-- **Duration** — arithmetic, formatting (`HumanizedDuration`, `DurationNaturalLanguageX`)
-- **num / int / double / bool** — nullability helpers, math utilities (`NumX`, `IntX`, `NumDurationExtension`, etc.)
-- **String** — conversion, formatting, validation helpers (`StringX`, `StringNullableX`)
-- **Iterable** — grouping, chunking, statistics (`IterableX`, `IterableNumX`, etc.)
-- **Stream** — debounce, throttle, scan, operators (`StreamX`, `StreamListX`)
-
-## Usage
-
 ```dart
 import 'package:gmana_extensions/gmana_extensions.dart';
+```
 
-// Duration
-final d = 5.seconds + 30.minutes;
-print(d.toHuman()); // '30m 5s'
+---
 
-// String
-print('hello world'.toTitleCase); // 'Hello World'
+## Table of contents
 
-// Iterable
-print([1, 2, 3].sum()); // 6
+- [Duration](#duration)
+- [num / int / double / bool](#num--int--double--bool)
+- [String](#string)
+- [Iterable](#iterable)
+- [Stream](#stream)
+
+---
+
+## Duration
+
+### Construction from numbers (`NumDurationExtension` on `num`)
+
+```dart
+5.seconds           // Duration(seconds: 5)
+30.minutes          // Duration(minutes: 30)
+2.hours             // Duration(hours: 2)
+1.days              // Duration(days: 1)
+3.weeks             // Duration(days: 21)
+500.milliseconds    // Duration(milliseconds: 500)
+500.ms              // same, shorter alias
+100.microseconds
+
+// Arithmetic still works
+final eta = 1.hours + 30.minutes + 45.seconds;
+```
+
+### Arithmetic & clamping (`HumanizedDuration`)
+
+```dart
+final d = 90.minutes;
+
+d * 2                       // Duration(hours: 3)
+d / 3                       // Duration(minutes: 30)
+
+d.clamp(1.hours, 2.hours)   // Duration(hours: 1, minutes: 30)
+d.coerceAtLeast(2.hours)    // Duration(hours: 2)
+d.coerceAtMost(1.hours)     // Duration(hours: 1)
+
+d.abs                       // always non-negative
+d.isNegative                // false
+d.isPositive                // true
+d.isZero                    // false
+
+d.isLongerThan(1.hours)     // true
+d.isShorterThan(2.hours)    // true
+d.isWithin(15.minutes, 1.hours + 10.minutes) // within 15m of 1h10m?
+```
+
+### Rounding
+
+```dart
+final d = Duration(minutes: 7, seconds: 40);
+
+d.roundToSeconds()    // Duration(minutes: 7, seconds: 40) — already whole seconds
+d.roundToMinutes()    // Duration(minutes: 8)
+d.ceilToMinutes()     // Duration(minutes: 8)
+d.floorToMinutes()    // Duration(minutes: 7)
+```
+
+### Parts & fractions
+
+```dart
+final d = Duration(hours: 1, minutes: 23, seconds: 45, milliseconds: 600);
+
+d.hoursPart         // 1
+d.minutesPart       // 23
+d.secondsPart       // 45
+d.millisecondsPart  // 600
+
+d.inHoursDouble     // 1.395...
+d.inMinutesDouble   // 83.76
+d.inSecondsDouble   // 5025.6
+d.inWeeksDouble     // 0.00993...
+d.totalHours        // same as inHoursDouble
+d.totalDays
+d.totalMinutes
+d.toSeconds()       // fractional seconds including ms
+```
+
+### Progress & remaining
+
+```dart
+final elapsed = 3.minutes;
+final total = 10.minutes;
+
+elapsed.progressOf(total)              // 0.3
+elapsed.progressOf(total, clampResult: false) // can exceed 1.0
+elapsed.remainingIn(total)             // Duration(minutes: 7)
+```
+
+### Video / animation frames
+
+```dart
+const fps = 24.0;
+final d = Duration(seconds: 5);
+
+d.toFrames(fps)                 // 120
+HumanizedDuration.fromFrames(120, fps) // Duration(seconds: 5)
+```
+
+### Async helpers
+
+```dart
+await 2.seconds.delay;                       // Future.delayed
+final result = await 500.ms.delayed(() => 42); // runs callback after delay
+```
+
+### Formatting
+
+```dart
+final d = Duration(hours: 1, minutes: 2, seconds: 34);
+
+d.toHuman()            // '1h 2m 34s'  — compact parts
+d.toVerboseString()    // '1h 2m 34s'
+d.toVerboseString(includeSeconds: false) // '1h 2m'
+d.toWordString()       // '1 hour 2 minutes 34 seconds'
+d.toHHMMSS()           // '01:02:34' or 'MM:SS' for durations under 1h
+d.toHumanizedString()  // '1:02:34'
+d.toPaddedString()     // '01:02:34'
+d.toRelativeString()   // 'in 1h 2m' / '1h 2m ago'
+
+// Natural language (DurationNaturalLanguageX)
+d.toNaturalString()    // '1 hour and 2 minutes'
+d.toCompactString()    // '1h 2m'
+d.toDetailedString()   // '1h 2m 34s 0ms'
+```
+
+---
+
+## num / int / double / bool
+
+### Nullable coercion
+
+```dart
+// int?
+int? n;
+n.orZero             // 0
+n.isNullOrZero       // true
+n.orDefault(42)      // 42
+
+// double?
+double? d;
+d.orZero             // 0.0
+d.orDefault(3.14)    // 3.14
+
+// num?
+num? x;
+x.orZero
+x.orDefault(10)
+
+// bool?
+bool? b;
+b.orFalse            // false
+b.orTrue             // true
+b.isNullOrFalse      // true
+```
+
+### `NumX` — math on any `num`
+
+```dart
+// Rounding to multiples
+17.roundToMultiple(5)    // 15
+17.ceilToMultiple(5)     // 20
+17.floorToMultiple(5)    // 15
+3.14159.roundTo(2)       // 3.14
+
+// Range checks
+7.isBetween(1, 10)       // true
+
+// Normalization / lerp
+50.normalized(0, 100)           // 0.5  — maps [0,100] → [0,1]
+50.normalized(0, 100, 0, 255)   // 127.5 — maps [0,100] → [0,255]
+50.normalizedClamped(0, 100)    // 0.5  — same but result clamped to [toMin,toMax]
+50.safeNormalized(0, 0, fallback: 0.5) // 0.5 — source range is zero, no throw
+
+0.3.lerp(10, 20)    // 13.0  — t=0.3 between 10 and 20
+
+// Temperature conversion
+100.0.celsiusToFahrenheit   // 212.0
+212.0.fahrenheitToCelsius   // 100.0
+0.0.celsiusToKelvin         // 273.15
+300.0.kelvinToCelsius       // 26.85
+
+// Predicates
+3.0.isWholeNumber    // true
+3.5.isWholeNumber    // false
+```
+
+### `IntX` — int-specific helpers
+
+```dart
+42.isEven           // true
+7.isOdd             // true
+42.digitCount       // 2
+42.digits           // [4, 2]
+7.isBetween(1, 10)  // true
+
+// Repeat an action
+3.times(() => print('hello'));  // prints 3 times
+
+// Inclusive range as lazy iterable
+1.to(5)              // [1, 2, 3, 4, 5]
+0.to(10, step: 2)    // [0, 2, 4, 6, 8, 10]
+```
+
+---
+
+## String
+
+### Null / blank safety (`StringNullableX` on `String?`)
+
+```dart
+String? s;
+s.orEmpty            // ''
+s.isNullOrEmpty      // true
+s.isNullOrBlank      // true
+s.orNull             // null (coerces blank '' to null)
+s.mapNotBlank((v) => v.toUpperCase())  // null if blank, else transformed
+```
+
+### Predicates (`StringX`)
+
+```dart
+'hello'.isBlank          // false
+'  '.isBlank             // true
+'hello'.isNotBlank       // true
+'ABC'.isAlpha            // true
+'A1B2'.isAlphanumeric    // true
+'42'.isNumeric           // true
+'hello'.blankToNull      // 'hello'
+'  '.blankToNull         // null
+```
+
+### Case conversion
+
+```dart
+'hello world'.toTitleCase       // 'Hello World'
+'hello world'.toSentenceCase    // 'Hello world'
+'hello world'.toCamelCase       // 'helloWorld'
+'hello world'.toSnakeCase       // 'hello_world'
+'hello world'.toKebabCase       // 'hello-world'
+'hello world'.toScreamingSnakeCase // 'HELLO_WORLD'
+'helloWorld'.toSnakeCase        // 'hello_world'
+'helloWorld'.toKebabCase        // 'hello-world'
+```
+
+### Slugs & URL helpers
+
+```dart
+'Hello World! 2024'.toSlug   // 'hello-world-2024'
+'hello'.toUriOrNull          // null (no scheme)
+'https://example.com'.toUriOrNull  // Uri(...)
+'https://example.com'.isUrl  // true
+```
+
+### Parse helpers
+
+```dart
+'42'.toIntOrNull     // 42
+'abc'.toIntOrNull    // null
+'abc'.toIntOrZero    // 0
+'3.14'.toDoubleOrNull // 3.14
+
+'true'.toBool        // true
+'yes'.toBool         // false  (only 'true' returns true)
+
+'{"a":1}'.jsonDecodeOrNull   // {'a': 1}
+'bad json'.jsonDecodeOrNull  // null
+
+'01:30'.toDurationOrNull     // Duration(minutes: 1, seconds: 30)
+'1:02:03'.toDuration()       // Duration(hours: 1, minutes: 2, seconds: 3)
+```
+
+### Manipulation
+
+```dart
+'hello'.repeat(3)                     // 'hellohellohello'
+'Hello World'.truncate(8)             // 'Hello...'
+'Hello World'.truncate(8, ellipsis: '…') // 'Hello W…'
+'Hello World'.truncateWords(8)        // 'Hello...' (breaks at word boundary)
+'hello'.wrap('(', ')')                // '(hello)'
+'hello'.wrap('<b>')                   // '<b>hello<b>'
+'--hello--'.trimHyphens()             // 'hello'
+'hello world'.removeWhitespace        // 'helloworld'
+'héllo'.reversed                      // 'ollèh' (Unicode-safe)
+'hello world'.countOccurrences('l')   // 3
+'hello'.hasLengthBetween(3, 10)       // true
+'Hello World'.readingTimeMinutes      // 1  (225 wpm estimate)
+```
+
+### Validation (`StringValidation`)
+
+```dart
+'user@example.com'.isValidEmail       // true
+'+12025551234'.isValidE164Phone       // true
+'555-1234'.isValidPhone               // true  (7–15 digits after stripping)
+'https://example.com'.isValidUrl      // true
+'#FF5500'.isValidHexColor             // true
+'192.168.0.1'.isValidIpv4            // true
+'2024-01-31'.isValidIsoDate          // true
+'550e8400-e29b-41d4-a716-446655440000'.isValidUuid // true
+'4111111111111111'.isValidCreditCard // true  (Luhn check)
+'John O\'Brien'.isValidName          // true
+'Abc123!xyz'.isValidPassword         // true
+
+// Password strength — returns set of unmet requirements
+'weak'.passwordStrength   // {PasswordStrength.minLength, PasswordStrength.uppercase, ...}
+
+// Length guard (protects against huge inputs)
+'hello'.isWithinLength(min: 3, max: 10)  // true
+```
+
+### Date strings (`StringDateExtension`)
+
+```dart
+'2024-01-15'.isDate        // true
+'2024-01-15'.isToday       // depends on today
+'2020-01-01'.isPast        // true
+'2099-12-31'.isFuture      // true
+'2024-01-13'.isWeekend     // true  (Saturday)
+'2024-01-15'.isWeekday     // true  (Monday)
+'2024-01-01'.isLeapYear    // true
+
+'2024-06-01'.isAfter('2024-01-01')    // true
+'2024-01-01'.isBefore('2025-01-01')   // true
+'2024-06-15'.isBetween('2024-01-01', '2024-12-31') // true
+```
+
+---
+
+## Iterable
+
+### Numeric statistics (`IterableNumX` on `Iterable<num>`)
+
+```dart
+final nums = [3, 1, 4, 1, 5, 9, 2, 6];
+
+nums.sum()          // 31
+nums.product()      // 6480
+nums.average        // 3.875
+nums.median         // 3.5
+nums.minOrNull      // 1
+nums.maxOrNull      // 9
+nums.range          // 8  (max - min)
+nums.variance       // population variance
+nums.stdDev         // population standard deviation
+
+nums.top(3)         // [9, 6, 5]  — descending
+nums.bottom(3)      // [1, 1, 2]  — ascending
+
+nums.clampAll(2, 7)            // [3, 2, 4, 2, 5, 7, 2, 6]
+nums.normalize()               // [0.25, 0.0, 0.375, 0.0, 0.5, 1.0, 0.125, 0.625]
+nums.runningSum().toList()     // [3, 4, 8, 9, 14, 23, 25, 31]
+nums.runningProduct().toList() // [3, 3, 12, 12, 60, 540, 1080, 6480]
+
+nums.allPositive    // true
+nums.allNonNegative // true
+nums.allNegative    // false
+
+// With empty-list safety
+<int>[].sum()           // 0 (identity default)
+<int>[].average         // null
+<int>[].averageOrThrow  // throws StateError
+<int>[].minOrNull       // null
+<int>[].minOrThrow      // throws StateError
+```
+
+### General iterable (`IterableX`)
+
+```dart
+final words = ['apple', 'ant', 'banana', 'bear', 'cherry'];
+
+// Group by first letter
+words.groupBy((w) => w[0]);
+// {'a': ['apple', 'ant'], 'b': ['banana', 'bear'], 'c': ['cherry']}
+
+// Chunk into pages
+[1, 2, 3, 4, 5].chunked(2).toList();
+// [[1, 2], [3, 4], [5]]
+
+// Distinct by derived key (preserves first-seen order)
+['foo', 'bar', 'baz'].distinctBy((s) => s[0]).toList();
+// ['foo', 'bar']
+
+// flatMap
+['hello', 'world'].flatMap((s) => s.split('').take(2)).toList();
+// ['h', 'e', 'w', 'o']
+
+['hello', null, 'world'].flatMapNotNull((s) => s?.split('')).toList();
+// ['h','e','l','l','o','w','o','r','l','d']
+```
+
+### Flatten (`IterableOfIterablesX`)
+
+```dart
+[[1, 2], [3, 4], [5]].flatten().toList()    // [1, 2, 3, 4, 5]
+[[1, 2], [3, 4], [5]].flattenToList()       // [1, 2, 3, 4, 5]
+```
+
+### Nullable filtering (`IterableNullableX`)
+
+```dart
+final values = ['a', null, 'b', null, 'c'];
+
+values.whereNotNull.toList()   // ['a', 'b', 'c']
+values.compact().toList()      // ['a', 'b', 'c']
+
+values.compactMap((s) => s?.toUpperCase()).toList(); // ['A', 'B', 'C']
+```
+
+---
+
+## Stream
+
+### Operators (`StreamX`)
+
+```dart
+// Debounce — emits only after a quiet period (e.g. search input)
+searchController.stream
+    .debounce(const Duration(milliseconds: 300))
+    .listen(runSearch);
+
+// Throttle — emits the first event, suppresses the rest within the window
+buttonTaps.throttle(const Duration(seconds: 1)).listen(submit);
+
+// Distinct — skip repeated values
+prefs.onChange
+    .distinctUntilChanged()
+    .listen(applySettings);
+
+// Custom equality
+stream
+    .distinctUntilChanged((a, b) => a.id == b.id)
+    .listen(update);
+
+// Scan — accumulate state (like redux reduce)
+clickStream
+    .scan(0, (count, _) => count + 1)
+    .listen((count) => print('Clicked $count times'));
+
+// Skip until a condition is met, then pass all subsequent events
+stream.skipUntil((v) => v > 10).listen(print);
+
+// Take while (inclusive — includes the first failing value, then closes)
+stream.takeWhileInclusive((v) => v < 100).listen(print);
+
+// Indexed — enumerate events
+stream.indexed.listen((pair) => print('${pair.$1}: ${pair.$2}'));
+
+// Pairwise — compare consecutive events
+prices.pairwise.listen((pair) {
+  final delta = pair.$2 - pair.$1;
+  print('Change: $delta');
+});
+
+// Error recovery
+stream.onErrorReturn(0).listen(print);
+stream.onErrorReturnWith((e) => -1).listen(print);
+
+// Null filtering
+Stream<int?>.value(null).whereNotNull<int>().listen(print); // skips null
+
+// Last value as Future (null if stream closes empty)
+final last = await stream.lastOrNull();
+```
+
+### List stream operators (`StreamListX`)
+
+```dart
+final itemsStream = Stream<List<int>>.value([3, 1, 4, 1, 5]);
+
+itemsStream.lengths.listen(print);              // 5
+itemsStream.whereNotEmpty.listen(print);        // passes [3,1,4,1,5], skips []
+itemsStream.filter((n) => n > 2).listen(print); // [3, 4, 5]
+itemsStream.mapItems((n) => n * 2).listen(print); // [6, 2, 8, 2, 10]
+itemsStream.flatMapItems((n) => [n, -n]).listen(print); // [3,-3,1,-1,4,-4,1,-1,5,-5]
+itemsStream.sortedBy((a, b) => a.compareTo(b)).listen(print); // [1,1,3,4,5]
+itemsStream.flatten().listen(print);            // 3, 1, 4, 1, 5  (individual ints)
 ```
