@@ -1,6 +1,6 @@
 /// Pure Dart runtime utilities.
 ///
-/// Provides [Debouncer], [Throttler], and [IdGenerator].
+/// Provides [Debouncer], [Throttler], [IdGenerator], and [SecureIdGenerator].
 library;
 
 export 'src/debouncer.dart';
