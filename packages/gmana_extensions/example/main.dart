@@ -38,9 +38,7 @@ Future<void> main() async {
   // top 3: [10, 9, 8]
   print('  chunks: ${scores.chunked(2).toList()}');
   // chunks: [[9, 4], [7, 10], [4, 8]]
-  print(
-    '  grouped: ${scores.groupBy((score) => score.isEven ? 'even' : 'odd')}',
-  );
+  print('  grouped: ${scores.groupBy((score) => score.isEven ? 'even' : 'odd')}');
   // grouped: {odd: [9, 7], even: [4, 10, 4, 8]}
 
   final nested = [
@@ -62,13 +60,7 @@ Future<void> main() async {
   print('  hex color: ${'#00AEEF'.isValidHexColor}');
   // hex color: true
 
-  final runningTotals =
-      await Stream.fromIterable([
-        1,
-        2,
-        3,
-        4,
-      ]).scan(0, (sum, n) => sum + n).toList();
+  final runningTotals = await Stream.fromIterable([1, 2, 3, 4]).scan(0, (sum, n) => sum + n).toList();
 
   print('\nStream');
   print('  running totals: $runningTotals');
