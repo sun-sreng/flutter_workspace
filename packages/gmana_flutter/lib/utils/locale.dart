@@ -43,8 +43,8 @@ Locale toLocale(String? locale) {
       default:
         return Locale.fromSubtags(
           languageCode: parts[0],
-          countryCode: parts.length > 1 ? parts[1] : null,
-          scriptCode: parts.length > 2 ? parts[2] : null,
+          scriptCode: parts.length > 1 ? parts[1] : null,
+          countryCode: parts.length > 2 ? parts[2] : null,
         );
     }
   } catch (e) {
