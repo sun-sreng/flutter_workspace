@@ -1,6 +1,7 @@
 library;
 
 export 'buttons/elevated_button.dart';
+export 'controllers/form_controller.dart';
 export 'fields/confirm_password_field.dart';
 export 'fields/email_field.dart';
 export 'fields/number_field.dart';
@@ -10,5 +11,6 @@ export 'models/field_config.dart';
 export 'validators/confirm_password_validator.dart';
 export 'validators/form_validator_adapter.dart';
 export 'widgets/configured_text_form_field.dart';
+export 'widgets/form.dart';
 export 'widgets/obscurable_text_form_field.dart';
 export 'widgets/visibility_toggle.dart';

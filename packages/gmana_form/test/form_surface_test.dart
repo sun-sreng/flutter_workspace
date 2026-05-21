@@ -169,5 +169,51 @@ void main() {
         expect(config.label, 'Display name');
       },
     );
+
+    testWidgets('GFormController validates, saves, reads, and resets text', (
+      tester,
+    ) async {
+      final controller = GFormController();
+      addTearDown(controller.dispose);
+
+      var savedValue = '';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: GForm(
+              controller: controller,
+              child: Column(
+                children: [
+                  GTextField(
+                    config: GTextFieldConfig(
+                      controller: controller.textController('username'),
+                      label: 'Username',
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Required'
+                                  : null,
+                      onSaved: (value) => savedValue = value ?? '',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(controller.validateAndSave(), isFalse);
+
+      await tester.enterText(find.byType(TextFormField), 'sreng');
+      expect(controller.validateAndSave(), isTrue);
+      expect(savedValue, 'sreng');
+      expect(controller.text('username'), 'sreng');
+      expect(controller.textValues(), {'username': 'sreng'});
+
+      controller.reset();
+      expect(controller.text('username'), isEmpty);
+    });
   });
 }

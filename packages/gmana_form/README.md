@@ -16,19 +16,17 @@ import 'package:gmana_form/gmana_form.dart';
 ## Quick Start
 
 ```dart
-final formKey = GlobalKey<FormState>();
-final email = TextEditingController();
-final password = TextEditingController();
+final form = GFormController();
 
-Form(
-  key: formKey,
+GForm(
+  controller: form,
   autovalidateMode: AutovalidateMode.onUserInteraction,
   child: Column(
     children: [
-      GTextField.email(controller: email),
+      GTextField.email(controller: form.textController('email')),
       const SizedBox(height: 12),
       GTextField.password(
-        controller: password,
+        controller: form.textController('password'),
         validationConfig: PasswordValidationConfig.strong(),
       ),
       const SizedBox(height: 20),
@@ -36,14 +34,44 @@ Form(
         label: 'Sign in',
         loading: isSubmitting,
         onPressed: () {
-          if (formKey.currentState?.validate() ?? false) {
-            submit();
+          if (form.validateAndSave()) {
+            submit(form.textValues());
           }
         },
       ),
     ],
   ),
 )
+```
+
+Dispose the controller from your `State`:
+
+```dart
+@override
+void dispose() {
+  form.dispose();
+  super.dispose();
+}
+```
+
+## Form Controller
+
+`GFormController` owns a `GlobalKey<FormState>` and lazily creates named text
+controllers.
+
+```dart
+final form = GFormController();
+
+final emailController = form.textController('email');
+final email = form.text('email');
+final values = form.textValues();
+
+if (form.validateAndSave()) {
+  await repository.save(values);
+}
+
+form.reset();
+form.dispose();
 ```
 
 ## Fields

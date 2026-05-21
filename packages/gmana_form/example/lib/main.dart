@@ -32,32 +32,21 @@ class ExampleFormPage extends StatefulWidget {
 }
 
 class _ExampleFormPageState extends State<ExampleFormPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _ageController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _form = GFormController();
 
   bool _isSubmitting = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _ageController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _form.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
-    final form = _formKey.currentState;
-    if (form == null || !form.validate()) {
+    if (!_form.validateAndSave()) {
       return;
     }
 
-    form.save();
     setState(() => _isSubmitting = true);
 
     await Future<void>.delayed(const Duration(milliseconds: 700));
@@ -68,7 +57,7 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
 
     setState(() => _isSubmitting = false);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Welcome, ${_nameController.text.trim()}')),
+      SnackBar(content: Text('Welcome, ${_form.text('name').trim()}')),
     );
   }
 
@@ -80,8 +69,9 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
-            child: Form(
-              key: _formKey,
+            child: GForm(
+              controller: _form,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -92,7 +82,7 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
                   const SizedBox(height: 16),
                   GTextField(
                     config: GTextFieldConfig(
-                      controller: _nameController,
+                      controller: _form.textController('name'),
                       label: 'Name',
                       hint: 'Enter your full name',
                       textInputAction: TextInputAction.next,
@@ -101,26 +91,26 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
                   ),
                   const SizedBox(height: 12),
                   GEmailField(
-                    controller: _emailController,
+                    controller: _form.textController('email'),
                     label: 'Email',
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 12),
                   GNumberField(
-                    controller: _ageController,
+                    controller: _form.textController('age'),
                     label: 'Age',
                     hint: 'Enter your age',
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 12),
                   GPasswordField(
-                    controller: _passwordController,
+                    controller: _form.textController('password'),
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 12),
                   GConfirmPasswordField(
-                    controller: _confirmPasswordController,
-                    passwordController: _passwordController,
+                    controller: _form.textController('confirmPassword'),
+                    passwordController: _form.textController('password'),
                   ),
                   const SizedBox(height: 20),
                   SizedBox(

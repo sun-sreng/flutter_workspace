@@ -9,6 +9,8 @@
   confirm-password fields.
 - Added `GSubmitButton` with custom child support and a text convenience
   factory.
+- Added `GFormController` and `GForm` for simpler form lifecycle, validation,
+  save, reset, and named text-controller management.
 - Added optional controller support via `initialValue` for simpler forms.
 - Added autofill, obscure-text, autocorrect, suggestions, prefix, suffix, and
   suffix-icon configuration to `GTextFieldConfig`.
