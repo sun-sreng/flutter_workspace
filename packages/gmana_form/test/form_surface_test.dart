@@ -215,5 +215,33 @@ void main() {
       controller.reset();
       expect(controller.text('username'), isEmpty);
     });
+
+    testWidgets('named fields resolve their controller from GForm', (
+      tester,
+    ) async {
+      final controller = GFormController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: GForm(
+              controller: controller,
+              child: GTextField.email(
+                name: 'email',
+                initialValue: 'draft@example.com',
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(controller.text('email'), 'draft@example.com');
+
+      await tester.enterText(find.byType(TextFormField), 'user@example.com');
+
+      expect(controller.text('email'), 'user@example.com');
+      expect(controller.textValues(), {'email': 'user@example.com'});
+    });
   });
 }

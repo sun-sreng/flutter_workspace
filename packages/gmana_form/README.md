@@ -23,10 +23,10 @@ GForm(
   autovalidateMode: AutovalidateMode.onUserInteraction,
   child: Column(
     children: [
-      GTextField.email(controller: form.textController('email')),
+      GTextField.email(name: 'email'),
       const SizedBox(height: 12),
       GTextField.password(
-        controller: form.textController('password'),
+        name: 'password',
         validationConfig: PasswordValidationConfig.strong(),
       ),
       const SizedBox(height: 20),
@@ -62,16 +62,25 @@ controllers.
 ```dart
 final form = GFormController();
 
-final emailController = form.textController('email');
-final email = form.text('email');
-final values = form.textValues();
+GForm(
+  controller: form,
+  child: GTextField.email(name: 'email'),
+);
 
 if (form.validateAndSave()) {
-  await repository.save(values);
+  await repository.save(form.textValues());
 }
 
 form.reset();
 form.dispose();
+```
+
+You can still request a controller directly when another widget needs it:
+
+```dart
+final password = form.textController('password');
+
+GTextField.password(controller: password)
 ```
 
 ## Fields
@@ -98,24 +107,24 @@ Use preset constructors when the intent is common:
 
 ```dart
 GTextField.text(
-  controller: name,
+  name: 'name',
   label: 'Full name',
   validationConfig: const TextValidationConfig(minLength: 2),
 )
 
 GTextField.email(
-  controller: email,
+  name: 'email',
   validationConfig: EmailValidationConfig.strict(),
 )
 
 GTextField.number(
-  controller: age,
+  name: 'age',
   label: 'Age',
   validationConfig: NumberValidationConfig.positiveInteger(min: 13, max: 120),
 )
 
 GTextField.password(
-  controller: password,
+  name: 'password',
   textInputAction: TextInputAction.next,
 )
 

@@ -9,6 +9,7 @@ import 'text_field.dart';
 class GEmailField extends StatelessWidget {
   GEmailField({
     super.key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     String label = 'Email',
@@ -33,6 +34,7 @@ class GEmailField extends StatelessWidget {
     Iterable<String>? autofillHints = const [AutofillHints.email],
     InputDecoration? decoration,
   }) : field = GTextField.email(
+         name: name,
          controller: controller,
          initialValue: initialValue,
          label: label,

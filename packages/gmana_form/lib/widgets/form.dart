@@ -23,13 +23,44 @@ class GForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: controller.key,
-      autovalidateMode: autovalidateMode,
-      canPop: canPop,
-      onPopInvokedWithResult: onPopInvokedWithResult,
-      onChanged: onChanged,
-      child: child,
+    return _GFormScope(
+      controller: controller,
+      child: Form(
+        key: controller.key,
+        autovalidateMode: autovalidateMode,
+        canPop: canPop,
+        onPopInvokedWithResult: onPopInvokedWithResult,
+        onChanged: onChanged,
+        child: child,
+      ),
     );
+  }
+
+  static GFormController? maybeControllerOf(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<_GFormScope>()
+        ?.controller;
+  }
+
+  static GFormController controllerOf(BuildContext context) {
+    final controller = maybeControllerOf(context);
+    if (controller == null) {
+      throw FlutterError(
+        'No GForm found in context. '
+        'Wrap named gmana_form fields with GForm or pass a controller directly.',
+      );
+    }
+    return controller;
+  }
+}
+
+class _GFormScope extends InheritedWidget {
+  final GFormController controller;
+
+  const _GFormScope({required this.controller, required super.child});
+
+  @override
+  bool updateShouldNotify(_GFormScope oldWidget) {
+    return controller != oldWidget.controller;
   }
 }

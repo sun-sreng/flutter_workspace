@@ -14,6 +14,7 @@ class GTextField extends StatelessWidget {
 
   factory GTextField.text({
     Key? key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     String label = 'Text',
@@ -45,6 +46,7 @@ class GTextField extends StatelessWidget {
   }) {
     final config = GTextFieldConfig(
       controller: controller,
+      name: name,
       initialValue: initialValue,
       label: label,
       hint: hint,
@@ -79,6 +81,7 @@ class GTextField extends StatelessWidget {
 
   factory GTextField.email({
     Key? key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     String label = 'Email',
@@ -106,6 +109,7 @@ class GTextField extends StatelessWidget {
   }) {
     final config = GTextFieldConfig(
       controller: controller,
+      name: name,
       initialValue: initialValue,
       label: label,
       hint: hint,
@@ -137,6 +141,7 @@ class GTextField extends StatelessWidget {
 
   factory GTextField.number({
     Key? key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     String label = 'Number',
@@ -167,6 +172,7 @@ class GTextField extends StatelessWidget {
   }) {
     final config = GTextFieldConfig(
       controller: controller,
+      name: name,
       initialValue: initialValue,
       label: label,
       hint: hint,
@@ -204,6 +210,7 @@ class GTextField extends StatelessWidget {
 
   factory GTextField.password({
     Key? key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     String label = 'Password',
@@ -233,6 +240,7 @@ class GTextField extends StatelessWidget {
   }) {
     final config = GTextFieldConfig(
       controller: controller,
+      name: name,
       initialValue: initialValue,
       label: label,
       hint: hint,
@@ -271,6 +279,7 @@ class GTextField extends StatelessWidget {
 
   factory GTextField.confirmPassword({
     Key? key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     required TextEditingController passwordController,
@@ -301,6 +310,7 @@ class GTextField extends StatelessWidget {
   }) {
     final config = GTextFieldConfig(
       controller: controller,
+      name: name,
       initialValue: initialValue,
       label: label,
       hint: hint,

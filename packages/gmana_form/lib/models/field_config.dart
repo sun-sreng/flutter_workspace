@@ -10,6 +10,7 @@ typedef GFormValidator = String? Function(String? value);
 /// teams can start with the built-in presets and still customize production
 /// forms without dropping down to raw Flutter widgets.
 final class GTextFieldConfig {
+  final String? name;
   final TextEditingController? controller;
   final String? initialValue;
   final String? label;
@@ -43,6 +44,7 @@ final class GTextFieldConfig {
   final InputDecoration? decoration;
 
   const GTextFieldConfig({
+    this.name,
     this.controller,
     this.initialValue,
     this.label,
@@ -80,6 +82,7 @@ final class GTextFieldConfig {
        );
 
   GTextFieldConfig copyWith({
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     String? label,
@@ -113,6 +116,7 @@ final class GTextFieldConfig {
     InputDecoration? decoration,
   }) {
     return GTextFieldConfig(
+      name: name ?? this.name,
       controller: controller ?? this.controller,
       initialValue: initialValue ?? this.initialValue,
       label: label ?? this.label,

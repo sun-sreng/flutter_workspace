@@ -82,7 +82,7 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
                   const SizedBox(height: 16),
                   GTextField(
                     config: GTextFieldConfig(
-                      controller: _form.textController('name'),
+                      name: 'name',
                       label: 'Name',
                       hint: 'Enter your full name',
                       textInputAction: TextInputAction.next,
@@ -91,25 +91,25 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
                   ),
                   const SizedBox(height: 12),
                   GEmailField(
-                    controller: _form.textController('email'),
+                    name: 'email',
                     label: 'Email',
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 12),
                   GNumberField(
-                    controller: _form.textController('age'),
+                    name: 'age',
                     label: 'Age',
                     hint: 'Enter your age',
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 12),
                   GPasswordField(
-                    controller: _form.textController('password'),
+                    name: 'password',
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 12),
                   GConfirmPasswordField(
-                    controller: _form.textController('confirmPassword'),
+                    name: 'confirmPassword',
                     passwordController: _form.textController('password'),
                   ),
                   const SizedBox(height: 20),

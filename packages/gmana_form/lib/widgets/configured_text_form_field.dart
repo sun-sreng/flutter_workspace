@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/field_config.dart';
+import 'form.dart';
 
 class GConfiguredTextFormField extends StatelessWidget {
   const GConfiguredTextFormField({
@@ -14,9 +15,17 @@ class GConfiguredTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller =
+        config.controller ??
+        (config.name == null
+            ? null
+            : GForm.controllerOf(
+              context,
+            ).textController(config.name!, text: config.initialValue));
+
     return TextFormField(
-      controller: config.controller,
-      initialValue: config.initialValue,
+      controller: controller,
+      initialValue: controller == null ? config.initialValue : null,
       focusNode: config.focusNode,
       obscureText: config.obscureText,
       obscuringCharacter: config.obscuringCharacter,

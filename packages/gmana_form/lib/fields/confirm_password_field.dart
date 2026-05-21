@@ -10,6 +10,7 @@ import 'text_field.dart';
 class GConfirmPasswordField extends StatelessWidget {
   GConfirmPasswordField({
     super.key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     required TextEditingController passwordController,
@@ -37,6 +38,7 @@ class GConfirmPasswordField extends StatelessWidget {
     Iterable<String>? autofillHints = const [AutofillHints.password],
     InputDecoration? decoration,
   }) : field = GTextField.confirmPassword(
+         name: name,
          controller: controller,
          initialValue: initialValue,
          passwordController: passwordController,

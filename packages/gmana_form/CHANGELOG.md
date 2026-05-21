@@ -11,6 +11,9 @@
   factory.
 - Added `GFormController` and `GForm` for simpler form lifecycle, validation,
   save, reset, and named text-controller management.
+- Added named field binding through `GTextFieldConfig.name` and preset `name`
+  parameters. Fields inside `GForm` can now resolve their controller
+  automatically.
 - Added optional controller support via `initialValue` for simpler forms.
 - Added autofill, obscure-text, autocorrect, suggestions, prefix, suffix, and
   suffix-icon configuration to `GTextFieldConfig`.

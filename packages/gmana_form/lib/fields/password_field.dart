@@ -9,6 +9,7 @@ import 'text_field.dart';
 class GPasswordField extends StatelessWidget {
   GPasswordField({
     super.key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     String label = 'Password',
@@ -35,6 +36,7 @@ class GPasswordField extends StatelessWidget {
     Iterable<String>? autofillHints = const [AutofillHints.password],
     InputDecoration? decoration,
   }) : field = GTextField.password(
+         name: name,
          controller: controller,
          initialValue: initialValue,
          label: label,

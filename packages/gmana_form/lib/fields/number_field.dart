@@ -9,6 +9,7 @@ import 'text_field.dart';
 class GNumberField extends StatelessWidget {
   GNumberField({
     super.key,
+    String? name,
     TextEditingController? controller,
     String? initialValue,
     String label = 'Number',
@@ -36,6 +37,7 @@ class GNumberField extends StatelessWidget {
     Iterable<String>? autofillHints,
     InputDecoration? decoration,
   }) : field = GTextField.number(
+         name: name,
          controller: controller,
          initialValue: initialValue,
          label: label,
