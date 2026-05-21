@@ -173,7 +173,6 @@ Form(
 | `GConfiguredTextFormField`                     | Render a `TextFormField` from `GFieldConfig`.                               |
 | `GObscurableTextFormField`                     | Text field with password visibility toggle.                                 |
 | `VisibilityToggle`                             | Reusable show/hide icon button.                                             |
-| `GBaseField`                                   | Base class for field widgets using `GFieldConfig`.                          |
 | `GEmailField`                                  | Email input with keyboard type, icon, and `EmailValidator`.                 |
 | `GPasswordField`                               | Password input with visibility toggle and `PasswordValidator`.              |
 | `GConfirmPasswordField`                        | Confirmation input that compares against a password controller.             |
@@ -183,7 +182,6 @@ Form(
 | `ConfirmPasswordValidationConfig`              | Configure required confirmation and whitespace trimming.                    |
 | `ConfirmPasswordValidator.validate(...)`       | Validate password/confirmation pairs.                                       |
 | `resolveConfirmPasswordValidationIssue(issue)` | Convert confirm-password issues to English messages.                        |
-| `InputFormatterProvider.getFormatters()`       | Interface for reusable input formatter providers.                           |
 
 ## Widgets
 

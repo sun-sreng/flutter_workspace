@@ -2,49 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gmana_validation/gmana_validation.dart';
 
-import '../validators/form_validator_adapter.dart';
-
 import '../models/field_config.dart';
-import '../widgets/configured_text_form_field.dart';
-import 'base_field.dart';
+import 'text_field.dart';
 
-/// A customizable email input field with default validation and email-specific keyboard.
-class GEmailField extends GBaseField {
+/// Email preset kept for discoverability.
+class GEmailField extends StatelessWidget {
   GEmailField({
     super.key,
-    required TextEditingController controller,
-    required String labelText,
-    String? hintText,
-    TextInputAction? textInputAction,
+    TextEditingController? controller,
+    String? initialValue,
+    String label = 'Email',
+    String hint = 'Enter your email',
+    TextInputAction textInputAction = TextInputAction.next,
     List<TextInputFormatter>? inputFormatters,
-    EmailValidationConfig? validationConfig,
+    EmailValidationConfig validationConfig = const EmailValidationConfig(),
     ValidationMessageResolver<EmailValidationIssue>? validationMessageResolver,
-    String? Function(String?)? validatorOverride,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
     void Function(String)? onChanged,
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
     IconData? prefixIcon,
-  }) : super(
-         config: GFieldConfig(
-           controller: controller,
-           labelText: labelText,
-           hintText: hintText ?? 'Enter your email',
-           keyboardType: TextInputType.emailAddress,
-           textInputAction: textInputAction ?? TextInputAction.next,
-           inputFormatters: inputFormatters,
-           validator: asFormValidator(
-             validate:
-                 EmailValidator(
-                   validationConfig ?? const EmailValidationConfig(),
-                 ).validate,
-             resolve: validationMessageResolver ?? resolveEmailValidationIssue,
-             validatorOverride: validatorOverride,
-           ),
-           onChanged: onChanged,
-           prefixIcon: prefixIcon ?? Icons.email,
-         ),
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? maxLength,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints = const [AutofillHints.email],
+    InputDecoration? decoration,
+  }) : field = GTextField.email(
+         controller: controller,
+         initialValue: initialValue,
+         label: label,
+         hint: hint,
+         textInputAction: textInputAction,
+         inputFormatters: inputFormatters,
+         validationConfig: validationConfig,
+         validationMessageResolver:
+             validationMessageResolver ?? resolveEmailValidationIssue,
+         validator: validator,
+         configure: configure,
+         onChanged: onChanged,
+         onFieldSubmitted: onFieldSubmitted,
+         onSaved: onSaved,
+         prefixIcon: prefixIcon,
+         focusNode: focusNode,
+         autovalidateMode: autovalidateMode,
+         enabled: enabled,
+         readOnly: readOnly,
+         maxLength: maxLength,
+         textAlign: textAlign,
+         style: style,
+         autofillHints: autofillHints,
+         decoration: decoration,
        );
 
+  final GTextField field;
+
+  GTextFieldConfig get config => field.config;
+
   @override
-  Widget build(BuildContext context) {
-    return GConfiguredTextFormField(config: config);
-  }
+  Widget build(BuildContext context) => field;
 }

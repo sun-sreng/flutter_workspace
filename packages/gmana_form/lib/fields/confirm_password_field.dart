@@ -4,56 +4,70 @@ import 'package:gmana_validation/gmana_validation.dart';
 
 import '../models/field_config.dart';
 import '../validators/confirm_password_validator.dart';
-import '../widgets/obscurable_text_form_field.dart';
-import 'base_field.dart';
+import 'text_field.dart';
 
-class GConfirmPasswordField extends GBaseField {
+/// Confirm-password preset kept for discoverability.
+class GConfirmPasswordField extends StatelessWidget {
   GConfirmPasswordField({
     super.key,
-    required TextEditingController controller,
+    TextEditingController? controller,
+    String? initialValue,
     required TextEditingController passwordController,
-    String labelText = 'Confirm Password',
-    String? hintText,
-    TextInputAction? textInputAction,
+    String label = 'Confirm password',
+    String hint = 'Re-enter your password',
+    TextInputAction textInputAction = TextInputAction.done,
     List<TextInputFormatter>? inputFormatters,
-    ConfirmPasswordValidationConfig? validationConfig,
+    ConfirmPasswordValidationConfig validationConfig =
+        const ConfirmPasswordValidationConfig(),
     ValidationMessageResolver<ConfirmPasswordValidationIssue>?
     validationMessageResolver,
-    String? Function(String?)? validatorOverride,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
     void Function(String)? onChanged,
-  }) : super(
-         config: GFieldConfig(
-           controller: controller,
-           labelText: labelText,
-           hintText: hintText ?? 'Re-enter your password',
-           keyboardType: TextInputType.visiblePassword,
-           textInputAction: textInputAction ?? TextInputAction.done,
-           inputFormatters: inputFormatters,
-           validator: (value) {
-             final message = ConfirmPasswordValidator(
-                   validationConfig ?? const ConfirmPasswordValidationConfig(),
-                 )
-                 .validate(
-                   password: passwordController.text,
-                   confirmation: value ?? '',
-                 )
-                 .fold(
-                   validationMessageResolver ??
-                       resolveConfirmPasswordValidationIssue,
-                   (_) => null,
-                 );
-             if (message != null) {
-               return message;
-             }
-             return validatorOverride?.call(value);
-           },
-           onChanged: onChanged,
-           prefixIcon: Icons.lock,
-         ),
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
+    IconData? prefixIcon,
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? maxLength,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints = const [AutofillHints.password],
+    InputDecoration? decoration,
+  }) : field = GTextField.confirmPassword(
+         controller: controller,
+         initialValue: initialValue,
+         passwordController: passwordController,
+         label: label,
+         hint: hint,
+         textInputAction: textInputAction,
+         inputFormatters: inputFormatters,
+         validationConfig: validationConfig,
+         validationMessageResolver:
+             validationMessageResolver ?? resolveConfirmPasswordValidationIssue,
+         validator: validator,
+         configure: configure,
+         onChanged: onChanged,
+         onFieldSubmitted: onFieldSubmitted,
+         onSaved: onSaved,
+         prefixIcon: prefixIcon,
+         focusNode: focusNode,
+         autovalidateMode: autovalidateMode,
+         enabled: enabled,
+         readOnly: readOnly,
+         maxLength: maxLength,
+         textAlign: textAlign,
+         style: style,
+         autofillHints: autofillHints,
+         decoration: decoration,
        );
 
+  final GTextField field;
+
+  GTextFieldConfig get config => field.config;
+
   @override
-  Widget build(BuildContext context) {
-    return GObscurableTextFormField(config: config);
-  }
+  Widget build(BuildContext context) => field;
 }

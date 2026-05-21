@@ -2,83 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gmana_validation/gmana_validation.dart';
 
-import '../validators/form_validator_adapter.dart';
-
 import '../models/field_config.dart';
-import '../widgets/configured_text_form_field.dart';
-import 'base_field.dart';
+import 'text_field.dart';
 
-/// A number input field with min/max validation.
-class GNumberField extends GBaseField {
+/// Number preset kept for discoverability.
+class GNumberField extends StatelessWidget {
   GNumberField({
     super.key,
-    required TextEditingController controller,
-    required String labelText,
-    String? hintText,
-    TextInputAction? textInputAction,
+    TextEditingController? controller,
+    String? initialValue,
+    String label = 'Number',
+    String? hint,
+    TextInputAction textInputAction = TextInputAction.next,
     List<TextInputFormatter>? inputFormatters,
-    NumberValidationConfig? validationConfig,
+    NumberValidationConfig validationConfig = const NumberValidationConfig(
+      allowNegative: false,
+      integerOnly: true,
+    ),
     ValidationMessageResolver<NumberValidationIssue>? validationMessageResolver,
-    String? Function(String?)? validatorOverride,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
     void Function(String)? onChanged,
-  }) : super(
-         config: GFieldConfig(
-           controller: controller,
-           labelText: labelText,
-           hintText: hintText ?? '',
-           keyboardType: TextInputType.numberWithOptions(
-             signed: _effectiveValidationConfig(validationConfig).allowNegative,
-             decimal: !_effectiveValidationConfig(validationConfig).integerOnly,
-           ),
-           textInputAction: textInputAction ?? TextInputAction.next,
-           inputFormatters: _buildInputFormatters(
-             inputFormatters: inputFormatters,
-             validationConfig: validationConfig,
-           ),
-           validator: asFormValidator(
-             validate:
-                 NumberValidator(
-                   _effectiveValidationConfig(validationConfig),
-                 ).validate,
-             resolve: validationMessageResolver ?? resolveNumberValidationIssue,
-             validatorOverride: validatorOverride,
-           ),
-           onChanged: onChanged,
-           prefixIcon: Icons.onetwothree,
-         ),
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
+    IconData? prefixIcon,
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? maxLength,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints,
+    InputDecoration? decoration,
+  }) : field = GTextField.number(
+         controller: controller,
+         initialValue: initialValue,
+         label: label,
+         hint: hint,
+         textInputAction: textInputAction,
+         inputFormatters: inputFormatters,
+         validationConfig: validationConfig,
+         validationMessageResolver:
+             validationMessageResolver ?? resolveNumberValidationIssue,
+         validator: validator,
+         configure: configure,
+         onChanged: onChanged,
+         onFieldSubmitted: onFieldSubmitted,
+         onSaved: onSaved,
+         prefixIcon: prefixIcon,
+         focusNode: focusNode,
+         autovalidateMode: autovalidateMode,
+         enabled: enabled,
+         readOnly: readOnly,
+         maxLength: maxLength,
+         textAlign: textAlign,
+         style: style,
+         autofillHints: autofillHints,
+         decoration: decoration,
        );
 
+  final GTextField field;
+
+  GTextFieldConfig get config => field.config;
+
   @override
-  Widget build(BuildContext context) {
-    return GConfiguredTextFormField(config: config);
-  }
-
-  static NumberValidationConfig _effectiveValidationConfig(
-    NumberValidationConfig? validationConfig,
-  ) {
-    return validationConfig ??
-        const NumberValidationConfig(allowNegative: false, integerOnly: true);
-  }
-
-  static List<TextInputFormatter>? _buildInputFormatters({
-    required List<TextInputFormatter>? inputFormatters,
-    required NumberValidationConfig? validationConfig,
-  }) {
-    final config = _effectiveValidationConfig(validationConfig);
-    final defaultFormatter = switch ((
-      config.integerOnly,
-      config.allowNegative,
-    )) {
-      (true, false) => FilteringTextInputFormatter.digitsOnly,
-      (true, true) => FilteringTextInputFormatter.allow(RegExp(r'^-?\d*$')),
-      (false, false) => FilteringTextInputFormatter.allow(
-        RegExp(r'^\d*\.?\d*$'),
-      ),
-      (false, true) => FilteringTextInputFormatter.allow(
-        RegExp(r'^-?\d*\.?\d*$'),
-      ),
-    };
-
-    return [defaultFormatter, if (inputFormatters != null) ...inputFormatters];
-  }
+  Widget build(BuildContext context) => field;
 }

@@ -2,49 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gmana_validation/gmana_validation.dart';
 
-import '../validators/form_validator_adapter.dart';
-
 import '../models/field_config.dart';
-import '../widgets/obscurable_text_form_field.dart';
-import 'base_field.dart';
+import 'text_field.dart';
 
-class GPasswordField extends GBaseField {
+/// Password preset kept for discoverability.
+class GPasswordField extends StatelessWidget {
   GPasswordField({
     super.key,
-    required TextEditingController controller,
-    String labelText = 'Password',
-    String? hintText,
-    TextInputAction? textInputAction,
+    TextEditingController? controller,
+    String? initialValue,
+    String label = 'Password',
+    String hint = 'Enter your password',
+    TextInputAction textInputAction = TextInputAction.done,
     List<TextInputFormatter>? inputFormatters,
-    PasswordValidationConfig? validationConfig,
+    PasswordValidationConfig validationConfig =
+        const PasswordValidationConfig(),
     ValidationMessageResolver<PasswordValidationIssue>?
     validationMessageResolver,
-    String? Function(String?)? validatorOverride,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
     void Function(String)? onChanged,
-  }) : super(
-         config: GFieldConfig(
-           controller: controller,
-           labelText: labelText,
-           hintText: hintText ?? 'Enter your password',
-           keyboardType: TextInputType.visiblePassword,
-           textInputAction: textInputAction ?? TextInputAction.done,
-           inputFormatters: inputFormatters,
-           validator: asFormValidator(
-             validate:
-                 PasswordValidator(
-                   validationConfig ?? const PasswordValidationConfig(),
-                 ).validate,
-             resolve:
-                 validationMessageResolver ?? resolvePasswordValidationIssue,
-             validatorOverride: validatorOverride,
-           ),
-           onChanged: onChanged,
-           prefixIcon: Icons.lock,
-         ),
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
+    IconData? prefixIcon,
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? maxLength,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints = const [AutofillHints.password],
+    InputDecoration? decoration,
+  }) : field = GTextField.password(
+         controller: controller,
+         initialValue: initialValue,
+         label: label,
+         hint: hint,
+         textInputAction: textInputAction,
+         inputFormatters: inputFormatters,
+         validationConfig: validationConfig,
+         validationMessageResolver:
+             validationMessageResolver ?? resolvePasswordValidationIssue,
+         validator: validator,
+         configure: configure,
+         onChanged: onChanged,
+         onFieldSubmitted: onFieldSubmitted,
+         onSaved: onSaved,
+         prefixIcon: prefixIcon,
+         focusNode: focusNode,
+         autovalidateMode: autovalidateMode,
+         enabled: enabled,
+         readOnly: readOnly,
+         maxLength: maxLength,
+         textAlign: textAlign,
+         style: style,
+         autofillHints: autofillHints,
+         decoration: decoration,
        );
 
+  final GTextField field;
+
+  GTextFieldConfig get config => field.config;
+
   @override
-  Widget build(BuildContext context) {
-    return GObscurableTextFormField(config: config);
-  }
+  Widget build(BuildContext context) => field;
 }

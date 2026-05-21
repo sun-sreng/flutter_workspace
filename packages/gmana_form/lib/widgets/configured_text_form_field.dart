@@ -6,20 +6,22 @@ class GConfiguredTextFormField extends StatelessWidget {
   const GConfiguredTextFormField({
     super.key,
     required this.config,
-    this.obscureText = false,
     this.suffixIcon,
   });
 
-  final GFieldConfig config;
-  final bool obscureText;
+  final GTextFieldConfig config;
   final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: config.controller,
+      initialValue: config.initialValue,
       focusNode: config.focusNode,
-      obscureText: obscureText,
+      obscureText: config.obscureText,
+      obscuringCharacter: config.obscuringCharacter,
+      autocorrect: config.autocorrect,
+      enableSuggestions: config.enableSuggestions,
       keyboardType: config.keyboardType,
       textInputAction: config.textInputAction,
       inputFormatters: config.inputFormatters,
@@ -31,18 +33,22 @@ class GConfiguredTextFormField extends StatelessWidget {
       enabled: config.enabled,
       readOnly: config.readOnly,
       minLines: config.minLines,
-      maxLines: obscureText ? 1 : config.maxLines,
+      maxLines: config.obscureText ? 1 : config.maxLines,
       maxLength: config.maxLength,
       textCapitalization: config.textCapitalization,
       textAlign: config.textAlign,
       style: config.style,
+      autofillHints: config.autofillHints,
       decoration: (config.decoration ?? const InputDecoration()).copyWith(
-        labelText: config.decoration?.labelText ?? config.labelText,
-        hintText: config.decoration?.hintText ?? config.hintText,
+        labelText: config.decoration?.labelText ?? config.label,
+        hintText: config.decoration?.hintText ?? config.hint,
+        prefix: config.decoration?.prefix ?? config.prefix,
         prefixIcon:
             config.decoration?.prefixIcon ??
             (config.prefixIcon != null ? Icon(config.prefixIcon) : null),
-        suffixIcon: config.decoration?.suffixIcon ?? suffixIcon,
+        suffix: config.decoration?.suffix ?? config.suffix,
+        suffixIcon:
+            config.decoration?.suffixIcon ?? suffixIcon ?? config.suffixIcon,
       ),
     );
   }

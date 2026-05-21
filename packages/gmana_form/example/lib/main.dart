@@ -15,7 +15,9 @@ class GmanaFormExampleApp extends StatelessWidget {
       title: 'gmana_form',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F766E)),
-        inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
       ),
       home: const ExampleFormPage(),
     );
@@ -65,7 +67,9 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
     }
 
     setState(() => _isSubmitting = false);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Welcome, ${_nameController.text.trim()}')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Welcome, ${_nameController.text.trim()}')),
+    );
   }
 
   @override
@@ -81,25 +85,38 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  Text('Create account', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(
+                    'Create account',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
                   const SizedBox(height: 16),
                   GTextField(
-                    controller: _nameController,
-                    labelText: 'Name',
-                    hintText: 'Enter your full name',
-                    textInputAction: TextInputAction.next,
+                    config: GTextFieldConfig(
+                      controller: _nameController,
+                      label: 'Name',
+                      hint: 'Enter your full name',
+                      textInputAction: TextInputAction.next,
+                      prefixIcon: Icons.person,
+                    ),
                   ),
                   const SizedBox(height: 12),
-                  GEmailField(controller: _emailController, labelText: 'Email', textInputAction: TextInputAction.next),
+                  GEmailField(
+                    controller: _emailController,
+                    label: 'Email',
+                    textInputAction: TextInputAction.next,
+                  ),
                   const SizedBox(height: 12),
                   GNumberField(
                     controller: _ageController,
-                    labelText: 'Age',
-                    hintText: 'Enter your age',
+                    label: 'Age',
+                    hint: 'Enter your age',
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 12),
-                  GPasswordField(controller: _passwordController, textInputAction: TextInputAction.next),
+                  GPasswordField(
+                    controller: _passwordController,
+                    textInputAction: TextInputAction.next,
+                  ),
                   const SizedBox(height: 12),
                   GConfirmPasswordField(
                     controller: _confirmPasswordController,
@@ -108,7 +125,11 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 48,
-                    child: GElevatedButton(isLoading: _isSubmitting, onPressed: _submit, text: 'Submit'),
+                    child: GSubmitButton.text(
+                      loading: _isSubmitting,
+                      onPressed: _submit,
+                      label: 'Submit',
+                    ),
                   ),
                 ],
               ),

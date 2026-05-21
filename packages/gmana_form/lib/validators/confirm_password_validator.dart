@@ -72,6 +72,10 @@ final class ConfirmPasswordValidator {
       return const Left(ConfirmPasswordEmptyIssue());
     }
 
+    if (!config.requireConfirmation && normalizedConfirmation.isEmpty) {
+      return Right(normalizedConfirmation);
+    }
+
     if (normalizedConfirmation != normalizedPassword) {
       return const Left(ConfirmPasswordMismatchIssue());
     }

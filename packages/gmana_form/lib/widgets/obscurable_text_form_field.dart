@@ -7,7 +7,7 @@ import 'visibility_toggle.dart';
 class GObscurableTextFormField extends StatefulWidget {
   const GObscurableTextFormField({super.key, required this.config});
 
-  final GFieldConfig config;
+  final GTextFieldConfig config;
 
   @override
   State<GObscurableTextFormField> createState() =>
@@ -20,9 +20,9 @@ class _GObscurableTextFormFieldState extends State<GObscurableTextFormField> {
   @override
   Widget build(BuildContext context) {
     return GConfiguredTextFormField(
-      config: widget.config,
-      obscureText: _obscureText,
+      config: widget.config.copyWith(obscureText: _obscureText),
       suffixIcon: VisibilityToggle(
+        obscureText: _obscureText,
         onVisibilityChanged: (obscure) {
           setState(() {
             _obscureText = obscure;

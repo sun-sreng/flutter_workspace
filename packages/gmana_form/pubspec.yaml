@@ -20,7 +20,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  gmana_functional: ^0.0.01
+  gmana_functional: ^0.0.1
   gmana_spinner: ^0.0.1
   gmana_validation: ^0.0.1
 

@@ -2,49 +2,366 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gmana_validation/gmana_validation.dart';
 
-import '../validators/form_validator_adapter.dart';
-
 import '../models/field_config.dart';
+import '../validators/confirm_password_validator.dart';
+import '../validators/form_validator_adapter.dart';
 import '../widgets/configured_text_form_field.dart';
-import 'base_field.dart';
+import '../widgets/obscurable_text_form_field.dart';
 
-/// A customizable text input field.
-class GTextField extends GBaseField {
-  GTextField({
-    super.key,
-    required TextEditingController controller,
-    required String labelText,
-    String? hintText,
-    TextInputAction? textInputAction,
+/// Generic text form field with named constructors for common form inputs.
+class GTextField extends StatelessWidget {
+  const GTextField({super.key, required this.config, this.obscurable = false});
+
+  factory GTextField.text({
+    Key? key,
+    TextEditingController? controller,
+    String? initialValue,
+    String label = 'Text',
+    String? hint,
+    TextInputType keyboardType = TextInputType.text,
+    TextInputAction textInputAction = TextInputAction.next,
     List<TextInputFormatter>? inputFormatters,
-    TextValidationConfig? validationConfig,
-    ValidationMessageResolver<TextValidationIssue>? validationMessageResolver,
-    String? Function(String?)? validatorOverride,
+    TextValidationConfig validationConfig = const TextValidationConfig(),
+    ValidationMessageResolver<TextValidationIssue> validationMessageResolver =
+        resolveTextValidationIssue,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
     void Function(String)? onChanged,
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
     IconData? prefixIcon,
-  }) : super(
-         config: GFieldConfig(
-           controller: controller,
-           labelText: labelText,
-           hintText: hintText ?? '',
-           keyboardType: TextInputType.text,
-           textInputAction: textInputAction ?? TextInputAction.next,
-           inputFormatters: inputFormatters,
-           validator: asFormValidator(
-             validate:
-                 TextValidator(
-                   validationConfig ?? const TextValidationConfig(),
-                 ).validate,
-             resolve: validationMessageResolver ?? resolveTextValidationIssue,
-             validatorOverride: validatorOverride,
-           ),
-           onChanged: onChanged,
-           prefixIcon: prefixIcon ?? Icons.text_fields,
-         ),
-       );
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? minLines,
+    int? maxLines = 1,
+    int? maxLength,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints,
+    InputDecoration? decoration,
+  }) {
+    final config = GTextFieldConfig(
+      controller: controller,
+      initialValue: initialValue,
+      label: label,
+      hint: hint,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
+      validator: asFormValidator(
+        validate: TextValidator(validationConfig).validate,
+        resolve: validationMessageResolver,
+        validatorOverride: validator,
+      ),
+      onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
+      onSaved: onSaved,
+      prefixIcon: prefixIcon ?? Icons.text_fields,
+      focusNode: focusNode,
+      autovalidateMode: autovalidateMode,
+      enabled: enabled,
+      readOnly: readOnly,
+      minLines: minLines,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      textCapitalization: textCapitalization,
+      textAlign: textAlign,
+      style: style,
+      autofillHints: autofillHints,
+      decoration: decoration,
+    );
+
+    return GTextField(key: key, config: configure?.call(config) ?? config);
+  }
+
+  factory GTextField.email({
+    Key? key,
+    TextEditingController? controller,
+    String? initialValue,
+    String label = 'Email',
+    String hint = 'Enter your email',
+    TextInputAction textInputAction = TextInputAction.next,
+    List<TextInputFormatter>? inputFormatters,
+    EmailValidationConfig validationConfig = const EmailValidationConfig(),
+    ValidationMessageResolver<EmailValidationIssue> validationMessageResolver =
+        resolveEmailValidationIssue,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
+    void Function(String)? onChanged,
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
+    IconData? prefixIcon,
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? maxLength,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints = const [AutofillHints.email],
+    InputDecoration? decoration,
+  }) {
+    final config = GTextFieldConfig(
+      controller: controller,
+      initialValue: initialValue,
+      label: label,
+      hint: hint,
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
+      validator: asFormValidator(
+        validate: EmailValidator(validationConfig).validate,
+        resolve: validationMessageResolver,
+        validatorOverride: validator,
+      ),
+      onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
+      onSaved: onSaved,
+      prefixIcon: prefixIcon ?? Icons.email,
+      focusNode: focusNode,
+      autovalidateMode: autovalidateMode,
+      enabled: enabled,
+      readOnly: readOnly,
+      maxLength: maxLength,
+      textAlign: textAlign,
+      style: style,
+      autofillHints: autofillHints,
+      decoration: decoration,
+    );
+
+    return GTextField(key: key, config: configure?.call(config) ?? config);
+  }
+
+  factory GTextField.number({
+    Key? key,
+    TextEditingController? controller,
+    String? initialValue,
+    String label = 'Number',
+    String? hint,
+    TextInputAction textInputAction = TextInputAction.next,
+    List<TextInputFormatter>? inputFormatters,
+    NumberValidationConfig validationConfig = const NumberValidationConfig(
+      allowNegative: false,
+      integerOnly: true,
+    ),
+    ValidationMessageResolver<NumberValidationIssue> validationMessageResolver =
+        resolveNumberValidationIssue,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
+    void Function(String)? onChanged,
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
+    IconData? prefixIcon,
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? maxLength,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints,
+    InputDecoration? decoration,
+  }) {
+    final config = GTextFieldConfig(
+      controller: controller,
+      initialValue: initialValue,
+      label: label,
+      hint: hint,
+      keyboardType: TextInputType.numberWithOptions(
+        signed: validationConfig.allowNegative,
+        decimal: !validationConfig.integerOnly,
+      ),
+      textInputAction: textInputAction,
+      inputFormatters: [
+        _numberFormatter(validationConfig),
+        if (inputFormatters != null) ...inputFormatters,
+      ],
+      validator: asFormValidator(
+        validate: NumberValidator(validationConfig).validate,
+        resolve: validationMessageResolver,
+        validatorOverride: validator,
+      ),
+      onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
+      onSaved: onSaved,
+      prefixIcon: prefixIcon ?? Icons.onetwothree,
+      focusNode: focusNode,
+      autovalidateMode: autovalidateMode,
+      enabled: enabled,
+      readOnly: readOnly,
+      maxLength: maxLength,
+      textAlign: textAlign,
+      style: style,
+      autofillHints: autofillHints,
+      decoration: decoration,
+    );
+
+    return GTextField(key: key, config: configure?.call(config) ?? config);
+  }
+
+  factory GTextField.password({
+    Key? key,
+    TextEditingController? controller,
+    String? initialValue,
+    String label = 'Password',
+    String hint = 'Enter your password',
+    TextInputAction textInputAction = TextInputAction.done,
+    List<TextInputFormatter>? inputFormatters,
+    PasswordValidationConfig validationConfig =
+        const PasswordValidationConfig(),
+    ValidationMessageResolver<PasswordValidationIssue>
+        validationMessageResolver =
+        resolvePasswordValidationIssue,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
+    void Function(String)? onChanged,
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
+    IconData? prefixIcon,
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? maxLength,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints = const [AutofillHints.password],
+    InputDecoration? decoration,
+  }) {
+    final config = GTextFieldConfig(
+      controller: controller,
+      initialValue: initialValue,
+      label: label,
+      hint: hint,
+      keyboardType: TextInputType.visiblePassword,
+      textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
+      validator: asFormValidator(
+        validate: PasswordValidator(validationConfig).validate,
+        resolve: validationMessageResolver,
+        validatorOverride: validator,
+      ),
+      onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
+      onSaved: onSaved,
+      prefixIcon: prefixIcon ?? Icons.lock,
+      focusNode: focusNode,
+      autovalidateMode: autovalidateMode,
+      enabled: enabled,
+      readOnly: readOnly,
+      obscureText: true,
+      autocorrect: false,
+      enableSuggestions: false,
+      maxLength: maxLength,
+      textAlign: textAlign,
+      style: style,
+      autofillHints: autofillHints,
+      decoration: decoration,
+    );
+
+    return GTextField(
+      key: key,
+      config: configure?.call(config) ?? config,
+      obscurable: true,
+    );
+  }
+
+  factory GTextField.confirmPassword({
+    Key? key,
+    TextEditingController? controller,
+    String? initialValue,
+    required TextEditingController passwordController,
+    String label = 'Confirm password',
+    String hint = 'Re-enter your password',
+    TextInputAction textInputAction = TextInputAction.done,
+    List<TextInputFormatter>? inputFormatters,
+    ConfirmPasswordValidationConfig validationConfig =
+        const ConfirmPasswordValidationConfig(),
+    ValidationMessageResolver<ConfirmPasswordValidationIssue>
+        validationMessageResolver =
+        resolveConfirmPasswordValidationIssue,
+    GFormValidator? validator,
+    GTextFieldConfig Function(GTextFieldConfig config)? configure,
+    void Function(String)? onChanged,
+    void Function(String)? onFieldSubmitted,
+    void Function(String?)? onSaved,
+    IconData? prefixIcon,
+    FocusNode? focusNode,
+    AutovalidateMode? autovalidateMode,
+    bool? enabled,
+    bool readOnly = false,
+    int? maxLength,
+    TextAlign textAlign = TextAlign.start,
+    TextStyle? style,
+    Iterable<String>? autofillHints = const [AutofillHints.password],
+    InputDecoration? decoration,
+  }) {
+    final config = GTextFieldConfig(
+      controller: controller,
+      initialValue: initialValue,
+      label: label,
+      hint: hint,
+      keyboardType: TextInputType.visiblePassword,
+      textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
+      validator: (value) {
+        final message = ConfirmPasswordValidator(validationConfig)
+            .validate(
+              password: passwordController.text,
+              confirmation: value ?? '',
+            )
+            .fold(validationMessageResolver, (_) => null);
+        return message ?? validator?.call(value);
+      },
+      onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
+      onSaved: onSaved,
+      prefixIcon: prefixIcon ?? Icons.lock,
+      focusNode: focusNode,
+      autovalidateMode: autovalidateMode,
+      enabled: enabled,
+      readOnly: readOnly,
+      obscureText: true,
+      autocorrect: false,
+      enableSuggestions: false,
+      maxLength: maxLength,
+      textAlign: textAlign,
+      style: style,
+      autofillHints: autofillHints,
+      decoration: decoration,
+    );
+
+    return GTextField(
+      key: key,
+      config: configure?.call(config) ?? config,
+      obscurable: true,
+    );
+  }
+
+  final GTextFieldConfig config;
+  final bool obscurable;
 
   @override
   Widget build(BuildContext context) {
+    if (obscurable) {
+      return GObscurableTextFormField(config: config);
+    }
     return GConfiguredTextFormField(config: config);
+  }
+
+  static TextInputFormatter _numberFormatter(NumberValidationConfig config) {
+    return switch ((config.integerOnly, config.allowNegative)) {
+      (true, false) => FilteringTextInputFormatter.digitsOnly,
+      (true, true) => FilteringTextInputFormatter.allow(RegExp(r'^-?\d*$')),
+      (false, false) => FilteringTextInputFormatter.allow(
+        RegExp(r'^\d*\.?\d*$'),
+      ),
+      (false, true) => FilteringTextInputFormatter.allow(
+        RegExp(r'^-?\d*\.?\d*$'),
+      ),
+    };
   }
 }
