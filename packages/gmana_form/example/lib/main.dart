@@ -34,30 +34,21 @@ class ExampleFormPage extends StatefulWidget {
 class _ExampleFormPageState extends State<ExampleFormPage> {
   final _form = GFormController();
 
-  bool _isSubmitting = false;
-
   @override
   void dispose() {
     _form.dispose();
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    if (!_form.validateAndSave()) {
-      return;
-    }
-
-    setState(() => _isSubmitting = true);
-
+  Future<void> _submit(Map<String, String> values) async {
     await Future<void>.delayed(const Duration(milliseconds: 700));
 
     if (!mounted) {
       return;
     }
 
-    setState(() => _isSubmitting = false);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Welcome, ${_form.text('name').trim()}')),
+      SnackBar(content: Text('Welcome, ${values['name']?.trim()}')),
     );
   }
 
@@ -115,9 +106,8 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 48,
-                    child: GSubmitButton.text(
-                      loading: _isSubmitting,
-                      onPressed: _submit,
+                    child: GFormSubmitButton.text(
+                      onSubmit: _submit,
                       label: 'Submit',
                     ),
                   ),

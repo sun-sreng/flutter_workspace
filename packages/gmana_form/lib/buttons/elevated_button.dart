@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gmana_spinner/gmana_spinner.dart';
+
+import '../controllers/form_controller.dart';
+import '../widgets/form.dart';
 
 /// Production-friendly submit button with a loading state.
 class GSubmitButton extends StatelessWidget {
@@ -82,6 +87,74 @@ class GElevatedButton extends StatelessWidget {
       textStyle: textStyle,
       loadingColor: loadingColor,
       loadingSize: loadingSize,
+    );
+  }
+}
+
+/// Submit button wired to a [GFormController].
+class GFormSubmitButton extends StatelessWidget {
+  final GFormController? controller;
+  final FutureOr<void> Function(Map<String, String> values) onSubmit;
+  final bool resetOnSuccess;
+  final Widget child;
+  final ButtonStyle? style;
+  final Color loadingColor;
+  final double loadingSize;
+
+  const GFormSubmitButton({
+    super.key,
+    this.controller,
+    required this.onSubmit,
+    required this.child,
+    this.resetOnSuccess = false,
+    this.style,
+    this.loadingColor = Colors.white,
+    this.loadingSize = 24.0,
+  });
+
+  factory GFormSubmitButton.text({
+    Key? key,
+    GFormController? controller,
+    required String label,
+    required FutureOr<void> Function(Map<String, String> values) onSubmit,
+    bool resetOnSuccess = false,
+    TextStyle? textStyle,
+    ButtonStyle? style,
+    Color loadingColor = Colors.white,
+    double loadingSize = 24.0,
+  }) {
+    return GFormSubmitButton(
+      key: key,
+      controller: controller,
+      onSubmit: onSubmit,
+      resetOnSuccess: resetOnSuccess,
+      style: style,
+      loadingColor: loadingColor,
+      loadingSize: loadingSize,
+      child: Text(label, style: textStyle),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveController = controller ?? GForm.controllerOf(context);
+
+    return ListenableBuilder(
+      listenable: effectiveController,
+      builder: (context, _) {
+        return GSubmitButton(
+          loading: effectiveController.submitting,
+          onPressed:
+              () => effectiveController.submit(
+                onSubmit,
+                resetOnSuccess: resetOnSuccess,
+              ),
+          style: style,
+          loadingColor: loadingColor,
+          loadingSize: loadingSize,
+          child: child,
+        );
+      },
     );
   }
 }

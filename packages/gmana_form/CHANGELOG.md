@@ -11,6 +11,9 @@
   factory.
 - Added `GFormController` and `GForm` for simpler form lifecycle, validation,
   save, reset, and named text-controller management.
+- Added `GFormController.submit` with loading state and duplicate-submit
+  protection.
+- Added `GFormSubmitButton` for controller-aware async submit flows.
 - Added named field binding through `GTextFieldConfig.name` and preset `name`
   parameters. Fields inside `GForm` can now resolve their controller
   automatically.

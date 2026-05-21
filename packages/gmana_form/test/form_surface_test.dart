@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gmana_form/gmana_form.dart';
@@ -242,6 +244,105 @@ void main() {
 
       expect(controller.text('email'), 'user@example.com');
       expect(controller.textValues(), {'email': 'user@example.com'});
+    });
+
+    testWidgets(
+      'GFormController submit manages loading and prevents duplicates',
+      (tester) async {
+        final controller = GFormController();
+        addTearDown(controller.dispose);
+
+        var submitCount = 0;
+        var completer = Completer<void>();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: GForm(
+                controller: controller,
+                child: Column(
+                  children: [
+                    GTextField(
+                      config: const GTextFieldConfig(
+                        name: 'username',
+                        label: 'Username',
+                      ),
+                    ),
+                    GFormSubmitButton.text(
+                      label: 'Save',
+                      onSubmit: (values) {
+                        submitCount++;
+                        expect(values, {'username': 'sreng'});
+                        return Future<void>(
+                          () {},
+                        ).then((_) => Future<void>.delayed(Duration.zero));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.enterText(find.byType(TextFormField), 'sreng');
+
+        final firstSubmit = controller.submit((_) {
+          submitCount++;
+          return completer.future;
+        });
+        final duplicateSubmit = controller.submit((_) {
+          submitCount++;
+        });
+
+        expect(controller.submitting, isTrue);
+        expect(await duplicateSubmit, isFalse);
+        completer.complete();
+        expect(await firstSubmit, isTrue);
+        expect(controller.submitting, isFalse);
+        expect(submitCount, 1);
+
+        completer = Completer<void>();
+      },
+    );
+
+    testWidgets('GFormSubmitButton submits named form values', (tester) async {
+      final controller = GFormController();
+      addTearDown(controller.dispose);
+
+      Map<String, String>? submittedValues;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: GForm(
+              controller: controller,
+              child: Column(
+                children: [
+                  GTextField(
+                    config: const GTextFieldConfig(
+                      name: 'username',
+                      label: 'Username',
+                    ),
+                  ),
+                  GFormSubmitButton.text(
+                    label: 'Save',
+                    onSubmit: (values) {
+                      submittedValues = values;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(find.byType(TextFormField), 'sreng');
+      await tester.tap(find.byType(GFormSubmitButton));
+      await tester.pump();
+
+      expect(submittedValues, {'username': 'sreng'});
     });
   });
 }

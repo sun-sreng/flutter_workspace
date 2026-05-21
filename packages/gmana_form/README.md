@@ -44,6 +44,20 @@ GForm(
 )
 ```
 
+Or let the package handle validate/save/loading:
+
+```dart
+GFormSubmitButton.text(
+  label: 'Sign in',
+  onSubmit: (values) async {
+    await auth.signIn(
+      email: values['email']!,
+      password: values['password']!,
+    );
+  },
+)
+```
+
 Dispose the controller from your `State`:
 
 ```dart
@@ -168,6 +182,20 @@ GTextField.email(
 ```
 
 ## Submit Button
+
+Use `GFormSubmitButton` inside a `GForm` when you want validation, saving,
+loading state, and duplicate-submit protection handled for you:
+
+```dart
+GFormSubmitButton.text(
+  label: 'Create account',
+  onSubmit: (values) async {
+    await repository.createAccount(values);
+  },
+)
+```
+
+For manual loading state, use `GSubmitButton`:
 
 ```dart
 GSubmitButton.text(
