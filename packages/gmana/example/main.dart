@@ -15,7 +15,8 @@ Future<void> main() async {
   print('  generated id: $id');
   print('  predicate email: ${isEmail('hello@example.com')}');
 
-  final totals = await Stream.fromIterable([1, 2, 3]).scan(0, (sum, value) => sum + value).toList();
+  final numbers = Stream.fromIterable([1, 2, 3]);
+  final totals = await numbers.scan(0, (sum, value) => sum + value).toList();
 
   print('  running totals: $totals');
 }

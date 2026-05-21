@@ -2,7 +2,7 @@
 
 Core Dart utilities for production apps: functional result types, focused
 extensions, validation primitives, ID generation, debounce/throttle helpers,
-and small design-system constants.
+and stream helpers.
 
 `gmana` is pure Dart, so it works in CLI tools, server apps, packages, and
 Flutter apps.
@@ -54,8 +54,8 @@ import 'package:gmana/validation.dart';
 | Number and duration extensions | `5.seconds`, `2.hours`, rounding, normalization, time formatting            |
 | Iterable and list extensions   | `sum`, `average`, `median`, `chunked`, `groupBy`, `flatten`, `whereNotNull` |
 | Stream extensions              | `debounce`, `throttle`, `scan`, `pairwise`, `whereNotNull`, `onErrorReturn` |
-| Validation                     | email, password, number, text validators and form-validator adapters        |
-| Utilities                      | `IdGenerator`, `Debouncer`, `Throttler`, `GSpacing`, `waveVerticalOffset`   |
+| Validation                     | email, password, number, text validators, and predicate functions           |
+| Utilities                      | `IdGenerator`, `Debouncer`, `Throttler`                                     |
 
 ## Functional Results
 
@@ -338,17 +338,8 @@ print(number.rightOrNull()); // 42
 print(text.rightOrNull()); // abc
 ```
 
-Flutter form adapters:
-
-```dart
-final emailFormValidator = asFormValidator(
-  validate: const EmailValidator().validate,
-  resolve: resolveEmailValidationIssue,
-);
-
-print(emailFormValidator('invalid-email')); // Please enter a valid email address
-print(emailFormValidator('user@example.com')); // null
-```
+For Flutter `FormField.validator` adapters, use
+`package:gmana_form/gmana_form.dart`.
 
 ## Instant String Validation
 
@@ -410,7 +401,8 @@ throttler.run(() {
 
 - Use `gmana` for pure Dart extensions, validation, functional results, and
   utilities.
+- Use `gmana_form` for Flutter form fields and validator adapters.
 - Use [`gmana_flutter`](https://pub.dev/packages/gmana_flutter) for Flutter
-  widgets, form fields, theme helpers, color helpers, and UI convenience APIs.
+  widgets, theme helpers, color helpers, and UI convenience APIs.
 - Use `gmana_value_objects` for typed domain values when that package is part
   of your project.

@@ -292,7 +292,6 @@ print(validator.validate('user@mail.blocked.example').rightOrNull());
 | `TextValidationConfig`                      | Configure required text, trimming, length, pattern, allowed characters, and blocked words. |
 | `TextValidator(config).validate(value)`     | Validate and normalize text.                                                               |
 | `resolveTextValidationIssue(issue)`         | Convert text validation issues to English messages.                                        |
-| `asFormValidator(...)`                      | Adapt a validator into a Flutter-style `String? Function(String?)`.                        |
 | `ValidationIssue.code`                      | Stable machine-readable error code.                                                        |
 | `ValidationResult<TIssue, TValue>`          | Alias for `Either<TIssue, TValue>`.                                                        |
 | `ValidationMessageResolver<TIssue>`         | Alias for an issue-to-message function.                                                    |
@@ -339,5 +338,3 @@ Do not use it for secrets or security-sensitive tokens.
 | `Debouncer.dispose()`     | Cancel pending debounced work.                                                        |
 | `Throttler.run(action)`   | Run an action at most once per cooldown window.                                       |
 | `Throttler.dispose()`     | Cancel pending throttler state.                                                       |
-| `GSpacing`                | Shared spacing constants.                                                             |
-| `waveVerticalOffset(...)` | Calculate a sine-wave vertical offset for painters/animations.                        |
