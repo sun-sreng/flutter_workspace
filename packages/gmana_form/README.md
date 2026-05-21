@@ -143,8 +143,8 @@ GTextField.password(
 )
 
 GTextField.confirmPassword(
-  controller: confirmation,
-  passwordController: password,
+  name: 'confirmPassword',
+  passwordName: 'password',
 )
 ```
 

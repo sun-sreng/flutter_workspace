@@ -6,11 +6,17 @@ import '../models/field_config.dart';
 import '../validators/confirm_password_validator.dart';
 import '../validators/form_validator_adapter.dart';
 import '../widgets/configured_text_form_field.dart';
+import '../widgets/form.dart';
 import '../widgets/obscurable_text_form_field.dart';
 
 /// Generic text form field with named constructors for common form inputs.
 class GTextField extends StatelessWidget {
-  const GTextField({super.key, required this.config, this.obscurable = false});
+  const GTextField({
+    super.key,
+    required this.config,
+    this.obscurable = false,
+    this.resolveConfig,
+  });
 
   factory GTextField.text({
     Key? key,
@@ -282,7 +288,8 @@ class GTextField extends StatelessWidget {
     String? name,
     TextEditingController? controller,
     String? initialValue,
-    required TextEditingController passwordController,
+    TextEditingController? passwordController,
+    String? passwordName,
     String label = 'Confirm password',
     String hint = 'Re-enter your password',
     TextInputAction textInputAction = TextInputAction.done,
@@ -308,6 +315,23 @@ class GTextField extends StatelessWidget {
     Iterable<String>? autofillHints = const [AutofillHints.password],
     InputDecoration? decoration,
   }) {
+    assert(
+      passwordController != null || passwordName != null,
+      'Provide either passwordController or passwordName.',
+    );
+
+    GFormValidator confirmValidator(TextEditingController passwordController) {
+      return (value) {
+        final message = ConfirmPasswordValidator(validationConfig)
+            .validate(
+              password: passwordController.text,
+              confirmation: value ?? '',
+            )
+            .fold(validationMessageResolver, (_) => null);
+        return message ?? validator?.call(value);
+      };
+    }
+
     final config = GTextFieldConfig(
       controller: controller,
       name: name,
@@ -317,15 +341,10 @@ class GTextField extends StatelessWidget {
       keyboardType: TextInputType.visiblePassword,
       textInputAction: textInputAction,
       inputFormatters: inputFormatters,
-      validator: (value) {
-        final message = ConfirmPasswordValidator(validationConfig)
-            .validate(
-              password: passwordController.text,
-              confirmation: value ?? '',
-            )
-            .fold(validationMessageResolver, (_) => null);
-        return message ?? validator?.call(value);
-      },
+      validator:
+          passwordController == null
+              ? null
+              : confirmValidator(passwordController),
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
       onSaved: onSaved,
@@ -348,14 +367,29 @@ class GTextField extends StatelessWidget {
       key: key,
       config: configure?.call(config) ?? config,
       obscurable: true,
+      resolveConfig:
+          passwordName == null
+              ? null
+              : (context, config) {
+                final controller = GForm.controllerOf(
+                  context,
+                ).textController(passwordName);
+                return config.copyWith(validator: confirmValidator(controller));
+              },
     );
   }
 
   final GTextFieldConfig config;
   final bool obscurable;
+  final GTextFieldConfig Function(
+    BuildContext context,
+    GTextFieldConfig config,
+  )?
+  resolveConfig;
 
   @override
   Widget build(BuildContext context) {
+    final config = resolveConfig?.call(context, this.config) ?? this.config;
     if (obscurable) {
       return GObscurableTextFormField(config: config);
     }

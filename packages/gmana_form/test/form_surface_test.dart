@@ -246,6 +246,39 @@ void main() {
       expect(controller.textValues(), {'email': 'user@example.com'});
     });
 
+    testWidgets('confirm password can validate against passwordName', (
+      tester,
+    ) async {
+      final controller = GFormController();
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: GForm(
+              controller: controller,
+              child: Column(
+                children: [
+                  GPasswordField(name: 'password'),
+                  GConfirmPasswordField(
+                    name: 'confirmPassword',
+                    passwordName: 'password',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(find.byType(TextFormField).first, 'Password123!');
+      await tester.enterText(find.byType(TextFormField).last, 'different');
+
+      expect(controller.validate(), isFalse);
+      await tester.pump();
+      expect(find.text('Passwords do not match'), findsOneWidget);
+    });
+
     testWidgets(
       'GFormController submit manages loading and prevents duplicates',
       (tester) async {

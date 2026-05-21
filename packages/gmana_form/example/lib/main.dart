@@ -101,7 +101,7 @@ class _ExampleFormPageState extends State<ExampleFormPage> {
                   const SizedBox(height: 12),
                   GConfirmPasswordField(
                     name: 'confirmPassword',
-                    passwordController: _form.textController('password'),
+                    passwordName: 'password',
                   ),
                   const SizedBox(height: 20),
                   SizedBox(

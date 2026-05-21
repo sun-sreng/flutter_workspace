@@ -17,6 +17,8 @@
 - Added named field binding through `GTextFieldConfig.name` and preset `name`
   parameters. Fields inside `GForm` can now resolve their controller
   automatically.
+- Added `passwordName` to confirm-password fields so named forms can validate
+  password confirmation without manually requesting the password controller.
 - Added optional controller support via `initialValue` for simpler forms.
 - Added autofill, obscure-text, autocorrect, suggestions, prefix, suffix, and
   suffix-icon configuration to `GTextFieldConfig`.
